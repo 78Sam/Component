@@ -1,0 +1,39 @@
+Render pages:
+
+    Call special component type that has some identifier to make
+    it link to the database provided
+
+
+Take tables UserAccounts and UserCodes
+
+UserAccounts:
+first_name, surname, full_name, email, password_hash
+
+
+UserCodes:
+email, code
+
+```
+
+<div class="component-main {additional-classes}" {custom-id} {custom-style}>
+    <h1>
+        <!-- name -->
+    </h1>
+</div>
+
+
+```
+
+let @ dictate SQL
+
+Might need some way to prepare values in a batch later down the line instead of doing
+single calls each time, but good for a proof of concept
+
+```
+
+component(
+    name: "main",
+    values: ["name"=>"@table='UserAccounts'&field='first_name'"]
+)
+
+```

@@ -6,19 +6,19 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// DOTENV
+
+require_once('vendor/autoload.php');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 // Base requirement 
 
 require("dir.php");
-require_once('vendor/autoload.php');
 
 // Extra requirements
 
 require($REQUIRE_COMPONENTS);
-
-// DOTENV
-
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
 
 ?>
 
