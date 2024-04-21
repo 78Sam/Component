@@ -1,6 +1,12 @@
 <?php
 
 
+require("database.php");
+
+
+$db = new Database();
+
+
 function defaultRewriter(string $html) {
 
     $pattern = "/<component-([-a-zA-Z0-9]+)><\/component-([-a-zA-Z0-9]+)>/";
@@ -69,6 +75,7 @@ function component(string $name, array $attributes = null, array $values = null,
     global $attribute_prefixes;
     global $count;
     global $used_components;
+    global $db;
 
     $path = __DIR__ . "/component-" . $name;
 
@@ -122,7 +129,7 @@ function component(string $name, array $attributes = null, array $values = null,
 
     // Debugging
 
-    $html = $html . "<!-- component " . $name . " " . $count . " -->";
+    $html = $html . "<!-- component " . $name . " " . $count . " " . $db->getName() .  " -->";
     $count = $count + 1;
 
     if ($echo) {

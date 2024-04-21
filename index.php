@@ -6,12 +6,6 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// DOTENV
-
-require_once('vendor/autoload.php');
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
 // Base requirement 
 
 require("dir.php");
@@ -45,7 +39,7 @@ require($REQUIRE_COMPONENTS);
             $comp = _component(
                 name: "main",
                 attributes: ["custom-style"=>"color: red; background-color: blue;"],
-                values: ["main-heading"=>$_ENV["USER"], "subbyheading"=>"World", "para"=>"First Component"]
+                values: ["main-heading"=>"yooo", "subbyheading"=>"World", "para"=>"First Component"]
             );
 
             component(

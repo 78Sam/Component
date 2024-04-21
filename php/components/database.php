@@ -22,12 +22,17 @@ class Database {
         $this->USERNAME = $_ENV["USERNAME"];
         $this->PASSWORD = $_ENV["PASSWORD"];
 
-        $this->link = new mysqli($this->HOSTNAME);
+        $this->link = new mysqli($this->HOSTNAME, $this->USERNAME, $this->PASSWORD, $this->DATABASE);
 
     }
 
     public function getConnection(): mysqli {
         return $this->link;
+    }
+
+
+    public function getName() {
+        return $this->HOSTNAME;
     }
 
 }
