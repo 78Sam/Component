@@ -1,0 +1,1 @@
+SELECT `{field}` FROM `{table}` WHERE {condition};

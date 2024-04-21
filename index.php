@@ -52,6 +52,23 @@ require($REQUIRE_COMPONENTS);
                 ]
             );
 
+            generate(
+                name: "test",
+                data: "users",
+                values: ["add"=>"Additional data"]
+            );
+
+            generate(
+                name: "test",
+                data: "user",
+                values: ["add"=>"Additional data"],
+                query_params: [
+                    "field"=>"first_name",
+                    "table"=>"UserAccounts",
+                    "condition"=>"`email`='samvjsmccormack@gmail.com'"
+                ]
+            );
+
         ?>
 
     </body>
