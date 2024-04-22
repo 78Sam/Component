@@ -1,1 +1,1 @@
-SELECT `{field}` FROM `{table}` WHERE {condition};
+SELECT {field} FROM {table} WHERE {condition};

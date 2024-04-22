@@ -13,6 +13,11 @@ require("dir.php");
 // Extra requirements
 
 require($REQUIRE_COMPONENTS);
+require($REQUIRE_DATABASE);
+
+// 
+
+$db = new Database();
 
 ?>
 
@@ -52,22 +57,16 @@ require($REQUIRE_COMPONENTS);
                 ]
             );
 
-            generate(
-                name: "test",
-                data: "users",
-                values: ["add"=>"Additional data"]
+            $query = $db->query(
+                query: "user",
+                query_params: ["field"=>"first_name", "table"=>"UserAccounts", "condition"=>"true"]
             );
-
-            generate(
-                name: "test",
-                data: "user",
-                values: ["add"=>"Additional data"],
-                query_params: [
-                    "field"=>"first_name",
-                    "table"=>"UserAccounts",
-                    "condition"=>"`email`='samvjsmccormack@gmail.com'"
-                ]
-            );
+            foreach ($query as $row) {
+                component(
+                    name: "test",
+                    values: array_merge(["add"=>"Additional data"], $row)
+                );
+            }
 
         ?>
 

@@ -1,11 +1,6 @@
 <?php
 
 
-require("database.php");
-
-
-$db = new Database();
-
 function defaultRewriter(string $html) {
 
     $pattern = "/<component-([-a-zA-Z0-9]+)><\/component-([-a-zA-Z0-9]+)>/";
@@ -166,46 +161,48 @@ function group(array $components = null) {
 }
 
 
-function generate(string $name, string $data, array $attributes = null, array $values = null, array $query_params = null, bool $echo = true) {
+// function generate(string $name, string $data, array $attributes = null, array $values = null, array $query_params = null, bool $echo = true) {
 
-    global $db;
+//     global $db;
 
-    $results = $db->getData(query: $data, query_params: $query_params);
+//     $results = $db->getData(query: $data, query_params: $query_params);
 
-    $html = "";
+//     $html = "";
 
-    if ($results) {
-        for ($i = 0; $i < count($results); $i++) {
+//     if ($results) {
 
-            $values = array_merge($values, $results[$i]);
+//         for ($i = 0; $i < count($results); $i++) {
+
+//             $values = array_merge($values, $results[$i]);
             
-            $html = $html . _component(
-                name: $name,
-                attributes: $attributes,
-                values: $values
-            );
+//             $html = $html . _component(
+//                 name: $name,
+//                 attributes: $attributes,
+//                 values: $values
+//             );
     
-        }
-    }
+//         }
+        
+//     }
 
-    if ($echo) {
-        echo $html;
-    } else {
-        return $html;
-    }
+//     if ($echo) {
+//         echo $html;
+//     } else {
+//         return $html;
+//     }
 
-}
+// }
 
 
-function _generate(string $name, string $data, array $attributes = null, array $values = null, array $query_params = null) {
-    return generate(
-        name: $name,
-        data: $data,
-        attributes: $attributes,
-        values: $values,
-        query_params: $query_params,
-        echo: false
-    );
-}
+// function _generate(string $name, string $data, array $attributes = null, array $values = null, array $query_params = null) {
+//     return generate(
+//         name: $name,
+//         data: $data,
+//         attributes: $attributes,
+//         values: $values,
+//         query_params: $query_params,
+//         echo: false
+//     );
+// }
 
 ?>
