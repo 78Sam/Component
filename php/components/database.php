@@ -88,6 +88,7 @@ class Database {
         } else {
             return $this->requestData($sql);
         }
+        
     }
 
 }
