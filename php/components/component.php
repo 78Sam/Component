@@ -56,6 +56,7 @@ function attributeRewriter(string $html, array $attributes) {
 $count = 0;
 $used_components = [];
 
+
 /**
  * Base component function
  * 

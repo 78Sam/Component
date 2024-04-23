@@ -39,21 +39,6 @@ class Database {
 
     private function requestData(string $sql) {
 
-        // $sql = file_get_contents($this->ROOT_DIR . "/data/" . $query . ".sql");
-
-        // if ($query_params) {
-
-        //     foreach ($query_params as $key => $value) {
-        //         $sql = str_replace("{" . $key . "}", $value, $sql);
-        //     }
-
-        // }
-        
-        // $query_params_pattern = "/{{1}[a-zA-Z0-9-_]+}{1}/";
-        // $sql = preg_replace($query_params_pattern, "", $sql);
-
-        echo $sql;
-
         $result = $this->link->query($sql);
 
         $rows = [];

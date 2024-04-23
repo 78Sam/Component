@@ -4,6 +4,13 @@ $PROJECT_NAME = "PHPSite";
 
 $ROOT = __DIR__;
 
+// FOLDERS
+
+$FOLDER_ASSETS = $ROOT . "/assets/";
+$FOLDER_JS = $ROOT . "/js/";
+$FOLDER_PHP = $ROOT . "/php/";
+$FOLDER_STYLES = $ROOT . "/styles/";
+
 // REQUIREMENTS
 
 $REQUIRE_COMPONENTS = $ROOT . "/php/components/component.php";
