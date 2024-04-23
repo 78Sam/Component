@@ -38,37 +38,8 @@ $db = new Database();
 
     </head>
     <body>
+
         
-        <?php
-
-            $comp = _component(
-                name: "main",
-                attributes: ["custom-style"=>"color: red; background-color: blue;"],
-                values: ["main-heading"=>"yooo", "subbyheading"=>"World", "para"=>"First Component"]
-            );
-
-            component(
-                name: "main",
-                attributes: ["custom-style"=>"color: red; background-color: black;"],
-                values: [
-                    "main-heading"=>"Hello",
-                    "subbyheading"=>"World",
-                    "extra stuff"=>$comp
-                ]
-            );
-
-            $query = $db->query(
-                query: "user",
-                query_params: ["field"=>"first_name", "table"=>"UserAccounts", "condition"=>"true"]
-            );
-            foreach ($query as $row) {
-                component(
-                    name: "test",
-                    values: array_merge(["add"=>"Additional data"], $row)
-                );
-            }
-
-        ?>
 
     </body>
 </html>

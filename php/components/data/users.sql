@@ -1,1 +1,0 @@
-SELECT `first_name`, `email` FROM `UserAccounts`;
