@@ -161,49 +161,4 @@ function group(array $components = null) {
 
 }
 
-
-// function generate(string $name, string $data, array $attributes = null, array $values = null, array $query_params = null, bool $echo = true) {
-
-//     global $db;
-
-//     $results = $db->getData(query: $data, query_params: $query_params);
-
-//     $html = "";
-
-//     if ($results) {
-
-//         for ($i = 0; $i < count($results); $i++) {
-
-//             $values = array_merge($values, $results[$i]);
-            
-//             $html = $html . _component(
-//                 name: $name,
-//                 attributes: $attributes,
-//                 values: $values
-//             );
-    
-//         }
-        
-//     }
-
-//     if ($echo) {
-//         echo $html;
-//     } else {
-//         return $html;
-//     }
-
-// }
-
-
-// function _generate(string $name, string $data, array $attributes = null, array $values = null, array $query_params = null) {
-//     return generate(
-//         name: $name,
-//         data: $data,
-//         attributes: $attributes,
-//         values: $values,
-//         query_params: $query_params,
-//         echo: false
-//     );
-// }
-
 ?>

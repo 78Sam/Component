@@ -29,6 +29,7 @@ class Database {
         $this->data_points = [];
 
         $this->link = new mysqli($this->HOSTNAME, $this->USERNAME, $this->PASSWORD, $this->DATABASE);
+        // $this->link = new SQLite3($this->ROOT_DIR . "/data/testdb.db");
 
     }
 
@@ -42,7 +43,7 @@ class Database {
         $result = $this->link->query($sql);
 
         $rows = [];
-        while ($row = $result->fetch_assoc()) {
+        while ($row = $result->fetchArray()) {
             $rows[] = $row;
         }
         
@@ -51,7 +52,12 @@ class Database {
         return $rows;
     }
 
-
+    /**
+     * 
+     * 
+     * Remember this returns an array of arrays, if you are expecting one result use $result[0]
+     * 
+     */
     public function query(string $query, array $query_params = null) {
 
         $sql = file_get_contents($this->ROOT_DIR . "/data/" . $query . ".sql");
