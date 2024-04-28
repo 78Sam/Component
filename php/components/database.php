@@ -4,37 +4,85 @@
 require_once('vendor/autoload.php');
 
 
+enum DatabaseType {
+    case MariaDB;
+    case SQLite3;
+
+}
+
+
 class Database {
 
     private $ROOT_DIR;
-    private $HOSTNAME;
-    private $DATABASE;
-    private $USERNAME;
-    private $PASSWORD;
     private $link;
-    private $data_points;
+    private $db_type;
+    private $connection_success;
+    private $connection_type;
 
     function __construct() {
         
         $this->ROOT_DIR = __DIR__;
+        // $this->connection_success = false;
 
-        $dotenv = Dotenv\Dotenv::createImmutable($this->ROOT_DIR);
-        $dotenv->load();
+        if (file_exists($this->ROOT_DIR . "/.env")) {
 
-        $this->HOSTNAME = $_ENV["HOSTNAME"];
-        $this->DATABASE = $_ENV["DATABASE"];
-        $this->USERNAME = $_ENV["USERNAME"];
-        $this->PASSWORD = $_ENV["PASSWORD"];
+            $dotenv = Dotenv\Dotenv::createImmutable($this->ROOT_DIR);
+            $dotenv->load();
 
-        $this->data_points = [];
+            $this->connection_success = false;
 
-        $this->link = new mysqli($this->HOSTNAME, $this->USERNAME, $this->PASSWORD, $this->DATABASE);
-        // $this->link = new SQLite3($this->ROOT_DIR . "/data/testdb.db");
+            $local_hosts = ["127.0.0.1", "::1"];
+            $is_local_host = in_array($_SERVER["REMOTE_ADDR"], $local_hosts);
+
+            if (
+                !$is_local_host &&
+                isset($_ENV["HOSTNAME"]) && $_ENV["HOSTNAME"] &&
+                isset($_ENV["DATABASE"]) && $_ENV["DATABASE"] &&
+                isset($_ENV["USERNAME"]) && $_ENV["USERNAME"] &&
+                isset($_ENV["PASSWORD"]) && $_ENV["PASSWORD"]
+            ) {
+
+                $HOSTNAME = $_ENV["HOSTNAME"];
+                $DATABASE = $_ENV["DATABASE"];
+                $USERNAME = $_ENV["USERNAME"];
+                $PASSWORD = $_ENV["PASSWORD"];
+
+                $this->link = new mysqli($HOSTNAME, $USERNAME, $PASSWORD, $DATABASE);
+
+                $this->connection_success = $this->link instanceof mysqli && $this->link->connect_error === null;
+
+                if ($this->connection_success) {
+                    $this->connection_type = "remote";
+                }
+            }
+
+            if (
+                !$this->connection_success && 
+                isset($_ENV["LOCAL_TYPE"]) && $_ENV["LOCAL_TYPE"] &&
+                isset($_ENV["LOCAL_DB"]) && $_ENV["LOCAL_DB"]
+            ) {
+
+                $db_path = $this->ROOT_DIR . "/data/" . $_ENV["LOCAL_DB"];
+
+                $this->link = new SQLite3($db_path);
+
+                $this->connection_success = $this->link instanceof SQLite3;
+
+                if ($this->connection_success) {
+                    $this->connection_type = "local";
+                }
+            }
+
+        }
 
     }
 
     function __destruct() {
-        $this->link->close();
+
+        if ($this->link) {
+            $this->link->close();
+        }
+
     }
 
 
@@ -42,13 +90,18 @@ class Database {
 
         $result = $this->link->query($sql);
 
-        $rows = [];
-        while ($row = $result->fetchArray()) {
-            $rows[] = $row;
+        if ($this->connection_type == "local") {
+            $rows = [];
+            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                $rows[] = $row;
+            }
+        } else {
+            $rows = [];
+            while ($row = $result->fetch_assoc()) {
+                $rows[] = $row;
+            }
         }
         
-        $this->data_points[$sql] = $rows;
-
         return $rows;
     }
 
@@ -73,13 +126,12 @@ class Database {
         }
 
         // Check if query already taken place
-
-        if (array_key_exists($sql, $this->data_points)) {
-            return $this->data_points[$query];
-        } else {
-            return $this->requestData($sql);
-        }
+        return $this->requestData($sql);
         
+    }
+
+    public function connectionStatus() {
+        return $this->connection_success;
     }
 
 }
