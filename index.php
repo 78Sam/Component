@@ -39,7 +39,7 @@ $db = new Database();
     </head>
     <body>
 
-        
+        <h1>Hello!</h1>
 
     </body>
 </html>

@@ -1,0 +1,3 @@
+RewriteEngine On
+
+RewriteRule ^/Test/[a-zA-Z.]*?$ /Test/switch.php [R=301,L]
