@@ -43,10 +43,19 @@ function attributeRewriter(string $html, array $attributes) {
         "additional-classes"=>"%s"
     ];
 
-    foreach ($attributes as $key => $value) {
-        $prefixed_value = sprintf($attribute_prefixes[$key], $value);
-        $html = str_replace("{" . $key . "}", $prefixed_value, $html);
+    foreach($attribute_prefixes as $key => $value) {
+        if ($attributes[$key]) {
+            $prefixed_value = sprintf($value, $attributes[$key]);
+            $html = str_replace("{" . $key . "}", $prefixed_value, $html);
+        } else {
+            $html = str_replace(" {" . $key . "}", "", $html);
+        }
     }
+
+    // foreach ($attributes as $key => $value) {
+    //     $prefixed_value = sprintf($attribute_prefixes[$key], $value);
+    //     $html = str_replace("{" . $key . "}", $prefixed_value, $html);
+    // }
 
     return $html;
 
@@ -113,6 +122,8 @@ function component(string $name, array $attributes = null, array $values = null,
 
     if ($attributes) {
         $html = attributeRewriter(html: $html, attributes: $attributes);
+    } else {
+        $html = attributeRewriter(html: $html, attributes: []);
     }
 
     // Add values
@@ -123,7 +134,7 @@ function component(string $name, array $attributes = null, array $values = null,
 
     // Debugging
 
-    $html = $html . "<!-- component " . $name . " " . $count .  " -->";
+    // $html = $html . "<!-- component " . $name . " " . $count .  " -->";
     $count = $count + 1;
 
     if ($echo) {
