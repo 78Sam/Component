@@ -1,3 +1,3 @@
 RewriteEngine On
-
-RewriteRule ^/Test/[a-zA-Z.]*?$ /Test/switch.php [R=301,L]
+RewriteCond %{REQUEST_URI} ^/Test/.*$
+RewriteRule ^(.*)$ /Test/switch.php [L]
