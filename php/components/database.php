@@ -58,7 +58,7 @@ class Database {
 
             if (
                 !$this->connection_success && 
-                isset($_ENV["LOCAL_TYPE"]) && $_ENV["LOCAL_TYPE"] &&
+                // isset($_ENV["LOCAL_TYPE"]) && $_ENV["LOCAL_TYPE"] &&
                 isset($_ENV["LOCAL_DB"]) && $_ENV["LOCAL_DB"]
             ) {
 
