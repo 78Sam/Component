@@ -1,7 +1,7 @@
 RewriteEngine On
 RewriteBase /Test
 
-
-RewriteCond %{HTTP_REFERER} !switch\.php$
-RewriteCond %{REQUEST_URI} !^/Test/switch\.php$
-RewriteRule ^(.*)$ switch.php?r=1&redir=$1
+RewriteCond %{REQUEST_URI} !switch.php
+RewriteCond %{REQUEST_URI} /views [OR]
+RewriteCond %{REQUEST_URI} !\.
+RewriteRule ^(.*)$ switch.php [QSA,L]

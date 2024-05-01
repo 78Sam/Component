@@ -44,7 +44,7 @@ function attributeRewriter(string $html, array $attributes) {
     ];
 
     foreach($attribute_prefixes as $key => $value) {
-        if ($attributes[$key]) {
+        if (isset($attributes[$key])) {
             $prefixed_value = sprintf($value, $attributes[$key]);
             $html = str_replace("{" . $key . "}", $prefixed_value, $html);
         } else {

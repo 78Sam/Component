@@ -1,13 +1,16 @@
 <?php
 
-$redir = $_GET["redir"];
+$redir = $_SERVER["REQUEST_URI"];
 
-if ($redir === "index" || $redir === "index.php") {
-    // header("Location: https://sam-mccormack.co.uk/Test/index.php?r=1&from=" . $redir);
-    header("Location: https://sam-mccormack.co.uk/Test/index.php?r=1");
+$redir = substr($redir, strlen('/Test/'));
+
+if ($redir === "peepee") {
+    include "views/view1.php";
+} else if ($redir === "poopoo") {
+    include "index.php";
 } else {
-    // header("Location: https://sam-mccormack.co.uk/Test/index.php?r=1&from=" . $redir);
-    header("Location: https://sam-mccormack.co.uk/Test/index.php?r=1");
+    include "views/404.php";
 }
+
 
 ?>
