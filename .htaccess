@@ -2,5 +2,6 @@ RewriteEngine On
 RewriteBase /Test
 
 
-RewriteCond %{QUERY_STRING} !r=1
+RewriteCond %{HTTP_REFERER} !switch\.php$
+RewriteCond %{REQUEST_URI} !^/Test/switch\.php$
 RewriteRule ^(.*)$ switch.php?r=1&redir=$1
