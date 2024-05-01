@@ -41,7 +41,7 @@ $db = new Database();
     </head>
     <body>
 
-        <h1>Hello! From View 1</h1>
+        <h1>Home</h1>
 
         <?php
         

@@ -1,8 +1,22 @@
 # Disable index view
 Options -Indexes
 
-# Hide a specific file
-<Files ".env">
+<FilesMatch "\.php$">
     Order allow,deny
     Deny from all
-</Files>
+</FilesMatch>
+
+<FilesMatch "\.html$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.sql$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "\.db$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

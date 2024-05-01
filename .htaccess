@@ -1,7 +1,15 @@
 RewriteEngine On
 RewriteBase /Test
 
-RewriteCond %{REQUEST_URI} !switch.php
+RewriteCond %{REQUEST_URI} !index.php
 RewriteCond %{REQUEST_URI} /views [OR]
 RewriteCond %{REQUEST_URI} !\.
-RewriteRule ^(.*)$ switch.php [QSA,L]
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+ErrorDocument 404 /Test/index.php?err=404
+ErrorDocument 403 /Test/index.php?err=404
+
+<FilesMatch "\.env$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
