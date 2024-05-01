@@ -1,3 +1,6 @@
 RewriteEngine On
-RewriteCond %{REQUEST_URI} ^/Test/.*$
-RewriteRule ^(.*)$ /Test/switch.php [L]
+RewriteBase /Test
+
+
+RewriteCond %{QUERY_STRING} !r=1
+RewriteRule ^(.*)$ switch.php?r=1&redir=$1
