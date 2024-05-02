@@ -31,6 +31,10 @@ switch ($redir) {
         include "views/products/iphone.php";
         break;
 
+    case "/asdasdasd":
+        include "views/products/iphone.php";
+        break;
+
     case "/404":
         include "views/404.php";
         break;

@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
         <title>404</title>
 
         <style>
@@ -11,6 +12,8 @@
                 margin: 0;
                 padding: 0;
             }
+
+            @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
 
             body {
                 width: 100%;
@@ -22,11 +25,15 @@
                 align-items: center;
             }
 
+            h1, h2 {
+                font-family: "Karla", sans-serif;
+            }
+
         </style>
 
     </head>
     <body>
         <h1>404</h1>
-        <h2>Unknown page: <?php echo $_SERVER["REQUEST_URI"] ?></h2>
+        <h2>Page not found</h2>
     </body>
 </html>
