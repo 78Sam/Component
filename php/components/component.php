@@ -40,7 +40,9 @@ function attributeRewriter(string $html, array $attributes) {
     $attribute_prefixes = [
         "custom-id"=>"id='%s'",
         "custom-style"=>"style='%s'",
-        "additional-classes"=>"%s"
+        "additional-classes"=>"%s",
+        "action"=>"%s",
+        "method"=>"%s"
     ];
 
     foreach($attribute_prefixes as $key => $value) {
@@ -51,11 +53,6 @@ function attributeRewriter(string $html, array $attributes) {
             $html = str_replace(" {" . $key . "}", "", $html);
         }
     }
-
-    // foreach ($attributes as $key => $value) {
-    //     $prefixed_value = sprintf($attribute_prefixes[$key], $value);
-    //     $html = str_replace("{" . $key . "}", $prefixed_value, $html);
-    // }
 
     return $html;
 

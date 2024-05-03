@@ -14,39 +14,70 @@ if (isset($_GET["err"])) {
 }
 
 
-switch ($redir) {
+$routes = [
+    "views/home.php"=>[
+        "route"=>"views/home.php"
+    ],
+    "views/sales.php"=>[
+        "route"=>"views/sales.php"
+    ],
+    "views/products/iphone.php"=>[
+        "route"=>"views/products/iphone.php",
+        "auth"=>true,
+        "fallback"=>"/sales"
+    ],
+    "views/404.php"=>[
+        "route"=>"views/404.php",
+        "auth"=>false
+    ],
+    "views/403.php"=>[
+        "route"=>"views/403.php",
+        "auth"=>false
+    ],
+];
 
-    case "/":
-    case "/index";
-    case "/home";
-    case "/index.php";
-        include "views/home.php";
-        break;
+$aliases = [
+    "/"=>"views/home.php",
+    "/index"=>"views/home.php",
+    "/home"=>"views/home.php",
+    "/index.php"=>"views/home.php",
 
-    case "/sales":
-        include "views/sales.php";
-        break;
+    "/sales"=>"views/sales.php",
 
-    case "/products/iphone":
-        include "views/products/iphone.php";
-        break;
+    "/products/iphone"=>"views/products/iphone.php",
 
-    case "/asdasdasd":
-        include "views/products/iphone.php";
-        break;
+    "/404"=>"views/404.php",
+    "/403"=>"views/403.php",
+    "default"=>"views/404.php"
+];
 
-    case "/404":
-        include "views/404.php";
-        break;
 
-    case "/403":
-        include "views/403.php";
-        break;
-    
-    default:
-        include "views/404.php";
-        break;
+function routeManager(string $redir) {
+    global $routes;
+    global $aliases;
+
+    $redir = strtolower($redir);
+    $redir = str_replace(" ", "", $redir);
+
+    if (!isset($aliases[$redir])) {
+        $redir = "default";
+    }
+
+    $route = $routes[$aliases[$redir]];
+
+    if ($route["auth"] ?? false) { // If auth key exists and is true
+        if (!(isset($_COOKIE["admin"]) && $_COOKIE["admin"] === "admin")) {
+            $route = $routes[$route["fallback"]];
+            header("Location: https://sam-mccormack.co.uk/Test/sales");
+        }
+    }
+
+    require($route["route"]);
+
 }
+
+
+routeManager($redir);
 
 
 ?>

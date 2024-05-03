@@ -12,7 +12,10 @@ def main() -> None:
 
     os.mkdir(f"php/components/component-{name}")
 
-    component = f'<div class="component-{name} {{additional-classes}}" {{custom-id}} {{custom-style}}>\n\t<!-- value -->\n</div>'
+    if "form" in name.lower():
+        component = f'<form action="php/actions/{{action}}" method="{{method}}" class="component-{name} {{additional-classes}}" {{custom-id}} {{custom-style}}>\n\t<!-- inputs -->\n\t<input type="submit" value="<!-- submit-name -->">\n</form>'
+    else:
+        component = f'<div class="component-{name} {{additional-classes}}" {{custom-id}} {{custom-style}}>\n\t<!-- value -->\n</div>'
 
     with open(f"php/components/component-{name}/{name}.html", "x") as file:
         file.write(component)

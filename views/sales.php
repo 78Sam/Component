@@ -49,6 +49,8 @@ $db = new Database();
         
             component(name: "test");
 
+            component(name: "login-form");
+
         ?>
 
     </body>
