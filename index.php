@@ -1,83 +1,35 @@
 <?php
 
+require_once("route.php");
 
-$redir = $_SERVER["REQUEST_URI"];
-$redir = substr($redir, strlen('/Test'));
+$route_manager = new Route();
 
+$route_manager->registerRoute(
+    aliases: ["", "index", "index.php", "home"],
+    route: "home.php"
+);
 
-if (isset($_GET["err"])) {
-    if ($_GET["err"] == 404) {
-        $redir = "/404";
-    } else if ($_GET["err"] == 403) {
-        $redir = "/403";
-    }
-}
+$route_manager->registerRoute(
+    aliases: ["sales"],
+    route: "sales.php"
+);
 
-
-$routes = [
-    "views/home.php"=>[
-        "route"=>"views/home.php"
-    ],
-    "views/sales.php"=>[
-        "route"=>"views/sales.php"
-    ],
-    "views/products/iphone.php"=>[
-        "route"=>"views/products/iphone.php",
+$route_manager->registerRoute(
+    aliases: ["products/iphone"],
+    route: "products/iphone.php",
+    options: [
         "auth"=>true,
         "fallback"=>"/sales"
-    ],
-    "views/404.php"=>[
-        "route"=>"views/404.php",
-        "auth"=>false
-    ],
-    "views/403.php"=>[
-        "route"=>"views/403.php",
-        "auth"=>false
-    ],
-];
+    ]
+);
 
-$aliases = [
-    "/"=>"views/home.php",
-    "/index"=>"views/home.php",
-    "/home"=>"views/home.php",
-    "/index.php"=>"views/home.php",
+$route = $route_manager->resolveRoute($_SERVER["REQUEST_URI"]);
 
-    "/sales"=>"views/sales.php",
-
-    "/products/iphone"=>"views/products/iphone.php",
-
-    "/404"=>"views/404.php",
-    "/403"=>"views/403.php",
-    "default"=>"views/404.php"
-];
-
-
-function routeManager(string $redir) {
-    global $routes;
-    global $aliases;
-
-    $redir = strtolower($redir);
-    $redir = str_replace(" ", "", $redir);
-
-    if (!isset($aliases[$redir])) {
-        $redir = "default";
-    }
-
-    $route = $routes[$aliases[$redir]];
-
-    if ($route["auth"] ?? false) { // If auth key exists and is true
-        if (!(isset($_COOKIE["admin"]) && $_COOKIE["admin"] === "admin")) {
-            $route = $routes[$route["fallback"]];
-            header("Location: https://sam-mccormack.co.uk/Test/sales");
-        }
-    }
-
-    require($route["route"]);
-
+if ($route !== null) {
+    require_once($route["path"]);
+} else {
+    echo "<h1>Error</h1>";
+    // print_r($route_manager->getRoutes());
 }
-
-
-routeManager($redir);
-
 
 ?>

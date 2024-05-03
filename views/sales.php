@@ -51,6 +51,8 @@ $db = new Database();
 
             component(name: "login-form");
 
+            component(name: "teehee");
+
         ?>
 
     </body>
