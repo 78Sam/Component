@@ -4,25 +4,24 @@
 require_once('vendor/autoload.php');
 
 
-enum DatabaseType {
-    case MariaDB;
-    case SQLite3;
-
-}
-
-
 class Database {
 
+    
     private $ROOT_DIR;
     private $link;
-    private $db_type;
-    private $connection_success;
-    private $connection_type;
+    private bool $connection_success;
+    private string $connection_type;
 
-    function __construct() {
+
+    /**
+     * 
+     * @param string $fallback URL that should be used if database connection fails
+     * 
+     */
+    function __construct(string $fallback=null) {
         
         $this->ROOT_DIR = __DIR__;
-        // $this->connection_success = false;
+        $this->connection_success = false;
 
         if (file_exists($this->ROOT_DIR . "/.env")) {
 
@@ -36,10 +35,10 @@ class Database {
 
             if (
                 !$is_local_host &&
-                isset($_ENV["HOSTNAME"]) && $_ENV["HOSTNAME"] &&
-                isset($_ENV["DATABASE"]) && $_ENV["DATABASE"] &&
-                isset($_ENV["USERNAME"]) && $_ENV["USERNAME"] &&
-                isset($_ENV["PASSWORD"]) && $_ENV["PASSWORD"]
+                isset($_ENV["HOSTNAME"]) && $_ENV["HOSTNAME"] !== "" &&
+                isset($_ENV["DATABASE"]) && $_ENV["DATABASE"] !== "" &&
+                isset($_ENV["USERNAME"]) && $_ENV["USERNAME"] !== "" &&
+                isset($_ENV["PASSWORD"]) && $_ENV["PASSWORD"] !== ""
             ) {
 
                 $HOSTNAME = $_ENV["HOSTNAME"];
@@ -58,8 +57,8 @@ class Database {
 
             if (
                 !$this->connection_success && 
-                // isset($_ENV["LOCAL_TYPE"]) && $_ENV["LOCAL_TYPE"] &&
-                isset($_ENV["LOCAL_DB"]) && $_ENV["LOCAL_DB"]
+                isset($_ENV["LOCAL_DB"]) &&
+                $_ENV["LOCAL_DB"] !== ""
             ) {
 
                 $db_path = $this->ROOT_DIR . "/data/" . $_ENV["LOCAL_DB"];
@@ -75,43 +74,55 @@ class Database {
 
         }
 
+        if (!$this->connection_success && $fallback) {
+            header("Location: " . $fallback);
+            exit();
+        }
+
     }
 
     function __destruct() {
 
-        if ($this->link) {
+        if ($this->connection_success && $this->link) {
             $this->link->close();
         }
 
     }
 
 
-    private function requestData(string $sql) {
+    private function requestData(string $sql): array|null {
 
         $result = $this->link->query($sql);
 
-        if ($this->connection_type == "local") {
-            $rows = [];
+        $rows = [];
+        if ($this->connection_type === "local") {
             while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                 $rows[] = $row;
             }
         } else {
-            $rows = [];
             while ($row = $result->fetch_assoc()) {
                 $rows[] = $row;
             }
         }
+
+        if (!count($rows)) {
+            return null;
+        }
         
         return $rows;
+
     }
+
 
     /**
      * 
+     * @param string $query The filename of the query in php/components/data to be used
+     * @param array $query_params Values to be replaced in the specified SQL file
      * 
-     * Remember this returns an array of arrays, if you are expecting one result use $result[0]
+     * @return array|null 2D array of rows, or null if no data
      * 
      */
-    public function query(string $query, array $query_params = null) {
+    public function query(string $query, array $query_params = null): array|null {
 
         $sql = file_get_contents($this->ROOT_DIR . "/data/" . $query . ".sql");
 
@@ -125,8 +136,13 @@ class Database {
 
         }
 
-        // Check if query already taken place
-        return $this->requestData($sql);
+        $result = $this->requestData($sql);
+
+        if ($result === null) {
+            return null;
+        }
+        
+        return $result;
         
     }
 

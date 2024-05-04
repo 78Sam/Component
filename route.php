@@ -42,6 +42,10 @@ class Route {
 
         $path = __DIR__ . "/views/" . $route;
 
+        if (!file_exists($path)) {
+            return;
+        }
+
         if (!$options) {
 
             $options = [
