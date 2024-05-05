@@ -46,7 +46,7 @@ if ($route !== null) {
 
     if (isset($route["auth"]) && $route["auth"]) {
         if (!checkAuth()) {
-            header("Location: https://sam-mccormack.co.uk/Test" . $route["fallback"]);
+            header("Location: " . $URL_HOME . $route["fallback"]);
             exit();
         }
     }

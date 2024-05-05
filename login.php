@@ -51,7 +51,7 @@ $login_statement->bind_result($stored_password);
 if ($login_statement->fetch()) {
     if (password_verify($password, $stored_password)) {
         startSession("admin");
-        header("Location: https://sam-mccormack.co.uk/Test/");
+        header("Location: " . $URL_HOME);
         exit();
     } else {
         $login_statement->close();
