@@ -1,44 +1,66 @@
 <?php
 
+require_once("logout.php");
 
+function checkAuth(): bool {
 
-$EXPIRY = 60*1;
-
-
-function startSession(string $role) {
-    global $EXPIRY;
+    $EXPIRY = 60*5; // In seconds
 
     session_start();
-    if (!isset($_SESSION["uid"])) {
-        $uid = bin2hex(random_bytes(128));
-        $_SESSION["uid"] = $uid;
-        setcookie(
-            name: "uid",
-            value: $uid,
-            expires_or_options: time()+$EXPIRY,
-            path: "/Test/",
-            httponly: true,
-            secure: true
-        );
+
+    // Variables Set
+
+    if (
+        !isset(
+            $_SESSION["login_state"],
+            $_SESSION["login_state"]["uid"],
+            $_SESSION["login_state"]["role"]
+        )
+    ) {
+        // echo "1";
+        logout();
+        return false;
     }
-}
 
+    // Correct Types
 
-function endSession() {
-    session_start();
-    session_unset();
-    session_destroy();
-    if (isset($_COOKIE["uid"])) {
-        setcookie(name: "uid", value: "", expires_or_options: time() - 1);
+    if (
+        !is_array($_SESSION["login_state"]) ||
+        !is_string($_SESSION["login_state"]["uid"]) ||
+        !is_string($_SESSION["login_state"]["role"]) ||
+        !is_int($_SESSION["login_state"]["timestamp"])
+    ) {
+        // echo "2";
+        logout();
+        return false;
     }
+
+    // Meaningful Values Set
+
+    if (
+        strlen($_SESSION["login_state"]["uid"]) !== 256 ||
+        $_SESSION["login_state"]["role"] === "" ||
+        $_SESSION["login_state"]["timestamp"] > time() + 1
+    ) {
+        // echo "3";
+        logout();
+        return false;
+    }
+
+    // Expired Session
+
+    if ($EXPIRY) {
+
+        if ($_SESSION["login_state"]["timestamp"] < (time() - $EXPIRY)) {
+            // echo "4";
+            logout();
+            return false;
+        }
+
+    }
+
+    return true;
+
 }
-
-
-
-
-
-
-
-
 
 ?>

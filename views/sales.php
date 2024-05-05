@@ -11,10 +11,9 @@ require_once($REQUIRE_DATABASE);
 
 // DB Connection
 
-$db = new Database();
+// $db = new Database();
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -42,8 +41,6 @@ $db = new Database();
         <?php
         
             component(name: "test");
-
-            component(name: "login-form");
 
             component(name: "teehee");
 

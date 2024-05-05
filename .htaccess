@@ -1,6 +1,9 @@
 RewriteEngine On
 RewriteBase /Test
 
+RewriteCond %{HTTPS} off 
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 RewriteCond %{REQUEST_URI} !index.php
 RewriteCond %{REQUEST_URI} /views [OR]
 RewriteCond %{REQUEST_URI} !\.

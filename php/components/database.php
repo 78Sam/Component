@@ -150,6 +150,13 @@ class Database {
         return $this->connection_success;
     }
 
+    public function getConnection(): mysqli|null {
+        if ($this->connection_success) {
+            return $this->link;
+        }
+        return null;
+    }
+
 }
 
 
