@@ -1,10 +1,13 @@
 <?php
 
+require_once("dir.php");
+require_once("logout.php");
+require_once($REQUIRE_DATABASE);
+
+
 function startSession(string $role) {
 
-    session_start();
-    session_unset();
-    session_destroy();
+    logout();
     session_regenerate_id();
     session_start();
     
@@ -16,31 +19,25 @@ function startSession(string $role) {
     ];
 }
 
-function close(string $err=null) {
-    global $FALLBACK;
+
+function fallback(string $err=null) {
+    global $URL_FALLBACK;
     if ($err) {
-        header("Location: " . $FALLBACK . "?err=" . $err);
+        header("Location: " . $URL_FALLBACK . "?err=" . $err);
     } else {
-        header("Location: " . $FALLBACK);
+        header("Location: " . $URL_FALLBACK);
     }
     exit();
 }
 
+
 if (!isset($_POST["email"], $_POST["password"])) {
-    close(err: "Please enter email and password");
+    fallback(err: "Please enter email and password");
 }
 
-require_once("dir.php");
-require_once("logout.php");
-require_once($REQUIRE_DATABASE);
-
-$FALLBACK = "https://sam-mccormack.co.uk/Test/loginpage";
-
-$db = new Database($FALLBACK);
-$link = $db->getConnection();
-
-if (!$link) {
-    close(err: "Failed to connect to database");
+$db = new Database($URL_FALLBACK);
+if (!$link = $db->getConnection()) {
+    fallback(err: "Failed to connect to database");
 }
 
 $email = $_POST["email"];
@@ -58,11 +55,11 @@ if ($login_statement->fetch()) {
         exit();
     } else {
         $login_statement->close();
-        close(err: "Invalid Password");
+        fallback(err: "Invalid Password");
     }
 } else {
     $login_statement->close();
-    close(err: "Account doesn't exist");
+    fallback(err: "Account doesn't exist");
 }
 
 ?>

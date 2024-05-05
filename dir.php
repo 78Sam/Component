@@ -16,7 +16,10 @@ $FOLDER_STYLES = $ROOT . "/styles/";
 $REQUIRE_COMPONENTS = $ROOT . "/php/components/component.php";
 $REQUIRE_DATABASE = $ROOT . "/php/components/database.php";
 
+// URLs
 
+$URL_HOME = "https://sam-mccormack.co.uk/Test";
+$URL_FALLBACK = $URL_HOME;
 
 
 
