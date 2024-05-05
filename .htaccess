@@ -1,0 +1,18 @@
+RewriteEngine On
+RewriteBase /Test
+
+RewriteCond %{HTTPS} off 
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{REQUEST_URI} !index.php
+RewriteCond %{REQUEST_URI} /views [OR]
+RewriteCond %{REQUEST_URI} !\.
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+ErrorDocument 404 /Test/index.php?err=404
+ErrorDocument 403 /Test/index.php?err=403
+
+<FilesMatch "\.env$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

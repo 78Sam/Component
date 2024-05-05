@@ -1,45 +1,60 @@
 <?php
 
-// Remove if not required, security risk
+// Suppress error reporting
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(0);
 
-// Base requirement 
+// Requirements
 
-require("dir.php");
+require_once("dir.php");
+require_once("route.php");
+require_once("auth.php");
 
-// Extra requirements
+// Route Registration
 
-require($REQUIRE_COMPONENTS);
-require($REQUIRE_DATABASE);
+$route_manager = new Route();
 
-// 
+$route_manager->registerRoute(
+    aliases: ["", "index", "index.php", "home"],
+    route: "home.php"
+);
 
-$db = new Database();
+$route_manager->registerRoute(
+    aliases: ["sales"],
+    route: "sales.php"
+);
+
+$route_manager->registerRoute(
+    aliases: ["products/iphone"],
+    route: "products/iphone.php",
+    options: [
+        "auth"=>true,
+        "fallback"=>"/loginpage"
+    ]
+);
+
+$route_manager->registerRoute(
+    aliases: ["login", "loginpage"],
+    route: "loginpage.php"
+);
+
+// Resolve Routes
+
+$route = $route_manager->resolveRoute($_SERVER["REQUEST_URI"]);
+
+if ($route !== null) {
+
+    if (isset($route["auth"]) && $route["auth"]) {
+        if (!checkAuth()) {
+            header("Location: " . $URL_HOME . $route["fallback"]);
+            exit();
+        }
+    }
+
+    require_once($route["path"]);
+
+} else {
+    echo "<h1>Error</h1>";
+}
 
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>Test</title>
-        <link rel="icon" type="image/x-icon" href="assets/pingu.png">
-
-        <link rel="stylesheet" href="styles/main.css">
-
-        <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    </head>
-    <body>
-
-        
-
-    </body>
-</html>
