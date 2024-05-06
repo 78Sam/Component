@@ -1,6 +1,6 @@
 <?php
 
-require_once("logout.php");
+require_once("logoutservice.php");
 
 function checkAuth(): bool {
 

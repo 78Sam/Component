@@ -1,7 +1,7 @@
 <?php
 
 require_once("dir.php");
-require_once("logout.php");
+require_once($REQUIRE_LOGOUT);
 require_once($REQUIRE_DATABASE);
 
 
@@ -22,6 +22,7 @@ function startSession(string $role) {
 
 function fallback(string $err=null) {
     global $URL_FALLBACK;
+    logout();
     if ($err) {
         header("Location: " . $URL_FALLBACK . "?err=" . $err);
     } else {

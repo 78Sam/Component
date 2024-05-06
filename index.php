@@ -7,8 +7,8 @@ error_reporting(0);
 // Requirements
 
 require_once("dir.php");
-require_once("route.php");
-require_once("auth.php");
+require_once($REQUIRE_ROUTES);
+require_once($REQUIRE_AUTH);
 
 // Route Registration
 
