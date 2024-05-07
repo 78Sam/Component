@@ -4,21 +4,28 @@ RewriteBase /Test
 RewriteCond %{HTTPS} off 
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-RewriteCond %{REQUEST_URI} !index.php
-RewriteCond %{REQUEST_URI} !.css
-RewriteCond %{REQUEST_URI} !.js
-RewriteCond %{REQUEST_URI} !.png
-RewriteCond %{REQUEST_URI} !.webp
-RewriteCond %{REQUEST_URI} !.jpg
+RewriteCond %{REQUEST_URI} /vendor [OR]
+RewriteCond %{REQUEST_URI} /temp [OR]
+RewriteCond %{REQUEST_URI} /views
+RewriteRule ^(.*)$ index.php [QSA,L]
+
 RewriteCond %{REQUEST_URI} !index.php
 RewriteCond %{REQUEST_URI} !loginservice.php
 RewriteCond %{REQUEST_URI} !logoutservice.php
+RewriteCond %{REQUEST_URI} .php [OR]
+RewriteCond %{REQUEST_URI} .html [OR]
+RewriteCond %{REQUEST_URI} .sql [OR]
+RewriteCond %{REQUEST_URI} .db [OR]
+RewriteCond %{REQUEST_URI} .json [OR]
+RewriteCond %{REQUEST_URI} .lock [OR]
+RewriteCond %{REQUEST_URI} .git [OR]
+RewriteCond %{REQUEST_URI} !\.
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 ErrorDocument 404 /Test/index.php?err=404
 ErrorDocument 403 /Test/index.php?err=403
 
-<FilesMatch "\.env$">
+<FilesMatch "\.(env)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
