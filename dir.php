@@ -18,8 +18,8 @@ $REQUIRE_DATABASE = $ROOT . "/components/database.php";
 $REQUIRE_ROUTES = $ROOT . "/route.php";
 $REQUIRE_AUTH = $ROOT . "/auth.php";
 
-$REQUIRE_LOGIN = $ROOT . "loginservice.php";
-$REQUIRE_LOGOUT = $ROOT . "logoutservice.php";
+$REQUIRE_LOGIN = $ROOT . "/loginservice.php";
+$REQUIRE_LOGOUT = $ROOT . "/logoutservice.php";
 
 // URLs
 

@@ -8,8 +8,8 @@ require_once($REQUIRE_DATABASE);
 function startSession(string $role) {
 
     logout();
-    session_regenerate_id();
     session_start();
+    session_regenerate_id();
     
     $uid = bin2hex(random_bytes(128));
     $_SESSION["login_state"] = [

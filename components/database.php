@@ -116,7 +116,7 @@ class Database {
 
     /**
      * 
-     * @param string $query The filename of the query in php/components/data to be used
+     * @param string $query The filename of the query in components/data to be used
      * @param array $query_params Values to be replaced in the specified SQL file
      * 
      * @return array|null 2D array of rows, or null if no data

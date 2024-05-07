@@ -5,8 +5,14 @@ RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 RewriteCond %{REQUEST_URI} !index.php
-RewriteCond %{REQUEST_URI} /views [OR]
-RewriteCond %{REQUEST_URI} !\.
+RewriteCond %{REQUEST_URI} !.css
+RewriteCond %{REQUEST_URI} !.js
+RewriteCond %{REQUEST_URI} !.png
+RewriteCond %{REQUEST_URI} !.webp
+RewriteCond %{REQUEST_URI} !.jpg
+RewriteCond %{REQUEST_URI} !index.php
+RewriteCond %{REQUEST_URI} !loginservice.php
+RewriteCond %{REQUEST_URI} !logoutservice.php
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 ErrorDocument 404 /Test/index.php?err=404

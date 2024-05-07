@@ -27,7 +27,7 @@ $db = new Database();
         <title>Test</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">
 
-        <link rel="stylesheet" href="/Test/styles/main.css">
+        <link rel="stylesheet" href="styles/main.css">
 
         <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -36,6 +36,8 @@ $db = new Database();
     <body>
 
         <h1>Home</h1>
+
+        <img src="assets/pingu.png" alt="">
 
         <?php
         
