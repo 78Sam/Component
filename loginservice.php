@@ -32,6 +32,15 @@ function fallback(string $err=null) {
 }
 
 
+if ($URL_FALLBACK = $_SERVER["HTTP_REFERER"]) {
+    if (str_contains($URL_FALLBACK, "?")) {
+        $query_start = strpos($URL_FALLBACK, "?");
+        $URL_FALLBACK = substr($URL_FALLBACK, 0, $query_start);
+    }
+} else {
+    $URL_FALLBACK = $URL_HOME;
+}
+
 if (!isset($_POST["email"], $_POST["password"])) {
     fallback(err: "Please enter email and password");
 }

@@ -22,6 +22,11 @@ require_once($REQUIRE_DATABASE);
         <title>Login</title>
     </head>
     <body>
-        <?php component(name: "login-form"); ?>
+        <?php
+            if (isset($_GET["err"])) {
+                echo "<h3>" . $_GET["err"] . "</h3>";
+            }
+            component(name: "login-form");
+        ?>
     </body>
 </html>

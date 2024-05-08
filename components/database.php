@@ -45,10 +45,13 @@ class Database {
                 $DATABASE = $_ENV["DATABASE"];
                 $USERNAME = $_ENV["USERNAME"];
                 $PASSWORD = $_ENV["PASSWORD"];
-
-                $this->link = new mysqli($HOSTNAME, $USERNAME, $PASSWORD, $DATABASE);
-
-                $this->connection_success = $this->link instanceof mysqli && $this->link->connect_error === null;
+                
+                try {
+                    $this->link = new mysqli($HOSTNAME, $USERNAME, $PASSWORD, $DATABASE);
+                    $this->connection_success = $this->link instanceof mysqli && $this->link->connect_error === null;
+                } catch (mysqli_sql_exception $e) {
+                    $this->connection_success = false;
+                }
 
                 if ($this->connection_success) {
                     $this->connection_type = "remote";
@@ -89,7 +92,6 @@ class Database {
 
     }
 
-
     private function requestData(string $sql): array|null {
 
         $result = $this->link->query($sql);
@@ -112,7 +114,6 @@ class Database {
         return $rows;
 
     }
-
 
     /**
      * 

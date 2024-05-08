@@ -78,6 +78,11 @@ class Route {
 
         $alias = substr($alias, strlen("/Test/"));
 
+        if (str_contains($alias, "?")) {
+            $query_start = strpos($alias, "?");
+            $alias = substr($alias, 0, $query_start);
+        }
+
         if (
             isset($_GET["err"]) && 
             array_key_exists($_GET["err"], $this->aliases)

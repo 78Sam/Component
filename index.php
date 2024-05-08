@@ -4,6 +4,10 @@
 
 error_reporting(0);
 
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 // Requirements
 
 require_once("dir.php");
@@ -36,6 +40,11 @@ $route_manager->registerRoute(
 $route_manager->registerRoute(
     aliases: ["login", "loginpage"],
     route: "loginpage.php"
+);
+
+$route_manager->registerRoute(
+    aliases: ["test"],
+    route: "test.php"
 );
 
 // Resolve Routes

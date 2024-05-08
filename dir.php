@@ -24,7 +24,6 @@ $REQUIRE_LOGOUT = $ROOT . "/logoutservice.php";
 // URLs
 
 $URL_HOME = "https://sam-mccormack.co.uk/Test";
-$URL_FALLBACK = $URL_HOME;
 
 
 
