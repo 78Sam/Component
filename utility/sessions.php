@@ -1,8 +1,25 @@
 <?php
 
-// require_once("logoutservice.php");
-require_once("dir.php");
-require_once($REQUIRE_SESSIONS);
+function startSession(string $role): void {
+
+    endSession();
+    session_start();
+    session_regenerate_id();
+    
+    $uid = bin2hex(random_bytes(128));
+    $_SESSION["login_state"] = [
+        "uid"=>$uid,
+        "role"=>$role,
+        "timestamp"=>time()
+    ];
+    
+}
+
+function endSession(): void {
+    session_start();
+    session_unset();
+    session_destroy();
+}
 
 function checkAuth(): bool {
 

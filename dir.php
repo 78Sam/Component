@@ -19,7 +19,7 @@ $REQUIRE_ROUTES = $ROOT . "/route.php";
 $REQUIRE_AUTH = $ROOT . "/auth.php";
 
 $REQUIRE_LOGIN = $ROOT . "/loginservice.php";
-$REQUIRE_LOGOUT = $ROOT . "/logoutservice.php";
+$REQUIRE_SESSIONS = $ROOT . "/utility/sessions.php";
 
 // URLs
 

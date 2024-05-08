@@ -12,7 +12,8 @@ error_reporting(0);
 
 require_once("dir.php");
 require_once($REQUIRE_ROUTES);
-require_once($REQUIRE_AUTH);
+require_once($REQUIRE_SESSIONS);
+// require_once($REQUIRE_AUTH);
 
 // Route Registration
 
