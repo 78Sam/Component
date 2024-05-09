@@ -267,4 +267,5 @@ Which should look like:
 
 - Add database stuff to readme
 - Ability to create custom attributes
+- Documentation
 - LOTS of testing
