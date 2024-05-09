@@ -76,6 +76,8 @@ def main() -> None:
             with open(f"components/component-{name}/{name}.css", "x") as component_css:
                 component_css.write(schematic)
 
+        # YOUR SCHEMATICS
+
         case _:
             print(f"Unknown generator type: '{gen_type}', expected: 'component', 'form' or 'view'")
     
