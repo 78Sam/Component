@@ -1,4 +1,4 @@
-# Component PHP
+# Component PHP v1.0
 
 Component PHP designed by [@78Sam](https://github.com/78Sam/). View the official site [here](https://sam-mccormack.co.uk/phpsite).
 
@@ -262,3 +262,9 @@ Lets use what we know so far to spice up our landing page.
 Which should look like:
 
 ![Example Image](example.png)
+
+## TODO
+
+- Add database stuff to readme
+- Ability to create custom attributes
+- LOTS of testing
