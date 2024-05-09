@@ -14,42 +14,15 @@ require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
 require_once($REQUIRE_ROUTES);
 require_once($REQUIRE_SESSIONS);
 
-// Route Registration
+// Route Manager
 
 $route_manager = new Route();
+
+// Register Routes
 
 $route_manager->registerRoute(
     aliases: ["", "index", "index.php", "home"],
     route: "home.php"
-);
-
-$route_manager->registerRoute(
-    aliases: ["sales"],
-    route: "sales.php"
-);
-
-$route_manager->registerRoute(
-    aliases: ["products/iphone"],
-    route: "products/iphone.php",
-    options: [
-        "auth"=>true,
-        "fallback"=>"/loginpage"
-    ]
-);
-
-$route_manager->registerRoute(
-    aliases: ["login", "loginpage", "sign-in", "signin", "sign%20in"],
-    route: "login.php"
-);
-
-$route_manager->registerRoute(
-    aliases: ["logout"],
-    route: "logout.php"
-);
-
-$route_manager->registerRoute(
-    aliases: ["test"],
-    route: "temp.php"
 );
 
 // Resolve Routes
