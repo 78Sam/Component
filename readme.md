@@ -199,6 +199,13 @@ Lets use what we know so far to spice up our landing page.
 
 >welcome.css
 ```css
+.component-welcome {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 .component-welcome h1 {
     color: blue;
     text-decoration: underline;
@@ -213,7 +220,7 @@ Lets use what we know so far to spice up our landing page.
 ```php
 <?php
 
-    require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
+    require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
     require_once($REQUIRE_COMPONENTS);
     require_once($REQUIRE_DATABASE);
 
@@ -238,7 +245,8 @@ Lets use what we know so far to spice up our landing page.
         <?php
         
             component(
-                name: "Welcome",
+                name: "welcome",
+                attributes: ["custom-style"=>"justify-content:center; align-items:center;"],
                 values: [
                     "title"=>"Welcome!",
                     "paragraph"=>"This site is made with Component PHP"

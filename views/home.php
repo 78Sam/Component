@@ -25,7 +25,8 @@
         <?php
         
             component(
-                name: "Welcome",
+                name: "welcome",
+                attributes: ["custom-style"=>"justify-content:center; align-items:center;"],
                 values: [
                     "title"=>"Welcome!",
                     "paragraph"=>"This site is made with Component PHP"
