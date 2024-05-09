@@ -1,6 +1,6 @@
 <?php
 
-require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
 require_once($REQUIRE_ENV);
 
 
