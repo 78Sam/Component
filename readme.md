@@ -76,7 +76,7 @@ $route_manager = new Route();
 // Register Routes
 
 $route_manager->registerRoute(
-    aliases: ["", "index", "index.php", "home"],
+    aliases: ["", "index", "home"],
     route: "home.php"
 );
 
@@ -103,6 +103,8 @@ if ($route !== null) {
 ```
 
 Now that we have registered the route with route manager, anytime a user attempts to query "", "index", "index.php" or "home" on your site (the aliases), it will provide the route "home.php" (route).
+
+**Make sure not to name any aliases in such a way that they could be interpreted as an actual path within the file structure, for example 'test' could be interpreted by the browser as a request for access to the folder '/test' which would be hit with a 403.**
 
 ## Components
 
