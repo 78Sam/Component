@@ -16,7 +16,7 @@ def main() -> None:
         case "view":
 
             schematic = ""
-            with open("schematics/view.txt") as schema:
+            with open("components/schematics/view.txt") as schema:
                 schematic = schema.read()
 
             schematic = schematic.replace("{{name}}", name)
@@ -31,7 +31,7 @@ def main() -> None:
             # HTML
 
             schematic = ""
-            with open("schematics/component.txt") as schema:
+            with open("components/schematics/component.txt") as schema:
                 schematic = schema.read()
 
             schematic = schematic.replace("{{name}}", name)
@@ -42,7 +42,7 @@ def main() -> None:
             # CSS
 
             schematic = ""
-            with open("schematics/component_css.txt") as schema:
+            with open("components/schematics/component_css.txt") as schema:
                 schematic = schema.read()
 
             schematic = schematic.replace("{{name}}", name)
@@ -57,7 +57,7 @@ def main() -> None:
             # FORM
 
             schematic = ""
-            with open("schematics/form.txt") as schema:
+            with open("components/schematics/form.txt") as schema:
                 schematic = schema.read()
 
             schematic = schematic.replace("{{name}}", name)
@@ -68,7 +68,7 @@ def main() -> None:
             # CSS
 
             schematic = ""
-            with open("schematics/component_css.txt") as schema:
+            with open("components/schematics/component_css.txt") as schema:
                 schematic = schema.read()
 
             schematic = schematic.replace("{{name}}", name)
