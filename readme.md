@@ -258,3 +258,7 @@ Lets use what we know so far to spice up our landing page.
     </body>
 </html>
 ```
+
+Which should look like:
+
+![Example Image](example.png)
