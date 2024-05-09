@@ -220,7 +220,7 @@ Lets use what we know so far to spice up our landing page.
 ```php
 <?php
 
-    require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
+    require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
     require_once($REQUIRE_COMPONENTS);
     require_once($REQUIRE_DATABASE);
 
