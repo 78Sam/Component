@@ -180,3 +180,73 @@ at runtime would generate:
 ### How they are displayed
 
 Components can be display a few different ways. Anytime you call the ``` component(); ``` function, whatever is generated will be displayed to the page. Say you wanted to pass a component, or group of components to a component, you could first define it with ``` $comp_1 = _component(); ``` and then pass that variable as a value. If you wanted to pass a group of components as a value, you could use the grouping function as follows: ``` $component_group = group([_component(), _component()]); ```. **Just remember to add the underscore to prevent it being displayed immediately!**
+
+## Spice up the home page
+
+Lets use what we know so far to spice up our landing page.
+
+>welcome.html
+```html
+<div class="component-welcome {additional-classes}" {custom-id} {custom-style}>
+    <h1>
+        <!-- title -->
+    </h1>
+    <p>
+        <!-- paragraph -->
+    </p>
+</div>
+```
+
+>welcome.css
+```css
+.component-welcome h1 {
+    color: blue;
+    text-decoration: underline;
+}
+
+.component-welcome p {
+    font-size: 20px;
+}
+```
+
+>home.php
+```php
+<?php
+
+    require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
+    require_once($REQUIRE_COMPONENTS);
+    require_once($REQUIRE_DATABASE);
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>home</title>
+        <link rel="icon" type="image/x-icon" href="assets/pingu.png">
+
+        <link rel="stylesheet" href="styles/main.css">
+
+        <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    </head>
+    <body>
+        
+        <?php
+        
+            component(
+                name: "Welcome",
+                values: [
+                    "title"=>"Welcome!",
+                    "paragraph"=>"This site is made with Component PHP"
+                ]
+            );
+        
+        ?>
+
+    </body>
+</html>
+```

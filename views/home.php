@@ -24,7 +24,13 @@
         
         <?php
         
-            
+            component(
+                name: "Welcome",
+                values: [
+                    "title"=>"Welcome!",
+                    "paragraph"=>"This site is made with Component PHP"
+                ]
+            );
         
         ?>
 

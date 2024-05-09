@@ -1,3 +1,8 @@
-.component-welcome {
+.component-welcome h1 {
+    color: blue;
+    text-decoration: underline;
+}
 
+.component-welcome p {
+    font-size: 20px;
 }
