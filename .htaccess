@@ -6,7 +6,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 RewriteCond %{REQUEST_URI} /vendor [OR]
 RewriteCond %{REQUEST_URI} /temp [OR]
-RewriteCond %{REQUEST_URI} /views
+RewriteCond %{REQUEST_URI} /views [OR]
+RewriteCond %{REQUEST_URI} /utility [OR]
+RewriteCond %{REQUEST_URI} /schematics
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 RewriteCond %{REQUEST_URI} !index.php

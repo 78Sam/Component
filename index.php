@@ -13,7 +13,6 @@ error_reporting(0);
 require_once("dir.php");
 require_once($REQUIRE_ROUTES);
 require_once($REQUIRE_SESSIONS);
-// require_once($REQUIRE_AUTH);
 
 // Route Registration
 
@@ -39,8 +38,13 @@ $route_manager->registerRoute(
 );
 
 $route_manager->registerRoute(
-    aliases: ["login", "loginpage"],
-    route: "loginpage.php"
+    aliases: ["login", "loginpage", "sign-in", "signin", "sign%20in"],
+    route: "login.php"
+);
+
+$route_manager->registerRoute(
+    aliases: ["logout"],
+    route: "logout.php"
 );
 
 $route_manager->registerRoute(

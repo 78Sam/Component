@@ -1,0 +1,4 @@
+<form action="php/actions/{action}" method="{method}" class="component-{{name}} {additional-classes}" {custom-id} {custom-style}>
+    <!-- inputs -->
+    <input type="submit" value="<!-- submit-name -->">
+</form>

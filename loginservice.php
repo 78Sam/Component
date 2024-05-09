@@ -1,24 +1,9 @@
 <?php
 
+
 require_once("dir.php");
-// require_once($REQUIRE_LOGOUT);
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_SESSIONS);
-
-
-// function startSession(string $role) {
-
-//     logout();
-//     session_start();
-//     session_regenerate_id();
-    
-//     $uid = bin2hex(random_bytes(128));
-//     $_SESSION["login_state"] = [
-//         "uid"=>$uid,
-//         "role"=>$role,
-//         "timestamp"=>time()
-//     ];
-// }
 
 
 function fallback(string $err=null) {

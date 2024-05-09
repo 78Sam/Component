@@ -37,7 +37,6 @@ function checkAuth(): bool {
         )
     ) {
         // echo "1";
-        // logout();
         endSession();
         return false;
     }
@@ -51,7 +50,6 @@ function checkAuth(): bool {
         !is_int($_SESSION["login_state"]["timestamp"])
     ) {
         // echo "2";
-        // logout();
         endSession();
         return false;
     }
@@ -64,7 +62,6 @@ function checkAuth(): bool {
         $_SESSION["login_state"]["timestamp"] > time() + 1
     ) {
         // echo "3";
-        // logout();
         endSession();
         return false;
     }
@@ -75,7 +72,6 @@ function checkAuth(): bool {
 
         if ($_SESSION["login_state"]["timestamp"] < (time() - $EXPIRY)) {
             // echo "4";
-            // logout();
             endSession();
             return false;
         }
