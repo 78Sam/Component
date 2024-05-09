@@ -2,7 +2,7 @@
 
 // Dir
 
-require_once("dir.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
 
 // Extra requirements
 
@@ -20,8 +20,6 @@ require_once($REQUIRE_DATABASE);
 
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <base href="/Test/">
 
         <title>Test</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">

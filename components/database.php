@@ -1,7 +1,7 @@
 <?php
 
-
-require_once('vendor/autoload.php');
+require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
+require_once($REQUIRE_ENV);
 
 
 class Database {
@@ -19,8 +19,8 @@ class Database {
      * 
      */
     function __construct(string $fallback=null) {
-        
-        $this->ROOT_DIR = __DIR__;
+        global $FOLDER_COMPONENTS;
+        $this->ROOT_DIR = $FOLDER_COMPONENTS;
         $this->connection_success = false;
 
         if (file_exists($this->ROOT_DIR . "/.env")) {

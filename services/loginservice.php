@@ -1,7 +1,10 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-require_once("dir.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_SESSIONS);
 

@@ -10,7 +10,7 @@ error_reporting(0);
 
 // Requirements
 
-require_once("dir.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
 require_once($REQUIRE_ROUTES);
 require_once($REQUIRE_SESSIONS);
 
@@ -49,7 +49,7 @@ $route_manager->registerRoute(
 
 $route_manager->registerRoute(
     aliases: ["test"],
-    route: "test.php"
+    route: "temp.php"
 );
 
 // Resolve Routes

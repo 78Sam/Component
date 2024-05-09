@@ -34,6 +34,6 @@
     </head>
     <body>
         <h1>403</h1>
-        <h2>Access denied</h2>
+        <h2>Access denied: <?php echo $_SERVER["REQUEST_URI"]; ?></h2>
     </body>
 </html>

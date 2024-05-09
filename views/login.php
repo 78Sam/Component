@@ -2,7 +2,7 @@
 
 // Dir
 
-require_once("dir.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
 
 // Extra requirements
 
@@ -26,7 +26,7 @@ require_once($REQUIRE_DATABASE);
             if (isset($_GET["err"])) {
                 echo "<h3>" . $_GET["err"] . "</h3>";
             }
-            component(name: "login-form");
+            component(name: "login-form", attributes: ["action"=>"services/loginservice.php"]);
         ?>
     </body>
 </html>

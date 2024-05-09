@@ -7,13 +7,11 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteCond %{REQUEST_URI} /vendor [OR]
 RewriteCond %{REQUEST_URI} /temp [OR]
 RewriteCond %{REQUEST_URI} /views [OR]
-RewriteCond %{REQUEST_URI} /utility [OR]
 RewriteCond %{REQUEST_URI} /schematics
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 RewriteCond %{REQUEST_URI} !index.php
-RewriteCond %{REQUEST_URI} !loginservice.php
-RewriteCond %{REQUEST_URI} !logoutservice.php
+RewriteCond %{REQUEST_URI} !/services/
 RewriteCond %{REQUEST_URI} .php [OR]
 RewriteCond %{REQUEST_URI} .html [OR]
 RewriteCond %{REQUEST_URI} .sql [OR]

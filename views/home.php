@@ -2,7 +2,7 @@
 
 // Dir
 
-require_once("dir.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/Test/dir.php");
 
 // Extra requirements
 

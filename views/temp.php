@@ -11,7 +11,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{{name}}</title>
+        <title>temp</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">
 
         <link rel="stylesheet" href="styles/main.css">
@@ -24,7 +24,7 @@
         
         <?php
         
-            
+            echo $_SERVER["DOCUMENT_ROOT"];
         
         ?>
 
