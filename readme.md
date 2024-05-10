@@ -102,7 +102,7 @@ if ($route !== null) {
 ?>
 ```
 
-Now that we have registered the route with route manager, anytime a user attempts to query "", "index", "index.php" or "home" on your site (the aliases), it will provide the route "home.php" (route).
+Now that we have registered the route with route manager, anytime a user attempts to query "", "index", or "home" on your site (the aliases), it will provide the route "home.php" (route).
 
 **Make sure not to name any aliases in such a way that they could be interpreted as an actual path within the file structure, for example 'test' could be interpreted by the browser as a request for access to the folder '/test' which would be hit with a 403.**
 
@@ -155,7 +155,7 @@ at runtime would generate:
 </div>
 ```
 
-The other noteable attributes are: 'additional-classes', 'custom-style' and for forms: 'method', and 'action'. You can also specify your own attributes as long as they are wrapped in {}.
+The other noteable attributes are: 'additional-classes', 'custom-style' and for forms: 'method', and 'action'.
 
 ### Values
 
