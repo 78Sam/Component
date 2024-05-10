@@ -26,12 +26,14 @@
             
             $db = new Database();
 
-            $users = [];
-            foreach ($db->query(query: "getUser") as $row) {
-                $users[] = _component(
-                    name: "user",
-                    values: ["email"=>$row["email"]]
-                );
+            if ($db->connectionStatus()) {
+                $users = [];
+                foreach ($db->query(query: "getUser") as $row) {
+                    $users[] = _component(
+                        name: "user",
+                        values: ["email"=>$row["email"]]
+                    );
+                }
             }
 
             component(

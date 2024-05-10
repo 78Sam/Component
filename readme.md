@@ -2,6 +2,18 @@
 
 Component PHP designed by [@78Sam](https://github.com/78Sam/). View the official site [here](https://sam-mccormack.co.uk/phpsite).
 
+### Requirements
+
+PHP 8.2+
+
+Composer
+
+When opening the project for the first time run:
+
+```
+composer install
+```
+
 ## Create a view
 
 Using the provided generator, create a view based on the schematic provided in components/schematics/view.txt with the following command.
@@ -380,12 +392,14 @@ Finally, the updated home view, note that I am now also using the `_component()`
             
             $db = new Database();
 
-            $users = [];
-            foreach ($db->query(query: "getUser") as $row) {
-                $users[] = _component(
-                    name: "user",
-                    values: ["email"=>$row["email"]]
-                );
+            if ($db->connectionStatus()) {
+                $users = [];
+                foreach ($db->query(query: "getUser") as $row) {
+                    $users[] = _component(
+                        name: "user",
+                        values: ["email"=>$row["email"]]
+                    );
+                }
             }
 
             component(
