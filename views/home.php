@@ -4,6 +4,12 @@
     require_once($REQUIRE_COMPONENTS);
     require_once($REQUIRE_DATABASE);
 
+    setcookie(
+        name: "test",
+        value: "Hello",
+        expires_or_options: time() + 60
+    );
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
