@@ -4,12 +4,6 @@
     require_once($REQUIRE_COMPONENTS);
     require_once($REQUIRE_DATABASE);
 
-    setcookie(
-        name: "test",
-        value: "Hello",
-        expires_or_options: time() + 60
-    );
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,13 +23,24 @@
     <body>
         
         <?php
-        
+            
+            $db = new Database();
+
+            $users = [];
+            foreach ($db->query(query: "getUser") as $row) {
+                $users[] = _component(
+                    name: "user",
+                    values: ["email"=>$row["email"]]
+                );
+            }
+
             component(
                 name: "welcome",
                 attributes: ["custom-style"=>"justify-content:center; align-items:center;"],
                 values: [
                     "title"=>"Welcome!",
-                    "paragraph"=>"This site is made with Component PHP"
+                    "paragraph"=>"This site is made with Component PHP",
+                    "users"=>group($users)
                 ]
             );
         

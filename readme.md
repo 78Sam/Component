@@ -263,11 +263,153 @@ Lets use what we know so far to spice up our landing page.
 
 Which should look like:
 
-![Example Image](example.png)
+![Example Image](assets/images/examples/basic.png)
+
+## Databases
+
+Databases can be linked via the example.env file located at `components/example.env`. If you wish to run a remote database the required credentials must be filled out in the example.env file **and then saved as .env**.
+
+If you wish to run a local DB such as SQLITE, you can place the database inside the `components/data` folder, and add the database filename to the .env file.
+
+From there you will be able to instantiate a database class in any view, and perform queries on it. For example, much like values and attributes in components, you can create .sql query files with values that can be hydrated at runtime. However in this simple example I will have one database, and a simple SQL query.
+
+I have also added an extra component, as well as modify existing ones.
+
+>welcome.html
+```html
+<div class="component-welcome {additional-classes}" {custom-id} {custom-style}>
+    <h1>
+        <!-- title -->
+    </h1>
+    <p>
+        <!-- paragraph -->
+    </p>
+    <div class="flex">
+        <!-- users -->
+    </div>
+</div>
+```
+
+>welcome.css
+```css
+.component-welcome {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.component-welcome h1 {
+    color: blue;
+    text-decoration: underline;
+}
+
+.component-welcome p {
+    font-size: 20px;
+}
+```
+
+>user.html
+```html
+<div class="component-user {additional-classes}" {custom-id} {custom-style}>
+    <p>
+        <!-- email -->
+    </p>
+</div>
+```
+
+>user.css
+```css
+.component-user {
+    padding: 10px;
+    margin: 3px;
+    background-color: rgb(89, 89, 89);
+    border-radius: 5px;
+}
+
+.component-user p {
+    color: white;
+}
+```
+
+I have also updated the `styles/main.css` file to add a flex class used in `components/component-welcome/welcome.html`
+
+>main.css
+```css
+.flex {
+    display: flex;
+}
+```
+
+The SQL query (stored in `components/data`) I will use is as follows:
+
+>getUser.sql
+```sql
+SELECT `email` from `UserAccounts`;
+```
+
+Finally, the updated home view, note that I am now also using the `_component()` and `group()` functions to create components ahead of time, group them together, and pass them to a single value.
+
+>home.php
+```php
+<?php
+
+    require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
+    require_once($REQUIRE_COMPONENTS);
+    require_once($REQUIRE_DATABASE);
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>home</title>
+        <link rel="icon" type="image/x-icon" href="assets/pingu.png">
+
+        <link rel="stylesheet" href="styles/main.css">
+
+        <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    </head>
+    <body>
+        
+        <?php
+            
+            $db = new Database();
+
+            $users = [];
+            foreach ($db->query(query: "getUser") as $row) {
+                $users[] = _component(
+                    name: "user",
+                    values: ["email"=>$row["email"]]
+                );
+            }
+
+            component(
+                name: "welcome",
+                attributes: ["custom-style"=>"justify-content:center; align-items:center;"],
+                values: [
+                    "title"=>"Welcome!",
+                    "paragraph"=>"This site is made with Component PHP",
+                    "users"=>group($users)
+                ]
+            );
+        
+        ?>
+
+    </body>
+</html>
+```
+
+Which should result in this:
+
+![Example Image](assets/images/examples/database.png)
 
 ## TODO
 
-- Add database stuff to readme
 - Ability to create custom attributes
 - Documentation
 - LOTS of testing
