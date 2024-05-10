@@ -151,7 +151,7 @@ class Database {
         return $this->connection_success;
     }
 
-    public function getConnection(): mysqli|null {
+    public function getConnection(): mysqli|SQLite3|null {
         if ($this->connection_success) {
             return $this->link;
         }

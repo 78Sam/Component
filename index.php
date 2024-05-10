@@ -21,8 +21,22 @@ $route_manager = new Route();
 // Register Routes
 
 $route_manager->registerRoute(
-    aliases: ["", "index", "index.php", "home"],
+    aliases: ["", "index", "home"],
     route: "home.php"
+);
+
+$route_manager->registerRoute(
+    aliases: ["login", "signin", "sign%20in"],
+    route: "login.php"
+);
+
+$route_manager->registerRoute(
+    aliases: ["staff"],
+    route: "staff.php",
+    options: [
+        "auth"=>true,
+        "fallback"=>"login"
+    ]
 );
 
 // Resolve Routes

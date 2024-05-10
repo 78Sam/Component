@@ -11,7 +11,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{{name}}</title>
+        <title>login</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">
 
         <link rel="stylesheet" href="styles/main.css">
@@ -23,8 +23,21 @@
     <body>
         
         <?php
+
+            if (isset($_GET["err"])) {
+                echo "<h2>" . $_GET["err"] . "</h2>";
+            }
         
-            
+            component(
+                "login",
+                attributes: [
+                    "action"=>"services/loginservice.php",
+                    "method"=>"POST"
+                ],
+                values: [
+                    "submit-name"=>"Login"
+                ]
+            )
         
         ?>
 
