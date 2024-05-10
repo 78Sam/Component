@@ -261,7 +261,7 @@ Lets use what we know so far to spice up our landing page.
 </html>
 ```
 
-Which should look like:
+To view your work, just run the `start_server.py` file, and navigate to one of your registered aliases, for example: `localhost:8000/home`, which should appear as:
 
 ![Example Image](assets/images/examples/basic.png)
 
