@@ -181,7 +181,7 @@ at runtime would generate:
 
 ### How they are displayed
 
-Components can be display a few different ways. Anytime you call the ``` component(); ``` function, whatever is generated will be displayed to the page. Say you wanted to pass a component, or group of components to a component, you could first define it with ``` $comp_1 = _component(); ``` and then pass that variable as a value. If you wanted to pass a group of components as a value, you could use the grouping function as follows: ``` $component_group = group([_component(), _component()]); ```. **Just remember to add the underscore to prevent it being displayed immediately!**
+Components can be display a few different ways. Anytime you call the ``` component(); ``` function, whatever is generated will be displayed on the page. Say you wanted to pass a component, or group of components to a component, you could first define it with ``` $comp_1 = _component(); ``` and then pass that variable as a value. If you wanted to pass a group of components as a value, you could use the grouping function as follows: ``` $component_group = group([_component(), _component()]); ```. **Just remember to add the underscore to prevent it being displayed immediately!**
 
 ## Spice up the home page
 
