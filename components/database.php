@@ -1,6 +1,7 @@
 <?php
 
-require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
+// require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
+require_once("../dir.php");
 require_once($REQUIRE_ENV);
 
 
@@ -53,9 +54,6 @@ class Database {
                     $this->connection_success = false;
                 }
 
-                if ($this->connection_success) {
-                    $this->connection_type = "remote";
-                }
             }
 
             if (
@@ -70,12 +68,13 @@ class Database {
 
                 $this->connection_success = $this->link instanceof SQLite3;
 
-                if ($this->connection_success) {
-                    $this->connection_type = "local";
-                }
             }
 
         }
+        
+        $this->connection_type = gettype($this->link);
+
+        echo $this->connection_type;
 
         if (!$this->connection_success && $fallback) {
             header("Location: " . $fallback);
@@ -158,7 +157,14 @@ class Database {
         return null;
     }
 
+    // public function bindAndExecute() {
+
+    //     if (gettype($co))
+
+    // }
+
 }
 
+$db = new Database();
 
 ?>
