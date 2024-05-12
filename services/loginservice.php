@@ -43,12 +43,30 @@ if (!$link = $db->getConnection()) {
 $email = $_POST["email"];
 $password = $_POST["password"];
 
+match (gettype($db)) {
+    "mysqli"=>
+}
+
 $login_statement = $link->prepare("SELECT `password_hash` FROM `UserAccounts` WHERE `email`=?;");
 $login_statement->bind_param("s", $email);
 $login_statement->execute();
 $login_statement->bind_result($stored_password);
 
-if ($login_statement->fetch()) {
+// if ($login_statement->fetch()) {
+//     if (password_verify($password, $stored_password)) {
+//         startSession("admin");
+//         header("Location: " . $URL_HOME);
+//         exit();
+//     } else {
+//         $login_statement->close();
+//         fallback(err: "Invalid Password");
+//     }
+// } else {
+//     $login_statement->close();
+//     fallback(err: "Account doesn't exist");
+// }
+
+if ($stored_password) {
     if (password_verify($password, $stored_password)) {
         startSession("admin");
         header("Location: " . $URL_HOME);
