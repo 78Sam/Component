@@ -43,16 +43,16 @@ enum DatabaseType: int {
         $stmt = $this->prepare($conn, $statement);
 
         if ($params) {
-
             foreach ($params as $param) {
                 $this->bind($stmt, $param["key"], $param["value"]);
             }
         }
 
         return $this->execute($stmt);
+        
     }
 
-    private function marker(string $var = "") {
+    private function marker(string $var) {
         return match ($this) {
             DatabaseType::mysqli=>"?",
             DatabaseType::sqlite=>":" . $var
@@ -139,7 +139,7 @@ class Database {
                 try {
                     $this->link = new mysqli($HOSTNAME, $USERNAME, $PASSWORD, $DATABASE);
                     $this->connection_success = $this->link instanceof mysqli && $this->link->connect_error === null;
-                } catch (mysqli_sql_exception $e) {
+                } catch (\Throwable $e) {
                     $this->connection_success = false;
                 }
 
@@ -161,7 +161,7 @@ class Database {
                     try {
                         $this->link = new SQLite3($db_path);
                         $this->connection_success = $this->link instanceof SQLite3;
-                    } catch (SQLite3Exception $e) {
+                    } catch (\Throwable $e) {
                         $this->connection_success = false;
                     }
                 }

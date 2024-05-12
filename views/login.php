@@ -29,7 +29,7 @@
             }
         
             component(
-                "login",
+                name: "login",
                 attributes: [
                     "action"=>"services/loginservice.php",
                     "method"=>"POST"
