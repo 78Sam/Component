@@ -43,10 +43,6 @@ if (!$link = $db->getConnection()) {
 $email = $_POST["email"];
 $password = $_POST["password"];
 
-match (gettype($db)) {
-    "mysqli"=>
-}
-
 $login_statement = $link->prepare("SELECT `password_hash` FROM `UserAccounts` WHERE `email`=?;");
 $login_statement->bind_param("s", $email);
 $login_statement->execute();
