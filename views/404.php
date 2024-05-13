@@ -35,5 +35,6 @@
     <body>
         <h1>404</h1>
         <h2>Page not found</h2>
+        <h3><?php echo $_SERVER["REQUEST_URI"]; ?></h3>
     </body>
 </html>

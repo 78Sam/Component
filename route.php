@@ -76,8 +76,8 @@ class Route {
 
     public function resolveRoute($alias): array|null {
 
-        $alias = substr($alias, strlen("/"));
-        // $alias = substr($alias, strlen("/Test/"));
+        // $alias = substr($alias, strlen("/"));
+        $alias = substr($alias, strlen("/Test/"));
 
         if (str_contains($alias, "?")) {
             $query_start = strpos($alias, "?");

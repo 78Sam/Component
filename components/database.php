@@ -1,21 +1,20 @@
 <?php
 
-// require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
-require_once("../dir.php");
+
+$path = "";
+while (!file_exists($path . "dir.php")) {
+    $path = $path . "../";
+}
+require_once($path . "dir.php");
 require_once($REQUIRE_ENV);
 
 
-function getArgType($arg)
-{
-    switch (gettype($arg))
-    {
+function getArgType($arg) {
+
+    switch (gettype($arg)) {
         case 'double': return "d";
         case 'integer': return "i";
-        case 'boolean': return "s";
-        case 'NULL': return "s";
-        case 'string': return "s";
-        default:
-            throw new \InvalidArgumentException('Argument is of invalid type '.gettype($arg));
+        default: return "s";
     }
 }
 
@@ -35,8 +34,14 @@ enum DatabaseType: int {
     public function prepareExecute($conn, string $statement, array $params = null) {
 
         if ($params) {
+            $types = "";
+            $values = [];
             foreach ($params as $param) {
                 $statement = str_replace("{" . $param["key"] . "}", $this->marker($param["key"]), $statement);
+                if ($this === DatabaseType::mysqli) { // Build for bind_param later which is like ("si", "sam@gmail.com", 21)
+                    $values[] = $param["value"]; 
+                    $types = $types . getArgType($param["value"]);
+                }
             }
         }
 
@@ -48,17 +53,16 @@ enum DatabaseType: int {
                     $this->bind($stmt, $param["key"], $param["value"]);
                 }
             } elseif ($this === DatabaseType::mysqli) {
-                $types = "";
-                $values = [];
-                foreach ($params as $key => $value) {
-                    $values[] = $value; 
-                    $types = $types . getArgType($value);
-                }
                 $this->bind($stmt, $types, $values);
             }
         }
 
-        return $this->execute($stmt);
+        $exe = $this->execute($stmt);
+
+        return match ($this) {
+            DatabaseType::mysqli=>$stmt->get_result(),
+            DatabaseType::sqlite=>$exe
+        };
         
     }
 
@@ -83,12 +87,13 @@ enum DatabaseType: int {
         };
     }
 
-    private function execute(SQLite3Stmt $statement) {
+    private function execute($statement) {
         return match ($this) {
             DatabaseType::mysqli=>$statement->execute(),
             DatabaseType::sqlite=>$statement->execute()
         };
     }
+
 }
 
 
@@ -206,10 +211,14 @@ class Database {
      * @param string $query The filename of the query in components/data to be used
      * @param array $query_params Values to be replaced in the specified SQL file
      * 
-     * @return array|null 2D array of rows, or null if no data
+     * @return array|null 2D array of rows, or [] if no data
      * 
      */
-    public function query(string $query, array $query_params = null): array|null {
+    public function query(string $query, array $query_params = null): array {
+
+        if (!$this->connection_success) {
+            return [];
+        }
 
         $sql = file_get_contents($this->ROOT_DIR . "/data/" . $query . ".sql");
 
@@ -219,12 +228,10 @@ class Database {
         $result = $this->connection_type->prepareExecute($this->link, $sql, $query_params);
 
         $rows = [];
-        while ($row = $this->connection_type->fetch($result)) {
-            $rows[] = $row;
-        }
-
-        if (!count($rows)) {
-            return null;
+        if ($result) {
+            while ($row = $this->connection_type->fetch($result)) {
+                $rows[] = $row;
+            }
         }
         
         return $rows;
@@ -235,16 +242,9 @@ class Database {
         return $this->connection_success;
     }
 
-    // public function getConnection(): mysqli|SQLite3|null {
-    //     if ($this->connection_success) {
-    //         return $this->link;
-    //     }
-    //     return null;
-    // }
-
 }
 
-$db = new Database();
-print_r($db->query(query: "getUserStatement", query_params: [["key"=>"email", "value"=>"Sam@gmail.com"]]));
+// $db = new Database();
+// print_r($db->query(query: "getUserStatement", query_params: [["key"=>"email", "value"=>"admin@tab.com"]]));
 
 ?>

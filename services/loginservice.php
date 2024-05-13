@@ -4,7 +4,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
+$path = "";
+while (!file_exists($path . "dir.php")) {
+    $path = $path . "../";
+}
+require_once($path . "dir.php");
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_SESSIONS);
 
