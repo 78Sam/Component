@@ -1,8 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 $path = "";
 while (!file_exists($path . "dir.php")) {
@@ -15,7 +12,6 @@ require_once($REQUIRE_SESSIONS);
 
 function fallback(string $err=null) {
     global $URL_FALLBACK;
-    // logout();
     endSession();
     if ($err) {
         header("Location: " . $URL_FALLBACK . "?err=" . $err);
@@ -39,44 +35,28 @@ if (!isset($_POST["email"], $_POST["password"])) {
     fallback(err: "Please enter email and password");
 }
 
-$db = new Database($URL_FALLBACK);
-if (!$link = $db->getConnection()) {
+$db = new Database();
+if (!$db->connectionStatus()) {
     fallback(err: "Failed to connect to database");
 }
 
 $email = $_POST["email"];
 $password = $_POST["password"];
 
-$login_statement = $link->prepare("SELECT `password_hash` FROM `UserAccounts` WHERE `email`=?;");
-$login_statement->bind_param("s", $email);
-$login_statement->execute();
-$login_statement->bind_result($stored_password);
+$result = $db->query(
+    query: "login",
+    query_params: [["key"=>"email", "value"=>$email]]
+);
 
-// if ($login_statement->fetch()) {
-//     if (password_verify($password, $stored_password)) {
-//         startSession("admin");
-//         header("Location: " . $URL_HOME);
-//         exit();
-//     } else {
-//         $login_statement->close();
-//         fallback(err: "Invalid Password");
-//     }
-// } else {
-//     $login_statement->close();
-//     fallback(err: "Account doesn't exist");
-// }
-
-if ($stored_password) {
-    if (password_verify($password, $stored_password)) {
+if ($result !== []) {
+    if (password_verify($password, $result[0]["password_hash"])) {
         startSession("admin");
         header("Location: " . $URL_HOME);
         exit();
     } else {
-        $login_statement->close();
         fallback(err: "Invalid Password");
     }
 } else {
-    $login_statement->close();
     fallback(err: "Account doesn't exist");
 }
 

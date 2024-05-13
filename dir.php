@@ -23,7 +23,9 @@ $REQUIRE_ENV = $ROOT . "/vendor/autoload.php";
 
 // URLs
 
-$URL_HOME = "localhost:8000/";
+
+$URL_HOME = "/";
+// $URL_HOME = "https://sam-mccormack.co.uk/Test/";
 
 
 

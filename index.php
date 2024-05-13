@@ -2,11 +2,11 @@
 
 // Suppress error reporting
 
-// error_reporting(0);
+error_reporting(0);
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 // Requirements
 
@@ -35,7 +35,7 @@ $route_manager->registerRoute(
 );
 
 $route_manager->registerRoute(
-    aliases: ["staff"],
+    aliases: ["staff", "tryme"],
     route: "staff.php",
     options: [
         "auth"=>true,
@@ -46,6 +46,8 @@ $route_manager->registerRoute(
 // Resolve Routes
 
 $route = $route_manager->resolveRoute($_SERVER["REQUEST_URI"]);
+
+// print_r($route);
 
 if ($route !== null) {
 

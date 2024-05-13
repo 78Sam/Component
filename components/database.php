@@ -59,10 +59,14 @@ enum DatabaseType: int {
 
         $exe = $this->execute($stmt);
 
-        return match ($this) {
+        $ret = match ($this) {
             DatabaseType::mysqli=>$stmt->get_result(),
             DatabaseType::sqlite=>$exe
         };
+
+        $stmt->close();
+
+        return $ret;
         
     }
 
@@ -211,7 +215,7 @@ class Database {
      * @param string $query The filename of the query in components/data to be used
      * @param array $query_params Values to be replaced in the specified SQL file
      * 
-     * @return array|null 2D array of rows, or [] if no data
+     * @return array 2D array of rows, or [] if no data
      * 
      */
     public function query(string $query, array $query_params = null): array {
