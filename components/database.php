@@ -43,8 +43,18 @@ enum DatabaseType: int {
         $stmt = $this->prepare($conn, $statement);
 
         if ($params) {
-            foreach ($params as $param) {
-                $this->bind($stmt, $param["key"], $param["value"]);
+            if ($this === DatabaseType::sqlite) {
+                foreach ($params as $param) {
+                    $this->bind($stmt, $param["key"], $param["value"]);
+                }
+            } elseif ($this === DatabaseType::mysqli) {
+                $types = "";
+                $values = [];
+                foreach ($params as $key => $value) {
+                    $values[] = $value; 
+                    $types = $types . getArgType($value);
+                }
+                $this->bind($stmt, $types, $values);
             }
         }
 
@@ -68,14 +78,14 @@ enum DatabaseType: int {
 
     private function bind($statement, $key, $value) {
         return match ($this) {
-            DatabaseType::mysqli=>$statement->bind_param($key, $value),
+            DatabaseType::mysqli=>$statement->bind_param($key, ...$value), // ... explodes parameters
             DatabaseType::sqlite=>$statement->bindValue(":" . $key, $value)
         };
     }
 
     private function execute(SQLite3Stmt $statement) {
         return match ($this) {
-            // DatabaseType::mysqli=>$statement->fetch_assoc(),
+            DatabaseType::mysqli=>$statement->execute(),
             DatabaseType::sqlite=>$statement->execute()
         };
     }
