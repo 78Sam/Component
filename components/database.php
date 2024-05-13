@@ -48,12 +48,21 @@ enum DatabaseType: int {
         $stmt = $this->prepare($conn, $statement);
 
         if ($params) {
-            if ($this === DatabaseType::sqlite) {
-                foreach ($params as $param) {
-                    $this->bind($stmt, $param["key"], $param["value"]);
-                }
-            } elseif ($this === DatabaseType::mysqli) {
-                $this->bind($stmt, $types, $values);
+            switch ($this) {
+                
+                case DatabaseType::sqlite:
+                    foreach ($params as $param) {
+                        $this->bind($stmt, $param["key"], $param["value"]);
+                    }
+                    break;
+
+                case DatabaseType::mysqli:
+                    $this->bind($stmt, $types, $values);
+                    break;
+                
+                default:
+                    # code...
+                    break;
             }
         }
 
@@ -64,7 +73,7 @@ enum DatabaseType: int {
             DatabaseType::sqlite=>$exe
         };
 
-        $stmt->close();
+        // $stmt->close();
 
         return $ret;
         
@@ -213,7 +222,7 @@ class Database {
     /**
      * 
      * @param string $query The filename of the query in components/data to be used
-     * @param array $query_params Values to be replaced in the specified SQL file
+     * @param array $query_params Values to be replaced in the specified SQL file of form [["key"=>"email", "value"=>"Sam@gmail.com"], ...]
      * 
      * @return array 2D array of rows, or [] if no data
      * 
