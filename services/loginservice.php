@@ -31,7 +31,7 @@ if ($URL_FALLBACK = $_SERVER["HTTP_REFERER"]) {
     $URL_FALLBACK = $URL_HOME;
 }
 
-if (!isset($_POST["email"], $_POST["password"])) {
+if (!isset($_POST["email"], $_POST["password"]) || !$_POST["email"] || !$_POST["password"]) {
     fallback(err: "Please enter email and password");
 }
 
@@ -48,16 +48,16 @@ $result = $db->query(
     query_params: [["key"=>"email", "value"=>$email]]
 );
 
-if ($result !== []) {
-    if (password_verify($password, $result[0]["password_hash"])) {
-        startSession("admin");
-        header("Location: " . $URL_HOME);
-        exit();
-    } else {
-        fallback(err: "Invalid Password");
-    }
-} else {
+if ($result === []) {
     fallback(err: "Account doesn't exist");
 }
+
+if (!password_verify($password, $result[0]["password_hash"])) {
+    fallback(err: "Invalid Password");
+}
+
+startSession("admin");
+header("Location: " . $URL_HOME);
+exit();
 
 ?>
