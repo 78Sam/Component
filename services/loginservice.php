@@ -1,11 +1,12 @@
 <?php
 
 
-$path = "";
-while (!file_exists($path . "dir.php")) {
-    $path = $path . "../";
-}
-require_once($path . "dir.php");
+// $path = "";
+// while (!file_exists($path . "dir.php")) {
+//     $path = $path . "../";
+// }
+// require_once($path . "dir.php");
+require_once("../dir.php");
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_SESSIONS);
 
