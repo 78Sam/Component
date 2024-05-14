@@ -3,5 +3,5 @@ vendor
 composer.lock
 temp/*
 !temp/.gitkeep
-*.sql
-*.db
+# *.sql
+# *.db

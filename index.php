@@ -2,15 +2,20 @@
 
 // Suppress error reporting
 
-error_reporting(0);
+// error_reporting(0);
 
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 // Requirements
 
-require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
+// $path = "";
+// while (!file_exists($path . "dir.php")) {
+//     $path = $path . "../";
+// }
+// require_once($path . "dir.php");
+require_once(__DIR__ . "/dir.php");
 require_once($REQUIRE_ROUTES);
 require_once($REQUIRE_SESSIONS);
 
@@ -31,7 +36,7 @@ $route_manager->registerRoute(
 );
 
 $route_manager->registerRoute(
-    aliases: ["staff"],
+    aliases: ["staff", "tryme"],
     route: "staff.php",
     options: [
         "auth"=>true,
@@ -42,6 +47,8 @@ $route_manager->registerRoute(
 // Resolve Routes
 
 $route = $route_manager->resolveRoute($_SERVER["REQUEST_URI"]);
+
+// print_r($route);
 
 if ($route !== null) {
 
