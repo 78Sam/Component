@@ -1,12 +1,6 @@
 <?php
 
-
-// $path = "";
-// while (!file_exists($path . "dir.php")) {
-//     $path = $path . "../";
-// }
-// require_once($path . "dir.php");
-require_once("../dir.php");
+require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_SESSIONS);
 
@@ -58,7 +52,13 @@ if (!password_verify($password, $result[0]["password_hash"])) {
 }
 
 startSession("admin");
-header("Location: " . $URL_HOME);
+
+if (isset($_COOKIE["target"])) {
+    header("Location: " . "/" . $_COOKIE["target"]);
+} else {
+    header("Location: " . $URL_HOME);
+}
+
 exit();
 
 ?>

@@ -1,10 +1,6 @@
 <?php
 
-// $path = "";
-// while (!file_exists($path . "dir.php")) {
-//     $path = $path . "../";
-// }
-// require_once($path . "dir.php");
+
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_COMPONENTS);
 require_once($REQUIRE_DATABASE);
@@ -36,7 +32,7 @@ require_once($REQUIRE_DATABASE);
             component(
                 name: "login",
                 attributes: [
-                    "action"=>"services/loginservice.php",
+                    "action"=>"staff",
                     "method"=>"POST"
                 ],
                 values: [

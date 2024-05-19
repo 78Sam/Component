@@ -1,0 +1,23 @@
+Class Route
+    aliases [str]
+    path str
+    middlewares []
+
+
+
+Class Middleware
+
+    function apply
+
+
+Class checkAuth implements Middleware
+
+
+request->staff
+load route staff
+
+
+
+
+
+
