@@ -25,6 +25,9 @@ class Login implements Middleware {
     public function apply() {
 
         if (($res = $this->control()) !== "") {
+            // Note that header redirect does NOT stop code execution
+            // so we need the exit to prevent any code from further executing
+            // by using the exit function
             header("Location: " . $this->fallback . "?err=" . $res);
             exit();
         }
@@ -41,7 +44,7 @@ class Login implements Middleware {
             "role"=>"admin",
             "timestamp"=>time()
         ];
-
+        
     }
 
     private function control(): string {
