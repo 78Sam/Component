@@ -68,8 +68,9 @@ error_reporting(0);
 require_once(__DIR__ . "/dir.php");
 // require_once(__DIR__ . "/middleware/middleware.php");
 require_once($REQUIRE_DATABASE);
-require_once($REQUIRE_ROUTES);
-require_once(__DIR__ . "/routenew.php");
+// require_once($REQUIRE_ROUTES);
+// require_once(__DIR__ . "/routenew.php");
+require_once(__DIR__ . "/route.php");
 
 require_once(__DIR__ . "/middleware/mw_auth.php");
 require_once(__DIR__ . "/middleware/mw_login.php");

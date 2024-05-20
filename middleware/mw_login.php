@@ -26,6 +26,7 @@ class Login implements Middleware {
 
         if (($res = $this->control()) !== "") {
             header("Location: " . $this->fallback . "?err=" . $res);
+            exit();
         }
 
         session_start();
