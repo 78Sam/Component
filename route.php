@@ -3,109 +3,51 @@
 
 class Route {
 
-    private array $routes;
     private array $aliases;
+    private string $path;
+    private array $middleware;
 
-    public function __construct() {
-        
-        $this->routes = [];
-        $this->aliases = [];
-
-        if (file_exists(__DIR__ . "/views/404.php")) {
-            $this->registerRoute(
-                aliases: ["404"],
-                route: "404.php"
-            );
-        }
-
-        if (file_exists(__DIR__ . "/views/403.php")) {
-            $this->registerRoute(
-                aliases: ["403"],
-                route: "403.php"
-            );
-        }
-
+    public function __construct(array $aliases, string $path, array $middleware=[]) {
+        $this->aliases = array_fill_keys($aliases, true);
+        $this->path = $path;
+        $this->middleware = $middleware;
     }
 
-    /**
-     * 
-     * @param array $aliases The URLs that map to this route
-     * @param string $route The path to the view in the views folder (not including /view/ e.g. home.php)
-     * @param array $options Options: {'auth'=>bool, 'fallback'=>alias}
-     * 
-     */
-    public function registerRoute(array $aliases, string $route, array $options=null) {
+    public function getAliases(): array {
+        return $this->aliases;
+    }
 
-        foreach ($aliases as $alias) {
-            $this->aliases[$alias] = $route;
-        }
+    public function getPath(): string {
+        return $this->path;
+    }
 
-        $path = __DIR__ . "/views/" . $route;
+    public function getMiddleware(): array {
+        return $this->middleware;
+    }
 
-        if (!file_exists($path)) {
-            return;
-        }
+    public function isRoute(string $request): bool {
 
-        if (!$options) {
+        $pattern = "/[?]{1}([a-zA-Z0-9%]+[=]{1}[a-zA-Z0-9%]+[&]{1})*([a-zA-Z0-9%]+[=]{1}[a-zA-Z0-9%]+){1}/";
+        $res = preg_split($pattern, $request);
 
-            $options = [
-                "path"=>$path,
-                "auth"=>false,
-                "fallback"=>"/"
-            ];
+        if ($res) {$request = $res[0];}
 
-        } else {
+        return isset($this->aliases[$request]);
+    }
 
-            $options["path"] = $path;
-
-            if (!isset($options["auth"])) {
-                $options["auth"] = false;
-            } else {
-                $options["auth"] = (bool) $options["auth"];
+    public function use(): string {
+        foreach ($this->middleware as $mw) {
+            if ($mw instanceof Middleware) {
+                $mw->apply();
             }
-
-            if (!(isset($options["fallback"]) && $options["fallback"] !== "")) {
-                $options["fallback"] = "/";
-            }
-
         }
-
-        $this->routes[$route] = $options;
-
+        return $this->path;
     }
 
-    public function resolveRoute($alias): array|null {
 
-        $alias = substr($alias, strlen("/"));
-        // $alias = substr($alias, strlen("/Test/"));
-
-        if (str_contains($alias, "?")) {
-            $query_start = strpos($alias, "?");
-            $alias = substr($alias, 0, $query_start);
-        }
-
-        if (
-            isset($_GET["err"]) && 
-            array_key_exists($_GET["err"], $this->aliases)
-        ) {
-            $alias = (string) $_GET["err"];
-        }
-
-        if (array_key_exists($alias, $this->aliases)) {
-            return $this->routes[$this->aliases[$alias]];
-        } else if (array_key_exists("404", $this->aliases)) {
-            return $this->routes[$this->aliases["404"]];
-        }
-
-        return null;
-
-    }
-
-    public function getRoutes(): array {
-        return $this->routes;
-    }
 
 }
+
 
 
 

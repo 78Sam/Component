@@ -1,6 +1,5 @@
 <?php
 
-
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_COMPONENTS);
 require_once($REQUIRE_DATABASE);
@@ -12,7 +11,7 @@ require_once($REQUIRE_DATABASE);
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>login</title>
+        <title>register</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">
 
         <link rel="stylesheet" href="styles/main.css">
@@ -24,7 +23,7 @@ require_once($REQUIRE_DATABASE);
     <body>
         
         <?php
-
+        
             if (isset($_GET["err"])) {
                 echo "<h2>" . $_GET["err"] . "</h2>";
             }
@@ -32,11 +31,11 @@ require_once($REQUIRE_DATABASE);
             component(
                 name: "login",
                 attributes: [
-                    "action"=>"staff",
+                    "action"=>"login",
                     "method"=>"POST"
                 ],
                 values: [
-                    "submit-name"=>"Login"
+                    "submit-name"=>"Register"
                 ]
             )
         
