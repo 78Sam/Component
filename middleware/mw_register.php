@@ -4,7 +4,7 @@
 require_once(__DIR__ . "/middleware.php");
 
 
-class Login implements Middleware {
+class Register implements Middleware {
 
     private string $target;
     private string $fallback;
@@ -18,22 +18,7 @@ class Login implements Middleware {
 
     public function apply() {
 
-        if (($res = $this->control()) === "") {
-
-            session_start();
-            session_unset();
-            session_destroy();
-            session_start();
-            session_regenerate_id();
-            
-            $uid = bin2hex(random_bytes(128));
-            $_SESSION["login_state"] = [
-                "uid"=>$uid,
-                "role"=>"admin",
-                "timestamp"=>time()
-            ];
-            
-        } else {
+        if (($res = $this->control()) !== "") {
             header("Location: " . $this->fallback . "?err=" . $res);
         }
         
@@ -42,7 +27,7 @@ class Login implements Middleware {
     private function control(): string {
 
         if (!isset($_POST["email"], $_POST["password"]) || !$_POST["email"] || !$_POST["password"]) {
-            return "Please login";
+            return "";
         }
 
         if (!$this->db->connectionStatus()) {
@@ -57,13 +42,16 @@ class Login implements Middleware {
             query_params: [["key"=>"email", "value"=>$email]]
         );
 
-        if ($result === []) {
-            return "Account doesn't exist";
+        if ($result !== []) {
+            return "Account already exists";
         }
 
-        if (!password_verify($password, $result[0]["password_hash"])) {
-            return "Invalid password";
-        }
+        $password_hash = password_hash($password, PASSWORD_BCRYPT);
+
+        $this->db->query(
+            query: "register",
+            query_params: [["key"=>"email", "value"=>$email], ["key"=>"password_hash", "value"=>$password_hash]]
+        );
 
         return "";
 

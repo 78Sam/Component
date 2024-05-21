@@ -20,11 +20,6 @@ class Auth implements Middleware {
 
     public function apply() {
         if (!$this->control()) {
-            setcookie(
-                name: "target",
-                value: $this->target,
-                expires_or_options: time() + 60
-            );
             $this->uses->apply();
         }
     }

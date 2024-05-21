@@ -424,8 +424,8 @@ Which should result in this:
 
 ## TODO
 
-- Forwarding to originally requested page on auth block
 - Ability to create custom attributes
 - Cleanup
 - Documentation
 - LOTS of testing
+- Release V1!

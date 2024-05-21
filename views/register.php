@@ -11,7 +11,7 @@ require_once($REQUIRE_DATABASE);
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{{name}}</title>
+        <title>register</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">
 
         <link rel="stylesheet" href="styles/main.css">
@@ -24,7 +24,20 @@ require_once($REQUIRE_DATABASE);
         
         <?php
         
-            
+            if (isset($_GET["err"])) {
+                echo "<h2>" . $_GET["err"] . "</h2>";
+            }
+        
+            component(
+                name: "login",
+                attributes: [
+                    "action"=>"login",
+                    "method"=>"POST"
+                ],
+                values: [
+                    "submit-name"=>"Register"
+                ]
+            )
         
         ?>
 

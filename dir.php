@@ -16,16 +16,13 @@ $REQUIRE_DATABASE = $ROOT . "/components/database.php";
 
 $REQUIRE_ROUTES = $ROOT . "/route.php";
 
-$REQUIRE_LOGIN = $ROOT . "/services/loginservice.php";
-$REQUIRE_SESSIONS = $ROOT . "/services/sessions.php";
-
 $REQUIRE_ENV = $ROOT . "/vendor/autoload.php";
+
+
 
 // URLs
 
-
 $URL_HOME = "/";
-// $URL_HOME = "https://sam-mccormack.co.uk/Test/";
 
 
 
