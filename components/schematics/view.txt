@@ -1,5 +1,7 @@
 <?php
 
+// TODO: Maybe move schematic files elsewhere
+
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_COMPONENTS);
 require_once($REQUIRE_DATABASE);

@@ -26,6 +26,8 @@ function defaultRewriter(string $html) {
 
 function valueRewriter(string $html, array $values) {
 
+    // TODO: Maybe change this to be something other than HTML comments
+
     foreach ($values as $key => $value) {
         $html = str_replace("<!-- " . $key . " -->", $value, $html);
     }
@@ -44,6 +46,9 @@ function attributeRewriter(string $html, array $attributes) {
         "action"=>"%s",
         "method"=>"%s"
     ];
+
+    // TODO: Preg match all attributes marked as /{[a-zA-Z0-9]+}/ that don't have specific prefixes
+    // in order to allow custom attributes
 
     foreach($attribute_prefixes as $key => $value) {
         if (isset($attributes[$key])) {
