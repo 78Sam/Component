@@ -8,9 +8,9 @@ require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_ROUTES);
 
-require_once(__DIR__ . "/../middleware/mw_auth.php");
-require_once(__DIR__ . "/../middleware/mw_login.php");
-require_once(__DIR__ . "/../middleware/mw_register.php");
+require_once(__DIR__ . "/../middleware/authenticate.php");
+require_once(__DIR__ . "/../middleware/login.php");
+require_once(__DIR__ . "/../middleware/register.php");
 
 
 $home_page = new Route(
