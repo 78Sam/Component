@@ -128,8 +128,7 @@ class Database {
 
         // TODO: Change this to be __DIR__ or similar as I have removed the folders from dir.php
 
-        global $FOLDER_COMPONENTS;
-        $this->ROOT_DIR = $FOLDER_COMPONENTS;
+        $this->ROOT_DIR = __DIR__;
         $this->connection_success = false;
 
         if (file_exists($this->ROOT_DIR . "/.env")) {

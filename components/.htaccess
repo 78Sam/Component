@@ -10,13 +10,3 @@ Options -Indexes
     Order allow,deny
     Deny from all
 </FilesMatch>
-
-<FilesMatch "\.sql$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-<FilesMatch "\.db$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>

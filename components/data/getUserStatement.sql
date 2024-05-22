@@ -1,1 +1,0 @@
-SELECT `email` from `UserAccounts` WHERE `email`={email};

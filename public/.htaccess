@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+<FilesMatch "\.(env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+

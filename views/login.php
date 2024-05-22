@@ -15,7 +15,7 @@ require_once($REQUIRE_DATABASE);
         <title>login</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">
 
-        <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="../styles/main.css">
 
         <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

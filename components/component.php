@@ -85,10 +85,10 @@ function component(string $name, array $attributes = null, array $values = null,
     $path = __DIR__ . "/component-" . $name;
 
     $html_file = $path . "/" . $name . ".html";
-    $css_file = "components/component-" . $name . "/" . $name . ".css";
+    $css_file = "../components/component-" . $name . "/" . $name . ".css";
 
     $standard_error_html = __DIR__ . "/component-standard-load-error/standard-load-error.html";
-    $standard_error_css = "components/component-standard-load-error/standard-load-error.css";
+    $standard_error_css = "../components/component-standard-load-error/standard-load-error.css";
 
     // Check components exist
 
