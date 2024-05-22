@@ -1,11 +1,6 @@
 <?php
 
 
-// $path = "";
-// while (!file_exists($path . "dir.php")) {
-//     $path = $path . "../";
-// }
-// require_once($path . "dir.php");
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_ENV);
 
@@ -127,8 +122,7 @@ class Database {
      */
     function __construct(string $fallback=null) {
 
-        global $FOLDER_COMPONENTS;
-        $this->ROOT_DIR = $FOLDER_COMPONENTS;
+        $this->ROOT_DIR = __DIR__;
         $this->connection_success = false;
 
         if (file_exists($this->ROOT_DIR . "/.env")) {
@@ -149,6 +143,8 @@ class Database {
             }
 
             // ATTEMPT REMOTE MYSQL CONNECTION
+
+            // TODO: Still not massively happy with the __construct() of this class
 
             if (
                 !$is_local_host &&
@@ -234,10 +230,14 @@ class Database {
             return [];
         }
 
+        // TODO: ROOT_DIR being used here too, can this maybe just be a relative file path?
+
         $sql = file_get_contents($this->ROOT_DIR . "/data/" . $query . ".sql");
 
         // "SELECT `password_hash` FROM `UserAccounts` WHERE `email`={email};"
         // query_params = [["key"=>"email", "value"=>"Sam@gmail.com"], ...]
+
+        // TODO: Do we also maybe want some form of error code if query fails?
 
         $result = $this->connection_type->prepareExecute($this->link, $sql, $query_params);
 
@@ -257,8 +257,5 @@ class Database {
     }
 
 }
-
-// $db = new Database();
-// print_r($db->query(query: "getUserStatement", query_params: [["key"=>"email", "value"=>"admin@tab.com"]]));
 
 ?>

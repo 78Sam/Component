@@ -4,13 +4,13 @@
 
 error_reporting(0);
 
-require_once(__DIR__ . "/dir.php");
+require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_ROUTES);
 
-require_once(__DIR__ . "/middleware/mw_auth.php");
-require_once(__DIR__ . "/middleware/mw_login.php");
-require_once(__DIR__ . "/middleware/mw_register.php");
+require_once(__DIR__ . "/../middleware/mw_auth.php");
+require_once(__DIR__ . "/../middleware/mw_login.php");
+require_once(__DIR__ . "/../middleware/mw_register.php");
 
 
 $home_page = new Route(
@@ -24,8 +24,8 @@ $staff_page = new Route(
     middleware: [
         new Auth(
             expiry: 60,
-            target: "/staff",
-            uses: new Login(target: "/staff", fallback: "/login", db: new Database())
+            target: "/public/staff",
+            uses: new Login(target: "/public/staff", fallback: "/public/login", db: new Database())
         )
     ]
 );
@@ -54,12 +54,10 @@ $routes = [
     $register_page
 ];
 
-// echo $_SERVER["REQUEST_URI"];
-
 foreach ($routes as $route) {
     if ($route->isRoute($_SERVER["REQUEST_URI"])) {
-        include_once("views/" . $route->use());
-        // $route->use();
+        $path = __DIR__ . "/../views/" . $route->use();
+        include_once($path);
     }
 }
 
