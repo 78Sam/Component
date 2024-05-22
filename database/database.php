@@ -1,10 +1,6 @@
 <?php
 
 
-// TODO: Need to maybe move Database and SQL files into their own directory, instead of being
-// a part of the components directory
-
-
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_ENV);
 
@@ -125,8 +121,6 @@ class Database {
      * 
      */
     function __construct(string $fallback=null) {
-
-        // TODO: Change this to be __DIR__ or similar as I have removed the folders from dir.php
 
         $this->ROOT_DIR = __DIR__;
         $this->connection_success = false;

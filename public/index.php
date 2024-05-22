@@ -54,8 +54,6 @@ $routes = [
     $register_page
 ];
 
-// echo $_SERVER["REQUEST_URI"];
-
 foreach ($routes as $route) {
     if ($route->isRoute($_SERVER["REQUEST_URI"])) {
         $path = __DIR__ . "/../views/" . $route->use();
