@@ -35,8 +35,8 @@ $login_page = new Route(
     path: "login.php",
     middleware: [
         new Register(
-            target: "/staff",
-            fallback: "/register",
+            target: "/public/staff",
+            fallback: "/public/register",
             db: new Database()
         )
     ]
