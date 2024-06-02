@@ -24,6 +24,17 @@ def main() -> None:
             with open(f"views/{name}.php", "x") as view:
                 view.write(schematic)
 
+            with open("public/index.php", "r") as file:
+                data = file.read()
+
+            route = f'${name} = new Route(\n\taliases: ["/{name}"],\n\tpath: "{name}.php",\n\tmiddleware: []\n);\n\n// route-placeholder'
+
+            data = data.replace("// route-placeholder", route)
+            data = data.replace("// routes-placeholder", f"${name},\n\t// routes-placeholder")
+
+            with open("public/index.php", "w") as file:
+                file.write(data)
+
         case "component":
 
             os.mkdir(f"components/component-{name}")
