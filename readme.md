@@ -1,4 +1,6 @@
-# Component PHP v1.0
+# Component PHP
+
+Please note that a lot of this readme is now out of date
 
 Component PHP designed by [@78Sam](https://github.com/78Sam/). View the official site [here](https://sam-mccormack.co.uk/phpsite).
 
@@ -275,7 +277,7 @@ Lets use what we know so far to spice up our landing page.
 
 To view your work, just run the `start_server.py` file, and navigate to one of your registered aliases, for example: `localhost:8000/home`, which should appear as:
 
-![Example Image](assets/images/examples/basic.png)
+![Example Image](public/assets/images/examples/basic.png)
 
 ## Databases
 
@@ -420,7 +422,7 @@ Finally, the updated home view, note that I am now also using the `_component()`
 
 Which should result in this:
 
-![Example Image](assets/images/examples/database.png)
+![Example Image](public/assets/images/examples/database.png)
 
 ## TODO
 
