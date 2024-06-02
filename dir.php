@@ -10,10 +10,9 @@ $REQUIRE_ROUTES = $ROOT . "/route.php";
 
 $REQUIRE_ENV = $ROOT . "/vendor/autoload.php";
 
-// URLs
+// FOLDERS
 
-$URL_HOME = "/";
-
+$MIDDLEWARE_FOLDER = $ROOT . "/middleware/";
 
 
 

@@ -180,7 +180,7 @@ class Database {
 
                 $this->connection_type = DatabaseType::sqlite;
 
-                $db_path = $this->ROOT_DIR . "/data/" . $_ENV["LOCAL_DB"];
+                $db_path = $this->ROOT_DIR . "/databases/" . $_ENV["LOCAL_DB"];
 
                 if (file_exists($db_path)) {
                     try {
@@ -232,7 +232,7 @@ class Database {
 
         // TODO: ROOT_DIR being used here too, can this maybe just be a relative file path?
 
-        $sql = file_get_contents($this->ROOT_DIR . "/data/" . $query . ".sql");
+        $sql = file_get_contents($this->ROOT_DIR . "/sql/" . $query . ".sql");
 
         // "SELECT `password_hash` FROM `UserAccounts` WHERE `email`={email};"
         // query_params = [["key"=>"email", "value"=>"Sam@gmail.com"], ...]
