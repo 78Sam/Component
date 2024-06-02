@@ -1,17 +1,28 @@
 <?php
 
+// For testing only
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 // Suppress error reporting
 
 error_reporting(0);
+
+// Base requirements
 
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_ROUTES);
 
-require_once(__DIR__ . "/../middleware/authenticate.php");
-require_once(__DIR__ . "/../middleware/login.php");
-require_once(__DIR__ . "/../middleware/register.php");
+// Middleware requirements
 
+require_once($MIDDLEWARE_FOLDER . "authenticate.php");
+require_once($MIDDLEWARE_FOLDER . "login.php");
+require_once($MIDDLEWARE_FOLDER . "register.php");
+
+// Routes
 
 $home_page = new Route(
     aliases: ["/home", "/", "/index"],
@@ -47,11 +58,15 @@ $register_page = new Route(
     path: "register.php"
 );
 
+// route-placeholder
+
 $routes = [
     $home_page,
     $staff_page,
     $login_page,
-    $register_page
+    $register_page,
+    // routes-placeholder
+
 ];
 
 foreach ($routes as $route) {

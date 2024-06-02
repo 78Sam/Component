@@ -1,15 +1,8 @@
 <?php
 
-
-// $path = "";
-// while (!file_exists($path . "dir.php")) {
-//     $path = $path . "../";
-// }
-// require_once($path . "dir.php");
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_COMPONENTS);
 require_once($REQUIRE_DATABASE);
-
 
 ?>
 <!DOCTYPE html>
@@ -17,6 +10,8 @@ require_once($REQUIRE_DATABASE);
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <base href="/">
 
         <title>home</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">

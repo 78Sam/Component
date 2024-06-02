@@ -12,6 +12,8 @@ require_once($REQUIRE_DATABASE);
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+        <base href="/">
+
         <title>login</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">
 

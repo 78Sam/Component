@@ -32,6 +32,8 @@ class Login implements Middleware {
                 "role"=>"admin",
                 "timestamp"=>time()
             ];
+
+            header("Location: " . $this->target);
             
         } else {
             header("Location: " . $this->fallback . "?err=" . $res);
@@ -40,6 +42,10 @@ class Login implements Middleware {
     }
 
     private function control(): string {
+
+        // TODO: ensure that same account isn't logged into twice
+
+        usleep(300000); // Brute force Delay
 
         if (!isset($_POST["email"], $_POST["password"]) || !$_POST["email"] || !$_POST["password"]) {
             return "Please login";
