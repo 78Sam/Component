@@ -85,10 +85,12 @@ function component(string $name, array $attributes = null, array $values = null,
     $path = __DIR__ . "/component-" . $name;
 
     $html_file = $path . "/" . $name . ".html";
-    $css_file = "../components/component-" . $name . "/" . $name . ".css";
+    $css_file = $path . "/" . $name . ".css";
+    $css_file_loaded = "styles/build/" . $name . ".css";
 
     $standard_error_html = __DIR__ . "/component-standard-load-error/standard-load-error.html";
-    $standard_error_css = "../components/component-standard-load-error/standard-load-error.css";
+    $standard_error_css = __DIR__ . "/component-standard-load-error/standard-load-error.css";
+    $standard_error_css_loaded = __DIR__ . "/component-standard-load-error/standard-load-error.css";
 
     // Check components exist
 
@@ -99,7 +101,7 @@ function component(string $name, array $attributes = null, array $values = null,
     } else if (file_exists($standard_error_html) and file_exists($standard_error_css)) { // Something missing
 
         $html = file_get_contents($standard_error_html);
-        $css_file = $standard_error_css;
+        $css_file_loaded = $standard_error_css_loaded;
         $attributes = [];
         $values = ["component-name"=>$name];
 
@@ -112,7 +114,8 @@ function component(string $name, array $attributes = null, array $values = null,
     // Add Stylesheet
 
     if (!isset($used_components[$name])) {
-        $html = '<link rel="stylesheet" href="' . $css_file . '">' . $html;
+        // copy($css_file, __DIR__ . "/../public/styles/" . $name . ".css");
+        $html = '<link rel="stylesheet" href="' . $css_file_loaded . '">' . $html;
         $used_components[$name] = 1; // Not sure I need to actually set a value
     }
 

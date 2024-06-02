@@ -11,4 +11,4 @@ if __name__ == "__main__":
             for comp_file in os.listdir(f"{comps_dir}{file}"):
                 if ".css" in comp_file:
                     # print(f"{comps_dir}{file}/{comp_file}")
-                    shutil.copy(f"{comps_dir}{file}/{comp_file}", "public/styles")
+                    shutil.copy(f"{comps_dir}{file}/{comp_file}", "public/styles/build")
