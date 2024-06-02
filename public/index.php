@@ -47,11 +47,15 @@ $register_page = new Route(
     path: "register.php"
 );
 
+// route-placeholder
+
 $routes = [
     $home_page,
     $staff_page,
     $login_page,
-    $register_page
+    $register_page,
+    // routes-placeholder
+
 ];
 
 foreach ($routes as $route) {

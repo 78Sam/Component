@@ -87,6 +87,18 @@ def main() -> None:
             with open(f"components/component-{name}/{name}.css", "x") as component_css:
                 component_css.write(schematic)
 
+        case "middleware":
+
+            schematic = ""
+            with open("components/schematics/middleware.txt") as schema:
+                schematic = schema.read()
+
+            schematic = schematic.replace("{{name}}", name)
+
+            with open(f"middleware/{name}.php", "x") as view:
+                view.write(schematic)
+
+
         # YOUR SCHEMATICS
 
         case _:

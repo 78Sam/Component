@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Maybe move schematic files elsewhere
-
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_COMPONENTS);
 require_once($REQUIRE_DATABASE);
@@ -12,6 +10,8 @@ require_once($REQUIRE_DATABASE);
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <base href="/">
 
         <title>{{name}}</title>
         <link rel="icon" type="image/x-icon" href="assets/pingu.png">
