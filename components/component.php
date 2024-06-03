@@ -1,146 +1,54 @@
 <?php
 
 
-function defaultRewriter(string $html) {
+$used = [];
 
-    $pattern = "/<component-([-a-zA-Z0-9]+)><\/component-([-a-zA-Z0-9]+)>/";
-    preg_match_all($pattern, $html, $default_components);
 
-    foreach ($default_components[0] as $default_component) {
+function component(string $name, array $values=[], bool $echo=true, bool $fill=true, array $parents=[]) {
 
-        $name_pattern = "/(-[a-zA-Z0-9]+>)/";
-        preg_match($name_pattern, $default_component, $component_name);
-        $component_name = $component_name[0];
-        $component_name = substr($component_name, 1, strlen($component_name)-2);
+    global $used;
 
-        $component = _component(name: $component_name);
-        $replacements = 1;
+    $ROOT = __DIR__;
 
-        $html = str_replace($default_component, $component, $html, count: $replacements);
+    $html_file_path = "{$ROOT}/component-{$name}/{$name}.html";
+    $css_file_path = "{$ROOT}/component-{$name}/{$name}.css";
+
+    if (!file_exists($html_file_path) || !file_exists($css_file_path)) {
+        return "";
     }
 
-    return $html;
+    $html = file_get_contents($html_file_path);
 
-}
+    // Add stylesheet
 
-
-function valueRewriter(string $html, array $values) {
-
-    // TODO: Maybe change this to be something other than HTML comments
-
-    foreach ($values as $key => $value) {
-        $html = str_replace("<!-- " . $key . " -->", $value, $html);
+    if (!isset($used[$name])) {
+        $html = "<link rel='stylesheet' href='styles/build/{$name}.css'>" . $html;
+        $used[$name] = true;
     }
 
-    return $html;
+    // Default components
 
-}
+    $ptrn = "/<component-([-a-zA-Z0-9]+)><\/component-\\1>/";
+    preg_match_all($ptrn, $html, $matches);
 
-
-function attributeRewriter(string $html, array $attributes) {
-
-    $attribute_prefixes = [
-        "custom-id"=>"id='%s'",
-        "custom-style"=>"style='%s'",
-        "additional-classes"=>"%s",
-        "action"=>"%s",
-        "method"=>"%s"
-    ];
-
-    // TODO: Preg match all attributes marked as /{[a-zA-Z0-9]+}/ that don't have specific prefixes
-    // in order to allow custom attributes
-
-    foreach($attribute_prefixes as $key => $value) {
-        if (isset($attributes[$key])) {
-            $prefixed_value = sprintf($value, $attributes[$key]);
-            $html = str_replace("{" . $key . "}", $prefixed_value, $html);
+    for ($i = 0; $i < count($matches[0]); $i ++) {
+        if (!isset($parents[$matches[1][$i]])) {
+            $parents[$name] = true;
+            $html = str_replace($matches[0][$i], _component(name: $matches[1][$i], fill: false, parents: $parents), $html);
         } else {
-            $html = str_replace(" {" . $key . "}", "", $html);
+            $html = str_replace($matches[0][$i], "<!-- Component '{$matches[1][$i]}' blocked due to infinite recursion -->", $html);
         }
     }
 
-    return $html;
+    // Values
 
-}
-
-
-$count = 0;
-$used_components = [];
-
-
-/**
- * Base component function
- * 
- * @param string $name The name of the component (must match component folder name)
- * @param array $attributes Default null. Attributes such as 'additional-classes', 'custom-id', and 'custom-style'
- * @param array $values Default null. Replaces HTML comments with values, e.g. ["value"=>"<p>Hello</p>"]
- * 
- */
-function component(string $name, array $attributes = null, array $values = null, bool $echo = true) {
-
-    global $attribute_prefixes;
-    global $count;
-    global $used_components;
-
-    $path = __DIR__ . "/component-" . $name;
-
-    $html_file = $path . "/" . $name . ".html";
-    $css_file = $path . "/" . $name . ".css";
-    $css_file_loaded = "styles/build/" . $name . ".css";
-
-    $standard_error_html = __DIR__ . "/component-standard-load-error/standard-load-error.html";
-    $standard_error_css = __DIR__ . "/component-standard-load-error/standard-load-error.css";
-    $standard_error_css_loaded = __DIR__ . "/component-standard-load-error/standard-load-error.css";
-
-    // Check components exist
-
-    if (file_exists($html_file) and file_exists($css_file)) { // Files ok
-
-        $html = file_get_contents($html_file);
-
-    } else if (file_exists($standard_error_html) and file_exists($standard_error_css)) { // Something missing
-
-        $html = file_get_contents($standard_error_html);
-        $css_file_loaded = $standard_error_css_loaded;
-        $attributes = [];
-        $values = ["component-name"=>$name];
-
-    } else { // All missing
-
-        return "";
-
+    if ($fill) {
+        preg_match_all("/@[^@]*@/", $html, $matches);
+        foreach ($matches[0] as $val) {
+            $val = trim($val, "@");
+            $html = str_replace("@{$val}@", $values[$val] ?? "", $html);
+        }
     }
-
-    // Add Stylesheet
-
-    if (!isset($used_components[$name])) {
-        // copy($css_file, __DIR__ . "/../public/styles/" . $name . ".css");
-        $html = '<link rel="stylesheet" href="' . $css_file_loaded . '">' . $html;
-        $used_components[$name] = 1; // Not sure I need to actually set a value
-    }
-
-    // Get all the default components
-
-    $html = defaultRewriter(html: $html);
-
-    // Add attributes
-
-    if ($attributes) {
-        $html = attributeRewriter(html: $html, attributes: $attributes);
-    } else {
-        $html = attributeRewriter(html: $html, attributes: []);
-    }
-
-    // Add values
-
-    if ($values) {
-        $html = valueRewriter(html: $html, values: $values);
-    }
-
-    // Debugging
-
-    // $html = $html . "<!-- component " . $name . " " . $count .  " -->";
-    $count = $count + 1;
 
     if ($echo) {
         echo $html;
@@ -148,24 +56,26 @@ function component(string $name, array $attributes = null, array $values = null,
         return $html;
     }
 
+
 }
 
 
-function _component(string $name, array $attributes = null, array $values = null) {
+function _component(string $name, array $values=[], bool $fill=true, array $parents=[]) {
     return component(
         name: $name,
-        attributes: $attributes,
         values: $values,
-        echo: false
+        echo: false,
+        fill: $fill,
+        parents: $parents
     );
 }
 
 
-function group(array $components = null) {
+function group(array $components) {
 
     $html = "";
 
-    if ($components) {
+    if (isset($components)) {
 
         foreach ($components as $component) {
             $html = $html . $component;

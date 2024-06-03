@@ -32,11 +32,9 @@ require_once($REQUIRE_DATABASE);
         
             component(
                 name: "login",
-                attributes: [
-                    "action"=>"login",
-                    "method"=>"POST"
-                ],
                 values: [
+                    "_action"=>"login",
+                    "_method"=>"POST",
                     "submit-name"=>"Register"
                 ]
             )

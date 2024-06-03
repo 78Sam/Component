@@ -1,4 +1,4 @@
-<form action="{action}" method="{method}" class="component-{{name}} {additional-classes}" {custom-id} {custom-style}>
-    <!-- inputs -->
-    <input type="submit" value="<!-- submit-name -->">
+<form action="@_action@" method="@_method@" class="component-{{name}} @_classes@" id="@_id@" style="@_style@">
+    @inputs@
+    <input type="submit" value="@submit-name@">
 </form>

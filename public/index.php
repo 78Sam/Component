@@ -58,6 +58,12 @@ $register_page = new Route(
     path: "register.php"
 );
 
+$play = new Route(
+	aliases: ["/play"],
+	path: "play.php",
+	middleware: []
+);
+
 // route-placeholder
 
 $routes = [
@@ -65,7 +71,8 @@ $routes = [
     $staff_page,
     $login_page,
     $register_page,
-    // routes-placeholder
+    $play,
+	// routes-placeholder
 
 ];
 
