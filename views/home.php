@@ -40,8 +40,8 @@ require_once($REQUIRE_DATABASE);
 
             component(
                 name: "welcome",
-                attributes: ["custom-style"=>"justify-content:center; align-items:center;"],
                 values: [
+                    "_style"=>"justify-content:center; align-items:center;",
                     "title"=>"Welcome!",
                     "paragraph"=>"This site is made with Component PHP",
                     "users"=>group($users)
