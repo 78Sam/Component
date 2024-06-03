@@ -1,1 +1,0 @@
-SELECT `password_hash` FROM `UserAccounts` WHERE `email`={email};
