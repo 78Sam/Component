@@ -26,12 +26,6 @@ class Route {
     }
 
     public function isRoute(string $request): bool {
-
-        if (substr($request, 0, 7) === "/public") {
-            $request = substr($request, 7);
-            // echo $request . " | ";
-        }
-
         $pattern = "/[?]{1}([a-zA-Z0-9%]+[=]{1}[a-zA-Z0-9%]+[&]{1})*([a-zA-Z0-9%]+[=]{1}[a-zA-Z0-9%]+){1}/";
         $res = preg_split($pattern, $request);
 
