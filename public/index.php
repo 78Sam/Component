@@ -18,60 +18,13 @@ require_once($REQUIRE_ROUTES);
 
 // Middleware requirements
 
-require_once($MIDDLEWARE_FOLDER . "authenticate.php");
-require_once($MIDDLEWARE_FOLDER . "login.php");
-require_once($MIDDLEWARE_FOLDER . "register.php");
+// require_once($MIDDLEWARE_FOLDER . "yourmiddleware.php");
 
 // Routes
-
-$home_page = new Route(
-    aliases: ["/home", "/", "/index"],
-    path: "home.php"
-);
-
-$staff_page = new Route(
-    aliases: ["/staff"],
-    path: "staff.php",
-    middleware: [
-        new Auth(
-            expiry: 60,
-            target: "/public/staff",
-            uses: new Login(target: "/public/staff", fallback: "/public/login", db: new Database())
-        )
-    ]
-);
-
-$login_page = new Route(
-    aliases: ["/login"],
-    path: "login.php",
-    middleware: [
-        new Register(
-            target: "/public/staff",
-            fallback: "/public/register",
-            db: new Database()
-        )
-    ]
-);
-
-$register_page = new Route(
-    aliases: ["/register"],
-    path: "register.php"
-);
-
-$play = new Route(
-	aliases: ["/play"],
-	path: "play.php",
-	middleware: []
-);
 
 // route-placeholder
 
 $routes = [
-    $home_page,
-    $staff_page,
-    $login_page,
-    $register_page,
-    $play,
 	// routes-placeholder
 
 ];
