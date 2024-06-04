@@ -1,0 +1,25 @@
+.component-nav-bar {
+    width: 100%;
+    height: 60px;
+
+    position: fixed;
+    display: flex;
+    align-items: center;
+
+    z-index: 3;
+
+    box-sizing: border-box;
+    padding: 0px 50px 0px 50px;
+}
+
+.component-nav-bar a {
+    font-family: "scary";
+    color: white;
+    font-size: 30px;
+    transition: all 0.5s ease;
+}
+
+.component-nav-bar a:hover {
+    color: var(--red);
+    transition: all 0.5s ease;
+}

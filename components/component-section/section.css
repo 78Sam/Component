@@ -1,0 +1,26 @@
+.component-section {
+    width: 100%;
+    height: 100vh;
+    border-bottom: 8px solid white;
+}
+
+.component-section div {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 2;
+}
+
+.component-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.component-section h1,
+.component-section h2,
+.component-section h3,
+.component-section p {
+    color: white;
+}

@@ -2,3 +2,51 @@
     padding: 0;
     margin: 0;
 }
+
+:root {
+    --black: rgb(21, 21, 21);
+    --link-blue: rgb(106, 163, 255);
+    --red: rgb(255, 0, 0);
+}
+
+/* FONTS */
+
+@font-face {
+    font-family: "scary";
+    src: url("../assets/fonts/Scary.ttf");
+}
+
+@font-face {
+    font-family: "regular";
+    src: url("../assets/fonts/Karla-VariableFont_wght.ttf");
+}
+
+/* TEXT */
+
+h1, h2, h3, h4, p, a, i {
+    font-family: "regular";
+    color: var(--black);
+}
+
+a {
+    text-decoration: none;
+    color: var(--link-blue);
+}
+
+/* GENERAL */
+
+.flex {
+    display: flex;
+}
+
+.centered {
+    justify-content: center;
+}
+
+.inline {
+    align-items: center;
+}
+
+.vertical {
+    flex-direction: column;
+}

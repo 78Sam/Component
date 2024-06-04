@@ -22,9 +22,16 @@ require_once($REQUIRE_ROUTES);
 
 // Routes
 
+$home = new Route(
+	aliases: ["/", "/home"],
+	path: "home.php",
+	middleware: []
+);
+
 // route-placeholder
 
 $routes = [
+	$home,
 	// routes-placeholder
 
 ];
