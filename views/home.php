@@ -28,7 +28,7 @@ require_once($REQUIRE_DATABASE);
 
             $sections = [
                 _component(name: "section", values: ["title"=>"COMPONENT PHP", "image"=>"test.png"]),
-                _component(name: "section", values: ["title"=>"Section 2", "image"=>"test.png"])
+                _component(name: "section", values: ["title"=>"REUSABILITY", "image"=>"test.png"])
             ];
         
             component(
