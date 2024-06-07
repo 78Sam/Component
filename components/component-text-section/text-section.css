@@ -4,14 +4,14 @@
 }
 
 .component-text-section .text {
-    width: 33%;
+    width: 40%;
     min-height: 100vh;
     box-sizing: border-box;
     padding: 50px;
 }
 
 .component-text-section .right-section {
-    width: 66%;
+    width: 60%;
     min-height: 100vh;
     box-sizing: border-box;
     padding: 50px;
