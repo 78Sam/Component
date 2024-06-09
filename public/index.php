@@ -33,7 +33,6 @@ $home = new Route(
 $routes = [
 	$home,
 	// routes-placeholder
-
 ];
 
 foreach ($routes as $route) {
