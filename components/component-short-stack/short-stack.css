@@ -7,13 +7,13 @@
     align-items: center;
 }
 
-.component-short-stack .sub-heading,
+.component-short-stack .cmd,
 .component-short-stack h1,
 .component-short-stack img {
     margin-bottom: 25px;
 }
 
-.component-short-stack .sub-heading {
+.component-short-stack .cmd {
     color: var(--light-grey);
 }
 
