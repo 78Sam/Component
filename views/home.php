@@ -14,7 +14,7 @@ require_once($REQUIRE_DATABASE);
         <base href="/">
 
         <title>Home</title>
-        <link rel="icon" type="image/x-icon" href="assets/pingu.png">
+        <link rel="icon" type="image/x-icon" href="assets/favi.png">
 
         <link rel="stylesheet" href="styles/main.css">
 
