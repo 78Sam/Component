@@ -30,10 +30,5 @@
     color: white;
     font-weight: normal;
     white-space: pre;
-    transition: all 0.5s ease;
-}
-
-.component-section pre:hover {
-    font-size: 8px;
-    transition: all 0.5s ease;
+    background-color: rgba(58, 137, 255, 0.4);
 }
