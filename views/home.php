@@ -31,12 +31,14 @@ require_once($REQUIRE_DATABASE);
             $sections = [
                 _component(name: "section", values: ["title"=>"COMPONENT PHP", "image"=>"test.png", "_id"=>"splash-page"]),
                 _component(
-                    name: "text-section",
+                    name: "3-col",
                     values: [
+                        "image"=>"component.png",
                         "title"=>"Components",
-                        "command"=>"gen component 'name'",
-                        "body"=>"<span class='bold'>The Skinny</span><br><br>Components are the core way to create and organise content that will be visible on your site. Using the above command, a component and its corresponding stylesheet will be created. Components, like every other type of generable element are created based off your schematic within the schematics folder.<br><br><span class='bold'>Values</span><br><br>Components are able to store placeholder values to be hydrated at runtime. These values are denoted by a wrapping set of @'s, such as @myvalue@.<br><br><span class='bold'>Defaults</span><br><br>Components themselves are able to use other components by adding a HTML tag that specifies the components name, such as &lt;component-section>&lt;/component-section> these components values are then able to be hydrated at the same time as the calling component.",
-                        "image"=>"component.png"
+                        "sub-heading"=>"gen component 'name'",
+                        "sec-1"=>"<h2>The Skinny</h2><br><p>Components are the core way to create and organise content that will be visible on your site. Using the above command, a component and its corresponding stylesheet will be created. Components, like every other type of generable element are created based off your schematic within the schematics folder.</p>",
+                        "sec-2"=>"<h2>Values</h2><br><p>Components are able to store placeholder values to be hydrated at runtime. These values are denoted by a wrapping set of @'s, such as @myvalue@.</p>",
+                        "sec-3"=>"<h2>Defaults</h2><br><p>Components themselves are able to use other components by adding a HTML tag that specifies the components name, such as &lt;component-section>&lt;/component-section> these components values are then able to be hydrated at the same time as the calling component.</p>"
                     ]
                 )
             ];

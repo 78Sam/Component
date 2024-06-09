@@ -1,0 +1,58 @@
+.component-3-col {
+
+}
+
+.component-3-col .sub-heading {
+    color: var(--light-grey);
+}
+
+.component-3-col .top {
+    box-sizing: border-box;
+    padding: 50px 50px 25px 50px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.component-3-col .top h1 {
+    font-size: 64px;
+}
+
+.component-3-col .top img {
+    width: 100%;
+}
+
+.component-3-col .bottom {
+    display: flex;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+    padding: 25px 50px 50px 50px;
+}
+
+.component-3-col .bottom .third {
+    width: 33%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    box-sizing: border-box;
+}
+
+.component-3-col .bottom .third:first-of-type {
+    padding-right: 10px;
+}
+
+.component-3-col .bottom .third:nth-of-type(2) {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.component-3-col .bottom .third:last-of-type{
+    padding-left: 10px;
+}
+
+.component-3-col .bottom .third p {
+    text-align: justify;
+}
