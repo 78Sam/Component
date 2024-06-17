@@ -2,7 +2,7 @@
 
 Please note that a lot of this readme is now out of date
 
-Component PHP designed by [@78Sam](https://github.com/78Sam/). View the official site [here](https://sam-mccormack.co.uk/phpsite).
+Component PHP designed by [@78Sam](https://github.com/78Sam/). View the official site [here](https://component.sam-mccormack.co.uk/).
 
 ### Requirements
 
