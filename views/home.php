@@ -13,39 +13,45 @@ require_once($REQUIRE_DATABASE);
 
         <base href="/">
 
-        <title>home</title>
-        <link rel="icon" type="image/x-icon" href="assets/pingu.png">
+        <title>Home</title>
+        <link rel="icon" type="image/x-icon" href="assets/favi.png">
 
         <link rel="stylesheet" href="styles/main.css">
 
         <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+        <script src="js/nav.js"></script>
+
     </head>
     <body>
         
         <?php
-            
-            $db = new Database();
 
-            if ($db->connectionStatus()) {
-                $users = [];
-                foreach ($db->query(query: "getUserStatement", query_params: [["key"=>"email", "value"=>"Sam@gmail.com"]]) as $row) {
-                    $users[] = _component(
-                        name: "user",
-                        values: ["email"=>$row["email"]]
-                    );
-                }
-            }
-
+            $sections = [
+                _component(
+                    name: "splash",
+                    values: [
+                        "title"=>
+"
+ ▄████████  ▄██████▄    ▄▄▄▄███▄▄▄▄      ▄███████▄  ▄██████▄  ███▄▄▄▄      ▄████████ ███▄▄▄▄       ███             ▄███████▄    ▄█    █▄       ▄███████▄ 
+███    ███ ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███    ███ ███▀▀▀██▄   ███    ███ ███▀▀▀██▄ ▀█████████▄        ███    ███   ███    ███     ███    ███ 
+███    █▀  ███    ███ ███   ███   ███   ███    ███ ███    ███ ███   ███   ███    █▀  ███   ███    ▀███▀▀██        ███    ███   ███    ███     ███    ███ 
+███        ███    ███ ███   ███   ███   ███    ███ ███    ███ ███   ███  ▄███▄▄▄     ███   ███     ███   ▀        ███    ███  ▄███▄▄▄▄███▄▄   ███    ███ 
+███        ███    ███ ███   ███   ███ ▀█████████▀  ███    ███ ███   ███ ▀▀███▀▀▀     ███   ███     ███          ▀█████████▀  ▀▀███▀▀▀▀███▀  ▀█████████▀  
+███    █▄  ███    ███ ███   ███   ███   ███        ███    ███ ███   ███   ███    █▄  ███   ███     ███            ███          ███    ███     ███        
+███    ███ ███    ███ ███   ███   ███   ███        ███    ███ ███   ███   ███    ███ ███   ███     ███            ███          ███    ███     ███        
+████████▀   ▀██████▀   ▀█   ███   █▀   ▄████▀       ▀██████▀   ▀█   █▀    ██████████  ▀█   █▀     ▄████▀         ▄████▀        ███    █▀     ▄████▀      
+",
+                        "image"=>"splash2.png",
+                        "_id"=>"splash-page"
+                    ]
+                ),
+            ];
+        
             component(
-                name: "welcome",
-                values: [
-                    "_style"=>"justify-content:center; align-items:center;",
-                    "title"=>"Welcome!",
-                    "paragraph"=>"This site is made with Component PHP",
-                    "users"=>group($users)
-                ]
+                name: "root",
+                values: ["comps"=>group($sections)]
             );
         
         ?>

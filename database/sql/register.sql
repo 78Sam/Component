@@ -1,1 +1,0 @@
-INSERT INTO `UserAccounts` (`email`, `password_hash`) VALUES ({email}, {password_hash});

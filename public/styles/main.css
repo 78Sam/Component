@@ -3,6 +3,84 @@
     margin: 0;
 }
 
+:root {
+    --black: rgb(21, 21, 21);
+    --light-grey: #D9D9D9;
+    --link-blue: rgb(106, 163, 255);
+    --red: rgb(255, 0, 0);
+}
+
+/* FONTS */
+
+@font-face {
+    font-family: "scary";
+    src: url("../assets/fonts/Scary.ttf");
+}
+
+@font-face {
+    font-family: "regular";
+    src: url("../assets/fonts/Karla-VariableFont_wght.ttf");
+}
+
+@font-face {
+    font-family: "heading";
+    src: url("../assets/fonts/Bely-Display-W00-Regular.ttf");
+}
+
+/* TEXT */
+
+h2, h3, h4, p, a {
+    font-family: "regular";
+}
+
+h1, h2, h3, h4, p, a, i {
+    color: var(--black);
+}
+
+h1 {
+    font-family: "heading";
+    font-size: 34px;
+}
+
+h2 {
+    font-size: 30px;
+}
+
+h3 {
+    font-size: 26px;
+}
+
+p {
+    font-size: 18px;
+    /* font-weight: lighter; */
+}
+
+a {
+    text-decoration: none;
+    color: var(--link-blue);
+}
+
+/* GENERAL */
+
 .flex {
     display: flex;
+}
+
+.centered {
+    justify-content: center;
+}
+
+.inline {
+    align-items: center;
+}
+
+.vertical {
+    flex-direction: column;
+}
+
+/* Custom */
+
+.bold {
+    font-size: 26px;
+    font-weight: bolder;
 }

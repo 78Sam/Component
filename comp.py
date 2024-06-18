@@ -120,6 +120,40 @@ def generate() -> None:
             print(f"Unknown generator type: '{gen_type}', expected: 'component', 'form', 'view' or 'middleware'. Generation failed.")
 
 
+def deBloat() -> None:
+    bloat = [
+        "public/assets/favi.png",
+        "public/assets/images/component.png",
+        "public/assets/images/controller.png",
+        "public/assets/images/splash.gif",
+        "public/assets/images/splash2.png",
+        "public/assets/images/view.png",
+        "public/assets/fonts/Bely-Display-W100-Regular.ttf",
+        "public/assets/fonts/Karla-VariableFont_wght.ttf",
+        "public/assets/fonts/Scary.ttf",
+        "public/js/nav.js",
+        "public/styles/build/nav-bar.css",
+        "public/styles/build/root.css",
+        "public/styles/build/splash.css",
+        "views/home.php",
+        "components/component-nav-bar",
+        "components/component-root",
+        "components/component-splash",
+    ]
+
+    files = "".join(["" + file + "\n" for file in bloat])
+
+    confirm = input(f"You are attempting to delete files:\n\n{files}\nFor {os.getcwd()}\nType 'confirm'")
+    while confirm != "confirm":
+        confirm = input("Please enter 'confirm' if you wish to debloat")
+
+    for file in bloat:
+        if os.path.isdir(file):
+            shutil.rmtree(file)
+        elif os.path.isfile(file):
+            os.remove(file)
+
+
 def parseCMD(cmd: str) -> None:
 
     clear()
@@ -138,6 +172,9 @@ def parseCMD(cmd: str) -> None:
 
         case "gen":
             generate()
+
+        case "debloat":
+            deBloat()
 
         case "exit":
             exit()

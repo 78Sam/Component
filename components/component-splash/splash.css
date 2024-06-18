@@ -1,0 +1,33 @@
+.component-splash {
+    width: 100%;
+    height: 100vh;
+}
+
+.component-splash div {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 2;
+}
+
+.component-splash img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(25%);
+    z-index: 1;
+}
+
+.component-splash h1,
+.component-splash h2,
+.component-splash h3,
+.component-splash p {
+    color: white;
+}
+
+.component-splash pre {
+    font-size: 6px;
+    color: white;
+    font-weight: normal;
+    white-space: pre;
+}
