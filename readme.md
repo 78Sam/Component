@@ -1,4 +1,4 @@
-# Component PHP
+# Component PHP (OUT OF DATE)
 
 Please note that a lot of this readme is now out of date
 
