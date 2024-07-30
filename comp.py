@@ -161,7 +161,7 @@ def parseCMD(cmd: str) -> None:
     match cmd.lower():
 
         case "help":
-            print("server: Start a localhost server\nbuild: Build files for deployment\ngen: Generate components, views, etc.\nexit: quit")
+            print("server: Start a localhost server\nbuild: Build files for deployment\ngen: Generate components, views, etc.\ndebloat: Remove pre-made files\nexit: quit")
 
         case "server":
             os.chdir("public/")

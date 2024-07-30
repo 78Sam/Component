@@ -40,6 +40,29 @@ function component(string $name, array $values=[], bool $echo=true, bool $fill=t
         }
     }
 
+    // Looped components
+
+    preg_match_all("/@!{([a-zA-Z0-9]+)}([\s\S]*?)!@/", $html, $loop_element_matches);
+
+    $looped_elements = [];
+    for ($i = 0; $i < count($loop_element_matches[1]); $i++) {
+        $looped_elements[] = str_repeat($loop_element_matches[2][$i], $values[$loop_element_matches[1][$i]]);
+
+        preg_match_all("/{i}/", $looped_elements[$i], $index_matches);
+
+        $count = 1;
+        foreach ($index_matches[0] as $counter) {
+            $index = strpos($looped_elements[$i], $counter);
+            if ($index !== false) {
+                $looped_elements[$i] = substr_replace($looped_elements[$i], $count, $index, strlen($counter));
+            }
+            $count += 1;
+        }
+
+        $html = str_replace($loop_element_matches[0][$i], $looped_elements[$i], $html);
+
+    }
+
     // Values
 
     if ($fill) {

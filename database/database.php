@@ -241,10 +241,14 @@ class Database {
 
         $result = $this->connection_type->prepareExecute($this->link, $sql, $query_params);
 
+        // Mad bug where if you do an INSERT followed by a fetch, it will re-run the INSERT and dupe entries
+
         $rows = [];
-        if ($result) {
-            while ($row = $this->connection_type->fetch($result)) {
-                $rows[] = $row;
+        if (str_contains($sql, "SELECT")) {
+            if ($result) {
+                while ($row = $this->connection_type->fetch($result)) {
+                    $rows[] = $row;
+                }
             }
         }
         
