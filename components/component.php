@@ -46,8 +46,8 @@ function component(string $name, array $values=[], bool $echo=true, bool $fill=t
 
     $looped_elements = [];
     for ($i = 0; $i < count($loop_element_matches[1]); $i++) {
-        $looped_elements[] = str_repeat($loop_element_matches[2][$i], $values[$loop_element_matches[1][$i]]);
 
+        $looped_elements[] = str_repeat($loop_element_matches[2][$i], count($values[$loop_element_matches[1][$i]]));
         preg_match_all("/{i}/", $looped_elements[$i], $index_matches);
 
         $count = 1;
@@ -62,6 +62,21 @@ function component(string $name, array $values=[], bool $echo=true, bool $fill=t
         $html = str_replace($loop_element_matches[0][$i], $looped_elements[$i], $html);
 
     }
+
+    $adds = [];
+    foreach ($values as $val) {
+        if (is_array($val)) {
+            $i = 1;
+            foreach ($val as $section) {
+                foreach ($section as $key => $value) {
+                    $adds["{$key}-{$i}"] = $value;
+                    $i++;
+                }
+            }
+        }
+    }
+
+    $values = array_merge($values, $adds);
 
     // Values
 
