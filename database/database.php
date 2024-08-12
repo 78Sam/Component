@@ -12,6 +12,7 @@ function getArgType($arg) {
         case 'integer': return "i";
         default: return "s";
     }
+    
 }
 
 

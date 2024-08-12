@@ -47,7 +47,12 @@ function component(string $name, array $values=[], bool $echo=true, bool $fill=t
     $looped_elements = [];
     for ($i = 0; $i < count($loop_element_matches[1]); $i++) {
 
-        $looped_elements[] = str_repeat($loop_element_matches[2][$i], count($values[$loop_element_matches[1][$i]]));
+        $val_to_count = $values[$loop_element_matches[1][$i]] ?? [];
+        if (!is_array($val_to_count)) {
+            $val_to_count = [];
+        }
+
+        $looped_elements[] = str_repeat($loop_element_matches[2][$i], count($val_to_count));
         preg_match_all("/{i}/", $looped_elements[$i], $index_matches);
 
         $count = 1;
@@ -93,7 +98,6 @@ function component(string $name, array $values=[], bool $echo=true, bool $fill=t
     } else {
         return $html;
     }
-
 
 }
 
