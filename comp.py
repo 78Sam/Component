@@ -10,13 +10,20 @@ def clear() -> None:
 def build() -> None:
 
     comps_dir = "components/"
+    build_dir = "public/styles/build"
+
+    for file in os.listdir(build_dir):
+        if file != ".gitkeep":
+            file_path = os.path.join(build_dir, file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
 
     for file in os.listdir(comps_dir):
         if "component-" in file:
             for comp_file in os.listdir(f"{comps_dir}{file}"):
                 if ".css" in comp_file:
                     print(f"Building file: {comp_file}")
-                    shutil.copy(f"{comps_dir}{file}/{comp_file}", "public/styles/build")
+                    shutil.copy(f"{comps_dir}{file}/{comp_file}", build_dir)
 
     print("Build complete.")
 
