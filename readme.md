@@ -1,14 +1,11 @@
-# Component PHP (OUT OF DATE)
-
-Please note that a lot of this readme is now out of date
+# Component PHP
 
 Component PHP designed by [@78Sam](https://github.com/78Sam/). View the official site [here](https://component.sam-mccormack.co.uk/).
 
 ### Requirements
 
-PHP 8.2+
-
-Composer
+- PHP 8.2+
+- Composer
 
 When opening the project for the first time run:
 
@@ -16,418 +13,99 @@ When opening the project for the first time run:
 composer install
 ```
 
-## Create a view
+Then to ensure everything has set up correctly run
 
-Using the provided generator, create a view based on the schematic provided in components/schematics/view.txt with the following command.
-
-```cmd
-python3 generate.py view home
+```
+python3 comp.py
 ```
 
-This will create a view called home within the /views/ folder. Views are the pages that users will see when navigating through your site.
+and enter the command ` server `, this should spin up a localhost:8000 server and you should see the
+ComponentPHP homepage.
 
-Note that schematics can be altered to fit your needs. New schematics can be added to the schematics folder and to the generate.py file as well.
+Note, nothing that you don't want users seeing should be placed inside the public folder.
 
->home
-```php
-<?php
+## Overview
 
-    require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
-    require_once($REQUIRE_COMPONENTS);
-    require_once($REQUIRE_DATABASE);
+ComponentPHP works by creating views, routes, middleware, components, and database files. All these
+elements work together to create your functioning web app. Almost everything that you make will first
+be generated using the ` comp.py ` file located in the root directory. I would also recommend you read the
+short php files ` components/component.php `, ` database/database.php `, ` public/index.php ` and ` route.php `
+to gain a feel for how the framework works.
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+The commands of the ` comp.py ` file are as follows:
+- ` help `: See a list of available commands
+- ` server `: Start a localhost:8000 server
+- ` gen `: Generate views, components, forms, and middleware
+- ` build `: Build all your css files for deployment (note you need to run this to see changes in any css files)
+- ` debloat `: Remove the setup of the bundled ComponentPHP webpage
+- ` exit `: Exit the program
 
-        <title>home</title>
-        <link rel="icon" type="image/x-icon" href="assets/pingu.png">
+### Schematics
 
-        <link rel="stylesheet" href="styles/main.css">
-
-        <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    </head>
-    <body>
-        
-        <?php
-        
-            
-        
-        ?>
-
-    </body>
-</html>
-```
-
-## Register a route
-
-In order to allow users access to these views, we need to register routes users can take. In the file index.php we have a class called RouteManager, this allows us to register aliases for these views by which users can search for them.
-
-Lets register the newly created home view.
-
->index.php
-```php
-<?php
-
-// Suppress error reporting
-
-error_reporting(0);
-
-// Requirements
-
-require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
-require_once($REQUIRE_ROUTES);
-
-// Route Manager
-
-$route_manager = new Route();
-
-// Register Routes
-
-$route_manager->registerRoute(
-    aliases: ["", "index", "home"],
-    route: "home.php"
-);
-
-// Resolve Routes
-
-$route = $route_manager->resolveRoute($_SERVER["REQUEST_URI"]);
-
-if ($route !== null) {
-
-    if (isset($route["auth"]) && $route["auth"]) {
-        if (!checkAuth()) {
-            header("Location: " . $URL_HOME . $route["fallback"]);
-            exit();
-        }
-    }
-
-    require_once($route["path"]);
-
-} else {
-    echo "<h1>Error</h1>";
-}
-
-?>
-```
-
-Now that we have registered the route with route manager, anytime a user attempts to query "", "index", or "home" on your site (the aliases), it will provide the route "home.php" (route).
-
-**Make sure not to name any aliases in such a way that they could be interpreted as an actual path within the file structure, for example 'test' could be interpreted by the browser as a request for access to the folder '/test' which would be hit with a 403.**
+You are free to change any of the templates used by the ` gen ` command in ` comp.py`. The schematic files are stored under ` components/schematics ` (just be sure not to change the names of the files themselves). Also note that schematics have a single fillable value called 'name' which can be used via the double brace notation: ` {{name}} `, this value will be filled with the name of the generated schematic.
 
 ## Components
 
-Components are a key feature of page management, they allow custom blocks of HTML and CSS to be added to your page, and hydrated at runtime.
+Components are blocks of HTML and CSS that can be imported into views. Components can contain placeholders in
+their templates that can be updated at runtime to your desired values. CSS files are automatically imported into
+the view along with their corresponding HTML file. You can also automatically import other components into a
+components HTML file.
 
-Lets create a component for our homepage
-
-```
-python3 generate.py component welcome
-```
-
-This generated two files under components/component-welcome/ for us, namely:
-
->welcome.html
+>components/component-root/root.html
 ```html
-<div class="component-welcome {additional-classes}" {custom-id} {custom-style}>
-    <!-- value -->
+<div class="component-root @_classes@" id="@_id@" style="@_style@">
+    <component-nav-bar></component-nav-bar>
+    @comps@
 </div>
 ```
 
-and
+Here is an example of a component that is used in the example that comes with ComponentPHP. Here we notice the two
+main features. Anything surrounded with @s means that that value can be replaced in the view file. Any HTML tag
+beginning with 'component-' means that corresponding component will automatically be brought in when it is rendered.
 
->welcome.css
-```css
-.component-welcome {
+In this example we automatically import the nav component. We also define a value that can be filled called 'comps' along with some others in the div tag.
+It should also be noted that you can set up components to be loopable using a special syntax that I wont go into here.
 
-}
-```
+## Views
 
-Here we can see some key features of components:
+Views are the actual pages of your website. Within views we write standard HTML and PHP, as well as import components and interact with our database.
 
-### Attributes
-
-Attributes are defined via braces, for example {custom-id}, attributes can be replaced with meaningful values when we call the component, for example:
-
+>views/home.php
 ```php
+$sections = [
+    _component(
+        name: "splash",
+        values: [
+            "title"=> "ComponentPHP",
+            "image"=>"splash2.png",
+            "_id"=>"splash-page"
+        ]
+    ),
+];
+
 component(
-    name: "welcome",
-    attributes: ["custom-id"=>"homepage-welcome"]
+    name: "root",
+    values: ["comps"=>group($sections)]
 );
 ```
 
-at runtime would generate:
+Here we see in our home view a few ways to interact with components. First we create an instance of a component called 'splash' using the underscored version of the function. Calling ` _component() ` instead of ` component() ` returns the value as a string instead of immediately displaying it. We then pass the list of one component to the 'root' component we saw earlier using a grouper. ` group() ` takes a list of components and turns it into a single string. This is then passed to the 'comps' placeholder we saw earlier. Finally the root component using the splash component is displayed on the page - remembering that the nav component is also loaded when we use the root component.
 
-```html
-<div class="component-welcome" id="homepage-welcome">
-    <!-- value -->
-</div>
-```
+## Routing
 
-The other noteable attributes are: 'additional-classes', 'custom-style' and for forms: 'method', and 'action'.
+Routing is the act of redirecting users to desired views via URLs. All the sites routes are managed within the ` public/index.php ` file. Note, you should NOT remove the two comments ` route-placeholder ` and ` routes-placeholder ` as these are used by ` comp.py ` to generate new views.
 
-### Values
+Whenever you generate a new view, a new route will be automatically filled in ` index.php `, this is where you can define aliases and middlewares that you wish your view to use.
 
-Values are how you inject data into your components. Values are identified via HTML comments, for example: '<\!-- value -->'. Much like attributes, as many values as you like can be added to components, and filled out at runtime.
-
-For example:
-
+>public/index.php
 ```php
-component(
-    name: "welcome",
-    values: ["value"=>"<p>Welcome to my website!</p>"]
-    attributes: ["custom-id"=>"homepage-welcome"]
+
+$home = new Route(
+	aliases: ["/", "/home"],
+	path: "home.php",
+	middleware: []
 );
+
 ```
 
-at runtime would generate:
-
-```html
-<div class="component-welcome" id="homepage-welcome">
-    <p>Welcome to my website!</p>
-</div>
-```
-
-### How they are displayed
-
-Components can be display a few different ways. Anytime you call the ``` component(); ``` function, whatever is generated will be displayed on the page. Say you wanted to pass a component, or group of components to a component, you could first define it with ``` $comp_1 = _component(); ``` and then pass that variable as a value. If you wanted to pass a group of components as a value, you could use the grouping function as follows: ``` $component_group = group([_component(), _component()]); ```. **Just remember to add the underscore to prevent it being displayed immediately!**
-
-## Spice up the home page
-
-Lets use what we know so far to spice up our landing page.
-
->welcome.html
-```html
-<div class="component-welcome {additional-classes}" {custom-id} {custom-style}>
-    <h1>
-        <!-- title -->
-    </h1>
-    <p>
-        <!-- paragraph -->
-    </p>
-</div>
-```
-
->welcome.css
-```css
-.component-welcome {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.component-welcome h1 {
-    color: blue;
-    text-decoration: underline;
-}
-
-.component-welcome p {
-    font-size: 20px;
-}
-```
-
->home.php
-```php
-<?php
-
-    require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
-    require_once($REQUIRE_COMPONENTS);
-    require_once($REQUIRE_DATABASE);
-
-?>
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>home</title>
-        <link rel="icon" type="image/x-icon" href="assets/pingu.png">
-
-        <link rel="stylesheet" href="styles/main.css">
-
-        <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    </head>
-    <body>
-        
-        <?php
-        
-            component(
-                name: "welcome",
-                attributes: ["custom-style"=>"justify-content:center; align-items:center;"],
-                values: [
-                    "title"=>"Welcome!",
-                    "paragraph"=>"This site is made with Component PHP"
-                ]
-            );
-        
-        ?>
-
-    </body>
-</html>
-```
-
-To view your work, just run the `start_server.py` file, and navigate to one of your registered aliases, for example: `localhost:8000/home`, which should appear as:
-
-![Example Image](public/assets/images/examples/basic.png)
-
-## Databases
-
-Databases can be linked via the example.env file located at `components/example.env`. If you wish to run a remote database the required credentials must be filled out in the example.env file **and then saved as .env**.
-
-If you wish to run a local DB such as SQLITE, you can place the database inside the `components/data` folder, and add the database filename to the .env file.
-
-From there you will be able to instantiate a database class in any view, and perform queries on it. For example, much like values and attributes in components, you can create .sql query files with values that can be hydrated at runtime. However in this simple example I will have one database, and a simple SQL query.
-
-I have also added an extra component, as well as modify existing ones.
-
->welcome.html
-```html
-<div class="component-welcome {additional-classes}" {custom-id} {custom-style}>
-    <h1>
-        <!-- title -->
-    </h1>
-    <p>
-        <!-- paragraph -->
-    </p>
-    <div class="flex">
-        <!-- users -->
-    </div>
-</div>
-```
-
->welcome.css
-```css
-.component-welcome {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.component-welcome h1 {
-    color: blue;
-    text-decoration: underline;
-}
-
-.component-welcome p {
-    font-size: 20px;
-}
-```
-
->user.html
-```html
-<div class="component-user {additional-classes}" {custom-id} {custom-style}>
-    <p>
-        <!-- email -->
-    </p>
-</div>
-```
-
->user.css
-```css
-.component-user {
-    padding: 10px;
-    margin: 3px;
-    background-color: rgb(89, 89, 89);
-    border-radius: 5px;
-}
-
-.component-user p {
-    color: white;
-}
-```
-
-I have also updated the `styles/main.css` file to add a flex class used in `components/component-welcome/welcome.html`
-
->main.css
-```css
-.flex {
-    display: flex;
-}
-```
-
-The SQL query (stored in `components/data`) I will use is as follows:
-
->getUser.sql
-```sql
-SELECT `email` from `UserAccounts`;
-```
-
-Finally, the updated home view, note that I am now also using the `_component()` and `group()` functions to create components ahead of time, group them together, and pass them to a single value.
-
->home.php
-```php
-<?php
-
-    require_once($_SERVER["DOCUMENT_ROOT"] . "/dir.php");
-    require_once($REQUIRE_COMPONENTS);
-    require_once($REQUIRE_DATABASE);
-
-?>
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-        <title>home</title>
-        <link rel="icon" type="image/x-icon" href="assets/pingu.png">
-
-        <link rel="stylesheet" href="styles/main.css">
-
-        <script src="https://kit.fontawesome.com/8fd25e8e0f.js" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    </head>
-    <body>
-        
-        <?php
-            
-            $db = new Database();
-
-            if ($db->connectionStatus()) {
-                $users = [];
-                foreach ($db->query(query: "getUser") as $row) {
-                    $users[] = _component(
-                        name: "user",
-                        values: ["email"=>$row["email"]]
-                    );
-                }
-            }
-
-            component(
-                name: "welcome",
-                attributes: ["custom-style"=>"justify-content:center; align-items:center;"],
-                values: [
-                    "title"=>"Welcome!",
-                    "paragraph"=>"This site is made with Component PHP",
-                    "users"=>group($users)
-                ]
-            );
-        
-        ?>
-
-    </body>
-</html>
-```
-
-Which should result in this:
-
-![Example Image](public/assets/images/examples/database.png)
-
-## TODO
-
-- Ability to create custom attributes
-- Cleanup
-- Documentation
-- LOTS of testing
-- Release V1!
+This is the route for the homepage of the example site. Here we can see that users can navigate to this view via either the '/' or '/home' paths. The path value is the name of the view file, in this case 'home.php'. In this case we have no middleware for the route.

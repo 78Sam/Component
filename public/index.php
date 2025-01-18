@@ -28,18 +28,37 @@ $home = new Route(
 	middleware: []
 );
 
+$not_found = new Route(
+	aliases: ["/404"],
+	path: "404.php",
+	middleware: []
+);
+
 // route-placeholder
 
 $routes = [
 	$home,
+	$not_found,
 	// routes-placeholder
 ];
 
+$route_reached = False;
+
 foreach ($routes as $route) {
+
     if ($route->isRoute($_SERVER["REQUEST_URI"])) {
         $path = __DIR__ . "/../views/" . $route->use();
+        $route_reached = True;
         include_once($path);
+        break;
     }
+
+}
+
+if (!$route_reached) {
+    $path = __DIR__ . "/../views/" . $not_found->use();
+    $route_reached = True;
+    include_once($path);
 }
 
 ?>
