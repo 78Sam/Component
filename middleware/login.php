@@ -16,7 +16,7 @@ class Login implements Middleware {
         $this->db = $db;
     }
 
-    public function apply() {
+    public function apply(): never {
 
         if (($res = $this->control()) === "") {
 
@@ -33,9 +33,11 @@ class Login implements Middleware {
             ];
 
             header("Location: " . $this->target);
+            exit();
             
         } else {
             header("Location: " . $this->fallback . "?err=" . $res);
+            exit();
         }
         
     }

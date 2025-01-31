@@ -26,7 +26,7 @@ class Route {
     }
 
     public function isRoute(string $request): bool {
-        $pattern = "/[?]{1}([a-zA-Z0-9%]+[=]{1}[a-zA-Z0-9%]+[&]{1})*([a-zA-Z0-9%]+[=]{1}[a-zA-Z0-9%]+){1}/";
+        $pattern = "/[?]{1}([a-zA-Z0-9%_]+[=]{1}[a-zA-Z0-9%_]+[&]{1})*([a-zA-Z0-9%_]+[=]{1}[a-zA-Z0-9%_]+){1}/";
         $res = preg_split($pattern, $request);
 
         if ($res) {$request = $res[0];}
@@ -46,9 +46,5 @@ class Route {
 
 
 }
-
-
-
-
 
 ?>

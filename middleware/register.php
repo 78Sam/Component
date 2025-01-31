@@ -14,11 +14,14 @@ class Register implements Middleware {
         $this->db = $db;
     }
 
-    public function apply() {
+    public function apply(): void {
 
         if (($res = $this->control()) !== "") {
             header("Location: " . $this->fallback . "?err=" . $res);
+            exit();
         }
+
+        return;
         
     }
 

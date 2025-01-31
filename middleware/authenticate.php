@@ -14,13 +14,13 @@ class Auth implements Middleware {
         $this->uses = $uses;
     }
 
-    public function apply() {
+    public function apply(): void {
         if (!$this->control()) {
             $this->uses->apply();
         }
     }
 
-    private function control() {
+    private function control(): bool {
 
         session_start();
     
