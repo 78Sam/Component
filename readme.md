@@ -109,3 +109,11 @@ $home = new Route(
 ```
 
 This is the route for the homepage of the example site. Here we can see that users can navigate to this view via either the '/' or '/home' paths. The path value is the name of the view file, in this case 'home.php'. In this case we have no middleware for the route.
+
+## Middleware
+
+TBC
+
+## Databases
+
+TBC
