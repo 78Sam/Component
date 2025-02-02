@@ -231,6 +231,8 @@ class Database {
             return [];
         }
 
+        $start_time = microtime(true);
+
         // TODO: ROOT_DIR being used here too, can this maybe just be a relative file path?
 
         $sql = file_get_contents($this->ROOT_DIR . "/sql/" . $query . ".sql");
@@ -252,6 +254,10 @@ class Database {
                 }
             }
         }
+
+        $time_end = microtime(true)-$start_time;
+
+        echo $time_end;
         
         return $rows;
         
@@ -262,6 +268,27 @@ class Database {
     }
 
 }
+
+$db = new Database();
+// echo $db->connectionStatus();
+// $db->query("deleteAll");
+$db->query(
+    "createRow",
+    [
+        ["key"=>"id", "value"=>"1"],
+        ["key"=>"text", "value"=>"Hello!"],
+    ]
+);
+$db->query(
+    "createRow",
+    [
+        ["key"=>"id", "value"=>"2"],
+        ["key"=>"text", "value"=>"Hi!"],
+    ]
+);
+$res = $db->query("getEverything");
+// print_r($res);
+$db->query("deleteAll");
 
 
 ?>

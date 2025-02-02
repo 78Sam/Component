@@ -161,30 +161,31 @@ class Database {
         $this->log("Query took {$query_time_taken}s");
         
         return $rows;
+
     }
 
 
 }
 
-// $db = new Database();
-// // echo $db->connectionStatus();
-// // $db->query("deleteAll");
-// $db->query(
-//     "createRow",
-//     [
-//         ["key"=>"id", "value"=>"1"],
-//         ["key"=>"text", "value"=>"Hello!"],
-//     ]
-// );
-// $db->query(
-//     "createRow",
-//     [
-//         ["key"=>"id", "value"=>"2"],
-//         ["key"=>"text", "value"=>"Hi!"],
-//     ]
-// );
-// $res = $db->query("getEverything");
-// // print_r($res);
+$db = new Database();
+// echo $db->connectionStatus();
 // $db->query("deleteAll");
+$db->query(
+    "createRow",
+    [
+        ["key"=>"id", "value"=>"1"],
+        ["key"=>"text", "value"=>"Hello!"],
+    ]
+);
+$db->query(
+    "createRow",
+    [
+        ["key"=>"id", "value"=>"2"],
+        ["key"=>"text", "value"=>"Hi!"],
+    ]
+);
+$res = $db->query("getEverything");
+// print_r($res);
+$db->query("deleteAll");
 
 ?>
