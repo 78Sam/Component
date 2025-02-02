@@ -122,6 +122,8 @@ class Database {
             return [];
         }
 
+        $start_time = microtime(true);
+
         $sql = file_get_contents($this->ROOT_DIR . "/sql/" . $query . ".sql");
 
         $mappings = [];
@@ -139,7 +141,7 @@ class Database {
         $stmt = $this->link->prepare(query: $sql);
 
         foreach ($mappings as $key => $value) {
-            $this->log("Binding: {$key} Value: {$value}");
+            // $this->log("Binding: {$key} Value: {$value}");
             $stmt->bindValue($key, $value);
         }
 
@@ -153,6 +155,10 @@ class Database {
                 $rows[] = $row;
             }
         }
+
+        $query_time_taken = round(microtime(true)-$start_time, 5);
+
+        $this->log("Query took {$query_time_taken}s");
         
         return $rows;
     }
@@ -161,7 +167,7 @@ class Database {
 }
 
 // $db = new Database();
-// echo $db->connectionStatus();
+// // echo $db->connectionStatus();
 // // $db->query("deleteAll");
 // $db->query(
 //     "createRow",
@@ -178,7 +184,7 @@ class Database {
 //     ]
 // );
 // $res = $db->query("getEverything");
-// print_r($res);
+// // print_r($res);
 // $db->query("deleteAll");
 
 ?>
