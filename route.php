@@ -43,8 +43,7 @@ class Route {
         return $this->path;
     }
 
-
-
 }
+
 
 ?>

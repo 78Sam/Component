@@ -14,6 +14,13 @@ class Register implements Middleware {
         $this->db = $db;
     }
 
+    public function log(string $message): void {
+        error_log(
+            message: "middleware/register.php: '{$message}'"
+        );
+        return;
+    }
+
     public function apply(): void {
 
         if (($res = $this->control()) !== "") {
@@ -22,31 +29,24 @@ class Register implements Middleware {
         }
 
         return;
-        
     }
 
     private function control(): string {
 
         if (
-            empty($_POST["first_name"]) ||
-            empty($_POST["surname"]) ||
             empty($_POST["email"]) ||
             empty($_POST["password"])
         ) {
-            return "Please register";
+            return "";
         }
 
         if (!$this->db->connectionStatus()) {
+            $this->log("DB connection failed");
             return "Database connection failed";
         }
 
-        $first_name = $_POST["first_name"];
-        $surname = $_POST["surname"];
-        $full_name = "{$first_name} {$surname}";
         $email = $_POST["email"];
         $password = $_POST["password"];
-
-        $type = "user";
         $created = date("H:i d/m/y");
 
         $result = $this->db->query(
@@ -57,6 +57,7 @@ class Register implements Middleware {
         );
 
         if ($result !== []) {
+            $this->log("Account already exists with that email: {$email}");
             return "Account already exists with that email";
         }
 
@@ -65,23 +66,19 @@ class Register implements Middleware {
         $result = $this->db->query(
             query: "accounts/register",
             query_params: [
-                ["key"=>"first_name", "value"=>$first_name],
-                ["key"=>"surname", "value"=>$surname],
-                ["key"=>"full_name", "value"=>$full_name],
                 ["key"=>"email", "value"=>$email],
                 ["key"=>"password_hash", "value"=>$password_hash],
-                ["key"=>"type", "value"=>$type],
                 ["key"=>"created", "value"=>$created]
             ]
         );
+
+        $this->log("Registration successful");
 
         return "";
 
     }
 
 }
-
-
 
 
 ?>

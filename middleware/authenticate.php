@@ -14,29 +14,41 @@ class Auth implements Middleware {
         $this->uses = $uses;
     }
 
-    public function apply(): void {
-        if (!$this->control()) {
-            $this->uses->apply();
-        }
+    public function log(string $message): void {
+        error_log(
+            message: "middleware/authenticate.php: '{$message}'"
+        );
+        return;
     }
 
-    private function control(): bool {
+    public function apply(): void {
 
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (($resp = $this->control()) !== "") {
+            session_unset();
+            session_destroy();
+            $this->log($resp);
+            $this->uses->apply();
+        }
+
+        $this->log("Authentication successful");
+        return;
+    }
+
+    private function control(): string {
     
         // Variables Set
     
         if (
-            !isset(
-                $_SESSION["login_state"],
-                $_SESSION["login_state"]["type"],
-                $_SESSION["login_state"]["email"]
-            )
+            empty($_SESSION["login_state"]) ||
+            empty($_SESSION["login_state"]["type"]) ||
+            empty($_SESSION["login_state"]["email"]) ||
+            empty($_SESSION["login_state"]["timestamp"])
         ) {
-            // echo "1";
-            session_unset();
-            session_destroy();
-            return false;
+            return "Unset session variables";
         }
     
         // Correct Types
@@ -47,23 +59,13 @@ class Auth implements Middleware {
             !is_string($_SESSION["login_state"]["email"]) ||
             !is_int($_SESSION["login_state"]["timestamp"])
         ) {
-            // echo "2";
-            session_unset();
-            session_destroy();
-            return false;
+            return "Session variables wrong type";
         }
     
         // Meaningful Values Set
     
-        if (
-            $_SESSION["login_state"]["type"] === "" ||
-            $_SESSION["login_state"]["email"] === "" ||
-            $_SESSION["login_state"]["timestamp"] > time() + 1
-        ) {
-            // echo "3";
-            session_unset();
-            session_destroy();
-            return false;
+        if ($_SESSION["login_state"]["timestamp"] > time() + 1) {
+            return "Timestamp inconsistent";
         }
     
         // Expired Session
@@ -71,15 +73,12 @@ class Auth implements Middleware {
         if ($this->expiry) {
     
             if ($_SESSION["login_state"]["timestamp"] < (time() - $this->expiry)) {
-                // echo "4";
-                session_unset();
-                session_destroy();
-                return false;
+                return "Login has expired";
             }
     
         }
     
-        return true;
+        return "";
 
     }
 
