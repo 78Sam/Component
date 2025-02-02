@@ -16,15 +16,27 @@ class Login implements Middleware {
         $this->db = $db;
     }
 
+    public function log(string $message): void {
+        error_log(
+            message: "middleware/login.php: '{$message}'"
+        );
+        return;
+    }
+
     public function apply() {
 
-        if (($res = $this->control()) === "") {
-
+        if (session_status() === PHP_SESSION_NONE) {
             session_start();
+        }
+
+        if (($resp = $this->control()) === "") {
+
             session_unset();
             session_destroy();
             session_start();
             session_regenerate_id();
+
+            $this->log("Logged in successfully");
             
             $_SESSION["login_state"] = [
                 "type"=>"user",
@@ -33,9 +45,12 @@ class Login implements Middleware {
             ];
 
             header("Location: " . $this->target);
+            exit();
             
         } else {
-            header("Location: " . $this->fallback . "?err=" . $res);
+            $this->log("Failed to login: {$resp}");
+            header("Location: " . $this->fallback . "?err=" . $resp);
+            exit();
         }
         
     }
@@ -50,10 +65,12 @@ class Login implements Middleware {
             empty($_POST["email"]) ||
             empty($_POST["password"])
         ) {
+            $this->log("No login params provided");
             return "Please login";
         }
 
         if (!$this->db->connectionStatus()) {
+            $this->log("Database connection failed");
             return "Database connection failed";
         }
 
@@ -66,10 +83,12 @@ class Login implements Middleware {
         );
 
         if ($result === []) {
+            $this->log("Account doesn't exist");
             return "Account doesn't exist";
         }
 
         if (!password_verify($password, $result[0]["password_hash"])) {
+            $this->log("Incorrect password");
             return "Incorrect password";
         }
 
@@ -78,8 +97,6 @@ class Login implements Middleware {
     }
 
 }
-
-
 
 
 ?>
