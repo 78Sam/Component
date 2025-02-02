@@ -1,0 +1,100 @@
+-- PHP CODE
+
+public function query(string $query, ?array $query_params = []) {
+
+        if (!$this->connection_success) {
+            return [];
+        }
+
+        $sql = file_get_contents($this->ROOT_DIR . "/sql/" . $query . ".sql");
+
+        $mappings = [];
+        foreach ($query_params as $param) {
+            $sql = str_replace(
+                search: "{{$param['key']}}", 
+                replace: ":{$param['key']}",
+                subject: $sql
+            );
+            $mappings[":{$param['key']}"] = $param["value"];
+        }
+
+        $this->log("Prepared statement: '{$sql}'");
+
+        $stmt = $this->link->prepare(query: $sql);
+
+        print_r($mappings);
+
+        foreach ($mappings as $key => $value) {
+            $this->log("Binding: {$key} Value: {$value}");
+            $stmt->bindParam($key, $value);
+        }
+
+        $stmt->execute();
+
+        // Mad bug where if you do an INSERT followed by a fetch, it will re-run the INSERT and dupe entries
+
+        $rows = [];
+        if (str_contains($sql, "SELECT")) {
+            foreach ($stmt as $row) {
+                $rows[] = $row;
+            }
+        }
+        
+        return $rows;
+    }
+
+$db = new Database();
+echo $db->connectionStatus();
+// $db->query("deleteAll");
+$db->query(
+    "createRow",
+    [
+        ["key"=>"id", "value"=>"1"],
+        ["key"=>"text", "value"=>"Hello!"],
+    ]
+);
+$res = $db->query("getEverything");
+print_r($res);
+$db->query("deleteAll");
+
+
+-- RESULT
+
+database/database.php: 'Prepared statement: 'INSERT INTO `Test` (`id`, `text`) VALUES (:id, :text);''
+
+Array
+(
+    [:id] => 1
+    [:text] => Hello!
+)
+
+database/database.php: 'Binding: :id Value: 1'
+database/database.php: 'Binding: :text Value: Hello!'
+
+database/database.php: 'Prepared statement: 'SELECT * FROM `Test`;''
+
+Array
+(
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => Hello!
+            [0] => Hello!
+            [text] => Hello!
+            [1] => Hello!
+        )
+
+)
+
+database/database.php: 'Prepared statement: 'DELETE FROM `Test`;''
+
+Array
+(
+)
+
+-- QUESTION
+
+
+Why is the id being set to 'Hello!' instead of '1'
