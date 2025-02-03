@@ -16,10 +16,11 @@ class Database {
 
         $this->ROOT_DIR = __DIR__;
         $this->connection_success = false;
+
         $this->db_types = [
-            "sqlite3",
-            "sqlite",
-            "mysql"
+            "sqlite"=>[
+                "DATABASE"
+            ]
         ];
 
         if (!file_exists("{$this->ROOT_DIR}/.env")) {
@@ -44,7 +45,7 @@ class Database {
 
         $db_type = strtolower($db_type);
 
-        if (!in_array($db_type, $this->db_types)) {
+        if (!array_key_exists($db_type, $this->db_types)) {
             $this->log("Unknown 'DB_TYPE': '{$db_type}'");
             return;
         }
@@ -77,17 +78,28 @@ class Database {
 
     private function checkSqlite(): void {
 
-        if (empty($_ENV["DATABASE"])) {
-            $this->log("sqlite(3): No 'DATABASE' env parameter set");
-            return;
+        // if (empty($_ENV["DATABASE"])) {
+        //     $this->log("sqlite(3): No 'DATABASE' env parameter set");
+        //     return;
+        // }
+
+        // $database = $_ENV["DATABASE"];
+
+        // if (!is_string($database)) {
+        //     $this->log("sqlite(3): 'DATABASE' not string: '{$database}'");
+        //     return;
+        // }
+
+        $this->log("Checking sqlite(3)");
+
+        foreach ($this->db_types["sqlite"] as $env_param) {
+            if (empty($_ENV[$env_param])) {
+                $this->log("sqlite(3): No '{$env_param}' env parameter set");
+                break;
+            }
         }
 
         $database = $_ENV["DATABASE"];
-
-        if (!is_string($database)) {
-            $this->log("sqlite(3): 'DATABASE' not string: '{$database}'");
-            return;
-        }
 
         $database = str_replace(
             search: ".db",
@@ -95,9 +107,16 @@ class Database {
             subject: $database
         );
 
+        $db_loc = "{$this->ROOT_DIR}/databases/{$database}.db";
+
+        if (!file_exists("{$db_loc}")) {
+            $this->log("Sqlite(3): DB not found at '{$db_loc}'");
+            return;
+        }
+
         try {
             $this->link = new PDO(
-                dsn: "sqlite:/{$this->ROOT_DIR}/databases/{$database}.db",
+                dsn: "sqlite:/{$db_loc}",
                 options: [
                     PDO::ATTR_PERSISTENT=>true
                 ]
