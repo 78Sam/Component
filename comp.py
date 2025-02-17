@@ -121,21 +121,23 @@ def generate() -> None:
 
 
 def deBloat() -> None:
+
     bloat = [
+        # Assets
         "public/assets/favi.png",
-        "public/assets/images/component.png",
-        "public/assets/images/controller.png",
-        "public/assets/images/splash.gif",
-        "public/assets/images/splash2.png",
-        "public/assets/images/view.png",
+        "public/assets/images/splash.png",
         "public/assets/fonts/Bely-Display-W100-Regular.ttf",
         "public/assets/fonts/Karla-VariableFont_wght.ttf",
         "public/assets/fonts/Scary.ttf",
+        # JS
         "public/js/nav.js",
+        # CSS
         "public/styles/build/nav-bar.css",
         "public/styles/build/root.css",
         "public/styles/build/splash.css",
+        # Views
         "views/home.php",
+        # Components
         "components/component-nav-bar",
         "components/component-root",
         "components/component-splash",
@@ -153,6 +155,11 @@ def deBloat() -> None:
         elif os.path.isfile(file):
             os.remove(file)
 
+    # TODO: Replace public/index.php with fresh page
+    # TODO: Remove all middlewares?
+
+    return
+
 
 def parseCMD(cmd: str) -> None:
 
@@ -165,7 +172,7 @@ def parseCMD(cmd: str) -> None:
 
         case "server":
             os.chdir("public/")
-            os.system("php -S localhost:8000")
+            os.system("php -S localhost:8000 -c ../php.ini")
 
         case "build":
             build()

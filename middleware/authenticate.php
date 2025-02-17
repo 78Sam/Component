@@ -26,6 +26,8 @@ class Auth implements Middleware {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        
+        session_regenerate_id();
 
         if (($resp = $this->control()) !== "") {
             session_unset();
