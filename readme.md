@@ -46,6 +46,8 @@ You are free to change any of the templates used by the ` gen ` command in ` com
 
 ## Components
 
+`components/component.php`
+
 Components are blocks of HTML and CSS that can be imported into views. Components can contain placeholders in
 their templates that can be updated at runtime to your desired values. CSS files are automatically imported into
 the view along with their corresponding HTML file. You can also automatically import other components into a
@@ -93,6 +95,8 @@ Here we see in our home view a few ways to interact with components. First we cr
 
 ## Routing
 
+`route.php`
+
 Routing is the act of redirecting users to desired views via URLs. All the sites routes are managed within the ` public/index.php ` file. Note, you should NOT remove the two comments ` route-placeholder ` and ` routes-placeholder ` as these are used by ` comp.py ` to generate new views.
 
 Whenever you generate a new view, a new route will be automatically filled in ` index.php `, this is where you can define aliases and middlewares that you wish your view to use.
@@ -115,5 +119,7 @@ This is the route for the homepage of the example site. Here we can see that use
 TBC
 
 ## Databases
+
+`database/database.php`
 
 TBC
