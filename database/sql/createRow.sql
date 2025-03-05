@@ -1,0 +1,1 @@
+INSERT INTO `Test` (`id`, `text`) VALUES ({id}, {text});

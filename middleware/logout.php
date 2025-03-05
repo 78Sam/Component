@@ -16,7 +16,9 @@ class Logout implements Middleware {
     }
 
     public function apply(): void {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         session_unset();
         session_destroy();
         $this->log("Logged user out");

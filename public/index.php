@@ -12,6 +12,11 @@ error_reporting(0);
 
 // Base requirements
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+    session_regenerate_id();
+}
+
 require_once(__DIR__ . "/../dir.php");
 require_once($REQUIRE_DATABASE);
 require_once($REQUIRE_ROUTES);
@@ -34,11 +39,18 @@ $not_found = new Route(
 	middleware: []
 );
 
+$ini = new Route(
+	aliases: ["/ini"],
+	path: "ini.php",
+	middleware: []
+);
+
 // route-placeholder
 
 $routes = [
 	$home,
 	$not_found,
+	$ini,
 	// routes-placeholder
 ];
 

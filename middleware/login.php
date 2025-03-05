@@ -29,8 +29,13 @@ class Login implements Middleware {
             session_start();
         }
 
-        if (($resp = $this->control()) === "") {
+        session_regenerate_id();
 
+        if (($resp = $this->control()) !== "") {
+            $this->log("Failed to login: {$resp}");
+            header("Location: " . $this->fallback . "?err=" . $resp);
+            exit();
+        } else {
             session_unset();
             session_destroy();
             session_start();
@@ -45,11 +50,6 @@ class Login implements Middleware {
             ];
 
             header("Location: " . $this->target);
-            exit();
-            
-        } else {
-            $this->log("Failed to login: {$resp}");
-            header("Location: " . $this->fallback . "?err=" . $resp);
             exit();
         }
         
