@@ -2,6 +2,10 @@
 
 $ROOT = __DIR__;
 
+// CONSTANTS
+
+define("SECONDS_UNTIL_LOGOUT", 120);
+
 // REQUIREMENTS
 
 $REQUIRE_COMPONENTS = $ROOT . "/components/component.php";
