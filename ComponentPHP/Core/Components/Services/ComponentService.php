@@ -2,37 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Core\Components;
+namespace Core\Components\Services;
 
 use Core\Components\Models\Component;
 
-abstract class AbstractTemplate
+class ComponentService
 {
     public const string VARIABLE_PATTERN = '/!@\(\s*\$(?<variable_name>[a-zA-Z_]{1}\w*)\s*\)/';
     public const string COMPONENT_PATTERN = '/!@\(\s*component\|(?<component_name>\w+)\s*\)(?<body>.*?)!@\(\s*end\s*\)/s';
 
-    /** @var array<string, Component> */
-    private array $components = [];
-
-    /** @var array<string, list<string>> */
-    private array $loadedFiles = [];
-
-    public function get(string $component, ?string $path = null): ?Component
+    public function get(string $componentName, string $path, bool $absolutePath = false): ?Component
     {
-        if ($path !== null) {
-            $component = "{$path}_{$component}";
-        }
-
-        $component = $this->components[$component] ?? null;
-        if ($component === null) {
-            return null;
-        }
-
-        return clone $component;
+        return $this->loadFile($path, $absolutePath)[$componentName] ?? null;
     }
 
     /**
-     * @return list<string> The names of the components loaded via this file
+     * @return array<string, Component> The names of the components loaded via this file
      */
     public function loadFile(string $path, bool $absolutePath = false): array
     {
@@ -40,43 +25,38 @@ abstract class AbstractTemplate
             $path = relativeToAbsolutePath($path);
         }
         $path = normalisePath($path);
-            
-        if (array_key_exists($path, $this->loadedFiles)) {
-            return $this->loadedFiles[$path];
-        }
 
-        $componentNames = [];
-        foreach ($this->parseComponents($path) as $componentName => $component) {
-            if (array_key_exists($componentName, $this->components)) {
-                $componentName = "{$path}_{$componentName}"; // Namespace the component if the same name already exists
-                if (array_key_exists($componentName, $this->components)) {
-                    throw new \Exception("Cannot load component as component with same name already exists '{$componentName}'");
-                }
-            }
-            $componentNames[] = $componentName;
-            $this->components[$componentName] = $component;
-        }
-        $this->loadedFiles[$path] = $componentNames;
-
-        return $componentNames;
-    }
-
-    /**
-     * @return array<string, Component>
-     */
-    private function parseComponents(string $path): array
-    {
         $content = file_get_contents($path);
         if ($content === false) {
             throw new \Exception("Unable to read file '{$path}'");
         }
 
+        /** @var list<array{component_name: string}> $componentMatches */
         $componentMatches = [];
         $componentCount = preg_match_all(self::COMPONENT_PATTERN, $content, $componentMatches, flags: PREG_SET_ORDER);
         if ($componentCount === 0 || $componentCount === false) {
             return [];
         }
 
+        $componentNames = [];
+        foreach ($componentMatches as $componentMatch)
+        {
+            $componentName = $componentMatch['component_name'];
+            if (array_key_exists($componentName, $componentNames))
+            {
+                throw new \Exception("Cannot load component as another component with the same name exists '{$componentName}'");
+            }
+            $componentNames[$componentName] = true;
+        }
+
+        return $this->parseComponents($componentMatches);
+    }
+
+    /**
+     * @return array<string, Component>
+     */
+    private function parseComponents(array $componentMatches): array
+    {
         /** @var array<string, Component> $components */
         $components = [];
         foreach ($componentMatches as $componentMatch) {

@@ -22,6 +22,9 @@ final class Router
     /** @var array<string, SiteMapEntry> */
     public array $siteMapEntries = [];
 
+    /** @var array<string, AbstractController> */
+    public array $cachedControllers = [];
+
     public function __construct()
     {
         $this->classFinder = new ClassFinder();
@@ -74,9 +77,10 @@ final class Router
         }
 
         $siteMapEntry = $this->siteMapEntries[$request->path];
-
-        /** @var AbstractController $controller */
-        $controller = new $siteMapEntry->method->class();
+        if (!array_key_exists($request->path, $this->cachedControllers)) {
+            $this->cachedControllers[$request->path] = new $siteMapEntry->method->class();
+        }
+        $controller = $this->cachedControllers[$request->path];
 
         $response = $siteMapEntry->method->invoke($controller, $request);
         if (!$response instanceof Response) {

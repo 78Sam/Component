@@ -8,9 +8,9 @@ use Core\Testing\Attributes\Test;
 
 abstract class AbstractTest
 {
-    abstract public function setup(): void;
+    public function setup(): void {}
 
-    abstract public function teardown(): void;
+    public function teardown(): void {}
 
     public function preTest(Test $test): void {}
 

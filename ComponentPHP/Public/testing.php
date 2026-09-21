@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Core\Components\AbstractTemplate;
+use Core\Components\Services\ComponentService;
 use Core\Routing\Router;
 use Core\Testing\AbstractTest;
 use Core\Testing\TestRunner;
@@ -23,6 +24,9 @@ define('PSR4_NAMESPACES', $psr4Namespaces);
 
 $tester = new TestRunner();
 $tester->runAllTests();
+
+// $componentService = new ComponentService();
+// $componentService->loadFile('Tests/Core/Components/Include/Components/Complex.html');
 
 // $router = new Router();
 // $router->createSiteMap();

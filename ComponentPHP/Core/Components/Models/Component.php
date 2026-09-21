@@ -27,15 +27,19 @@ class Component
         return $this->__toString();
     }
 
-    public function fill(string $name, string|Component $value, bool $raw = false): void
+    public function fill(string $name, string|Component $value, bool $raw = false): self
     {
         if (!array_key_exists($name, $this->variableMap)) {
-            throw new \Exception("Cannot fill non-existent value '{$name}'");
+            $options = implode(',', array_keys($this->variableMap));
+
+            throw new \Exception("Cannot fill non-existent value '{$name}' options are '{$options}'");
         }
 
         $pseudonyms = $this->variableMap[$name];
         foreach ($pseudonyms as $pseudonym) {
             $this->sockets[$pseudonym] = $raw || $value instanceof Component ? $value : htmlspecialchars($value);
         }
+
+        return $this;
     }
 }

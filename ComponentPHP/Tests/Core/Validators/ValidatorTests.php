@@ -12,12 +12,6 @@ use Core\Utility\Validators\Types\StringValidator;
 
 class ValidatorTests extends AbstractTest
 {
-    #[\Override]
-    public function setup(): void {}
-
-    #[\Override]
-    public function teardown(): void {}
-
     #[Test('Test a required string')]
     public function stringTest(): void
     {
