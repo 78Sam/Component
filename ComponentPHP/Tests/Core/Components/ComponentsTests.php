@@ -7,7 +7,7 @@ namespace Tests\Core\Components;
 use Core\Components\Services\ComponentService;
 use Core\Testing\AbstractTest;
 use Core\Testing\Attributes\Test;
-use Tests\Core\Components\Include\TestTemplate;
+use Tests\Core\Components\Include\Templates\TestTemplate;
 
 class ComponentsTests extends AbstractTest
 {

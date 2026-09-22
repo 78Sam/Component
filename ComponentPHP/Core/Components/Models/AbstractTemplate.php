@@ -21,12 +21,12 @@ abstract class AbstractTemplate
         $this->componentService = new ComponentService();
     }
 
-    public function loadFile(string $path, bool $absolutePath): self
+    public function loadFile(string $path, bool $absolutePath = false): self
     {
         $components = $this->componentService->loadFile($path, $absolutePath);
         foreach ($components as $name => $component) {
-            $componentsByName[$name] = $component;
-            $componentsByFile[$path][$name] = $component;
+            $this->componentsByName[$name] = $component;
+            $this->componentsByFile[$path][$name] = $component;
         }
 
         return $this;
@@ -34,10 +34,9 @@ abstract class AbstractTemplate
 
     public function get(string $name, ?string $path = null): ?Component
     {
-        if ($path !== null) {
-            return clone $this->componentsByFile[$path][$name] ?? null;
-        }
+        /** @var ?Component $component */
+        $component = $path !== null ? ($this->componentsByFile[$path][$name] ?? null) : ($this->componentsByName[$name] ?? null);
 
-        return clone $this->componentsByName[$name] ?? null;
+        return $component === null ? null : clone $component;
     }
 }
