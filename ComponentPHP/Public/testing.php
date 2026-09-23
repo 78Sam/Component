@@ -32,6 +32,8 @@ $databaseService = DatabaseService::getInstance();
 $path = relativeToAbsolutePath('App/SQL/main.sqlite3');
 $databaseService->connect("sqlite:{$path}");
 
+// TODO: Do tests for database stuff but with an in-memory sqlite database sqlite::memory: or something
+
 // $addUserComponent = $componentService->get('add_user', 'App/SQL/users.sql');
 // $addUserComponent->fill('user', 'uma');
 // print_r($databaseService->query($addUserComponent));
