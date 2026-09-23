@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Core\Components\AbstractTemplate;
 use Core\Components\Services\ComponentService;
+use Core\Databases\Services\DatabaseService;
 use Core\Routing\Router;
 use Core\Testing\AbstractTest;
 use Core\Testing\TestRunner;
@@ -22,26 +23,32 @@ foreach ($classLoader->getPrefixesPsr4() as $namespace => $paths) {
 /** @var array<string, string> */
 define('PSR4_NAMESPACES', $psr4Namespaces);
 
-$tester = new TestRunner();
-$tester->runAllTests();
+// $tester = new TestRunner();
+// $tester->runAllTests();
 
-// $componentService = new ComponentService();
-// $componentService->loadFile('Tests/Core/Components/Include/Components/Complex.html');
+$componentService = new ComponentService();
+$databaseService = DatabaseService::getInstance();
 
-// $router = new Router();
-// $router->createSiteMap();
-// print_r($router->siteMapEntries);
+$path = relativeToAbsolutePath('App/SQL/main.sqlite3');
+$databaseService->connect("sqlite:{$path}");
 
-// class TestTemplate extends AbstractTemplate
-// {
-//     public function __construct()
-//     {
-//         $this->loadFile('test.html');
-//     }
-// }
+// $addUserComponent = $componentService->get('add_user', 'App/SQL/users.sql');
+// $addUserComponent->fill('user', 'uma');
+// print_r($databaseService->query($addUserComponent));
 
-// $x = new TestTemplate();
-// $component = $x->get('test_component');
-// $component->fill('myVar', 'hi there');
-// $component->fill('newVar', 'hi there 2');
-// echo $component->__toString();
+$getUserComponent = $componentService->get('get_user', 'App/SQL/users.sql');
+$getUserComponent->fill('user', 'sam');
+$result = $databaseService->query($getUserComponent);
+
+foreach ($result as $row)
+{
+    print_r($row);
+}
+
+$getAllUsersComponent = $componentService->get('get_all_users', 'App/SQL/users.sql');
+$result = $databaseService->query($getAllUsersComponent);
+
+foreach ($result as $row)
+{
+    print_r($row);
+}

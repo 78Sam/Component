@@ -1,0 +1,6 @@
+CREATE TABLE "Test" (
+	id INTEGER NOT NULL, 
+	user VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	UNIQUE (user)
+);
