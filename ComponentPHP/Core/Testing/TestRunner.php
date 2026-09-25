@@ -83,15 +83,4 @@ final class TestRunner
         
         print_r("\n");
     }
-
-    private function runTest(object $class, string $method): ?\Throwable
-    {
-        try {
-            $class->$method(); // TODO: Call instance like controller methods?
-
-            return null;
-        } catch (\Throwable $th) {
-            return $th;
-        }
-    }
 }
