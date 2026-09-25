@@ -20,17 +20,11 @@ final class TestRunner
         $this->testClasses = $this->classFinder->byExtension('Tests', AbstractTest::class);
     }
 
-    public function runAllTests(): void // TODO: This method could do with being chunked up a bit I think
+    public function runAllTests(): void
     {
         foreach ($this->testClasses as $testClass) {
-            $classString = $testClass->name;
 
-            /** @var AbstractTest $class */
-            $class = new $classString();
-            $class->setup();
-
-            $testResults = ['passed' => 0, 'total' => 0];
-            print_r("Running tests for class {$classString}\n");
+            $tests = [];
             foreach ($testClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
                 $testAttributes = $method->getAttributes(Test::class);
                 if (count($testAttributes) === 0) {
@@ -41,33 +35,59 @@ final class TestRunner
                     throw new \LogicException('Each test method should only have one test attribute');
                 }
 
-                $testResults['total']++;
-                $methodName = $method->name;
                 $testAttribute = $testAttributes[0]->newInstance();
-                $testMessage = "{$methodName} [{$testAttribute->description}]";
 
-                $class->preTest($testAttribute);
-                $error = $this->runTest($class, $methodName);
-                $class->postTest($testAttribute);
-
-                if ($error !== null) {
-                    $testMessage .= " ({$error->getMessage()})";
-                } else {
-                    $testResults['passed']++;
-                }
-
-                $resultColour = $error === null ? Console::BG_COLOUR_GREEN : Console::BG_COLOUR_RED;
-                print_r(' - ' . Console::message($testMessage, background: $resultColour));
+                $tests[] = [
+                    'test' => $testAttribute,
+                    'method' => $method,
+                ];
             }
-            $class->teardown();
-            print_r("{$testResults['passed']}/{$testResults['total']} passed\n\n");
+            $this->runTests($testClass, $tests);
         }
+    }
+
+    /**
+     * @param \ReflectionClass<AbstractTest> $class
+     * @param list<array{test: Test, method: \ReflectionMethod}> $tests
+     */
+    public function runTests(\ReflectionClass $class, array $tests): void
+    {
+        print_r("Running tests for class {$class->name}\n");
+
+        uasort($tests, function(array $testA, array $testB) {
+            return $testB['test']->priority - $testA['test']->priority;
+        });
+
+        $class = new ($class->name)();
+        $class->setup();
+
+        foreach ($tests as $test) {
+            $method = $test['method'];
+            $testAttribute = $test['test'];
+
+            $class->preTest($testAttribute);
+
+            $testMessage = "{$method->name} [{$testAttribute->description}]";
+            try
+            {
+                $method->invoke($class);
+                print_r(' - ' . Console::message($testMessage, background: Console::BG_COLOUR_GREEN));
+            } catch (\Throwable $th) {
+                print_r(' - ' . Console::message("{$testMessage} ({$th->getMessage()})", background: Console::BG_COLOUR_RED));
+            }
+
+            $class->postTest($testAttribute);
+        }
+
+        $class->teardown();
+        
+        print_r("\n");
     }
 
     private function runTest(object $class, string $method): ?\Throwable
     {
         try {
-            $class->$method();
+            $class->$method(); // TODO: Call instance like controller methods?
 
             return null;
         } catch (\Throwable $th) {

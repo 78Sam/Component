@@ -79,7 +79,7 @@ class ComponentsTests extends AbstractTest
         static::assertEquals($renderedValue, $expectedRender, "Expected render '{$expectedRender}' got '{$renderedValue}'");
     }
 
-    #[Test('Render multiple variables')]
+    #[Test('Render multiple variables', priority: 2)]
     public function renderMultipleVariables()
     {
         $renderedValue = $this->componentService
@@ -93,7 +93,7 @@ class ComponentsTests extends AbstractTest
         static::assertEquals($renderedValue, $expectedRender, "Expected render '{$expectedRender}' got '{$renderedValue}'");
     }
 
-    #[Test('Render a nested variables')]
+    #[Test('Render a nested variables', priority: 1)]
     public function renderNestedComponent()
     {
         $innerComponent = $this->componentService

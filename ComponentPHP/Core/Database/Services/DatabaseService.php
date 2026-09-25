@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Databases\Services;
+namespace Core\Database\Services;
 
 use Core\Components\Models\Component;
 
@@ -30,15 +30,29 @@ class DatabaseService
         return $this;
     }
 
+    public function queryString(string $query, array $values): ?\PDOStatement
+    {
+        if ($this->connection === null) {
+            throw new \Exception('Cannot query without first connecting to DB');
+        }
+
+        return $this->runQuery($query, $values);
+    }
+
     public function query(Component $query): ?\PDOStatement
     {
         if ($this->connection === null) {
             throw new \Exception('Cannot query without first connecting to DB');
         }
 
-        $values = $this->recurseComponent($query);
+        $values = $this->prepareComponent($query);
         $queryString = $query->render();
 
+        return $this->runQuery($queryString, $values);
+    }
+
+    private function runQuery(string $queryString, array $values): ?\PDOStatement
+    {
         $statement = $this->connection->prepare($queryString);
         if ($statement === false) {
             return null;
@@ -55,13 +69,13 @@ class DatabaseService
     /**
      * @return array<string, string>
      */
-    private function recurseComponent(Component $query): array
+    private function prepareComponent(Component $query): array
     {
         $values = [];
         foreach ($query->variableMap as $variable => $pseudonyms) {
             $socketValue = $query->sockets[array_first($pseudonyms)] ?? '';
             if ($socketValue instanceof Component) {
-                $values += $this->recurseComponent($socketValue);
+                $values += $this->prepareComponent($socketValue);
 
                 continue;
             }

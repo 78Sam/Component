@@ -36,6 +36,9 @@ class Kernel
         $endOfHandleRequestPerformanceSlice = DebugMetrics::getPerformanceSlice('End of handleRequest()');
         // dump('Request took:', $endOfHandleRequestPerformanceSlice->since($startOfHandleRequestPerformanceSlice, 9));
 
+        foreach ($response->headers as $name => $value) {
+            header("{$name}: {$value}");
+        }
         http_response_code($response->responseCode);
         echo $response->content;
     }

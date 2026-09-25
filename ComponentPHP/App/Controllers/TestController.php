@@ -28,4 +28,12 @@ class TestController extends AbstractController
 
         return new Response($component ?? 'Unable to load component');
     }
+
+    #[Route(['/redirect'], 'app_redirect')]
+    public function redirect(): Response
+    {
+        return new Response('', 302, headers: [
+            'Location' => '/',
+        ]);
+    }
 }
