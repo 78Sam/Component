@@ -14,12 +14,11 @@ class Component
         public readonly string $name,
         public array $sockets,
         public readonly array $variableMap,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {
-        return implode("", $this->sockets);
+        return implode('', $this->sockets);
     }
 
     public function render(): string

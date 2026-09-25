@@ -32,11 +32,7 @@ class TemplateTests extends AbstractTest
         );
 
         $firstFileName = array_key_first($this->testTemplate->componentsByFile);
-        static::assertEquals(
-            $firstFileName,
-            $path,
-            "File '{$path}' not loaded, but got '{$firstFileName}' instead",
-        );
+        static::assertEquals($firstFileName, $path, "File '{$path}' not loaded, but got '{$firstFileName}' instead");
 
         // TODO: File -> Name test
         // TODO: instanceof Component test

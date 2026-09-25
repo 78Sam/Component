@@ -35,7 +35,9 @@ abstract class AbstractTemplate
     public function get(string $name, ?string $path = null): ?Component
     {
         /** @var ?Component $component */
-        $component = $path !== null ? ($this->componentsByFile[$path][$name] ?? null) : ($this->componentsByName[$name] ?? null);
+        $component = $path !== null
+            ? $this->componentsByFile[$path][$name] ?? null
+            : $this->componentsByName[$name] ?? null;
 
         return $component === null ? null : clone $component;
     }

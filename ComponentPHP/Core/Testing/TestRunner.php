@@ -23,7 +23,6 @@ final class TestRunner
     public function runAllTests(): void
     {
         foreach ($this->testClasses as $testClass) {
-
             $tests = [];
             foreach ($testClass->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
                 $testAttributes = $method->getAttributes(Test::class);
@@ -54,11 +53,11 @@ final class TestRunner
     {
         print_r("Running tests for class {$class->name}\n");
 
-        uasort($tests, function(array $testA, array $testB) {
+        uasort($tests, function (array $testA, array $testB) {
             return $testB['test']->priority - $testA['test']->priority;
         });
 
-        $class = new ($class->name)();
+        $class = new $class->name();
         $class->setup();
 
         foreach ($tests as $test) {
@@ -68,19 +67,21 @@ final class TestRunner
             $class->preTest($testAttribute);
 
             $testMessage = "{$method->name} [{$testAttribute->description}]";
-            try
-            {
+            try {
                 $method->invoke($class);
                 print_r(' - ' . Console::message($testMessage, background: Console::BG_COLOUR_GREEN));
             } catch (\Throwable $th) {
-                print_r(' - ' . Console::message("{$testMessage} ({$th->getMessage()})", background: Console::BG_COLOUR_RED));
+                print_r(
+                    ' - '
+                        . Console::message("{$testMessage} ({$th->getMessage()})", background: Console::BG_COLOUR_RED),
+                );
             }
 
             $class->postTest($testAttribute);
         }
 
         $class->teardown();
-        
+
         print_r("\n");
     }
 }

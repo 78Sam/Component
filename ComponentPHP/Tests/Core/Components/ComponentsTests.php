@@ -31,13 +31,17 @@ class ComponentsTests extends AbstractTest
     #[Test('Render a simple component')]
     public function renderSimpleComponentTest()
     {
-        $renderedValue = $this->componentService
-            ->get('simple', 'Tests/Core/Components/Include/Components/Simple.html')
-            ?->render()
-        ;
+        $renderedValue = $this->componentService->get(
+            'simple',
+            'Tests/Core/Components/Include/Components/Simple.html',
+        )?->render();
         $expectedRender = '<p>Simple</p>';
 
-        static::assertEquals($renderedValue, $expectedRender, "Expected render '{$expectedRender}' got '{$renderedValue}'");
+        static::assertEquals(
+            $renderedValue,
+            $expectedRender,
+            "Expected render '{$expectedRender}' got '{$renderedValue}'",
+        );
     }
 
     #[Test('Load complex components')]
@@ -49,7 +53,7 @@ class ComponentsTests extends AbstractTest
         static::assertEquals(
             $componentNames,
             ['complex_1', 'complex_2', 'complex_3'],
-            'Should have loaded ["complex_1", "complex_2", "complex_3"],'
+            'Should have loaded ["complex_1", "complex_2", "complex_3"],',
         );
     }
 
@@ -59,11 +63,14 @@ class ComponentsTests extends AbstractTest
         $renderedValue = $this->componentService
             ->get('complex_1', 'Tests/Core/Components/Include/Components/Variables.html')
             ?->fill('var', '1')
-            ?->render()
-        ;
+            ?->render();
         $expectedRender = '<p>Complex 1</p>';
 
-        static::assertEquals($renderedValue, $expectedRender, "Expected render '{$expectedRender}' got '{$renderedValue}'");
+        static::assertEquals(
+            $renderedValue,
+            $expectedRender,
+            "Expected render '{$expectedRender}' got '{$renderedValue}'",
+        );
     }
 
     #[Test('Render a duplicate variable')]
@@ -72,11 +79,14 @@ class ComponentsTests extends AbstractTest
         $renderedValue = $this->componentService
             ->get('complex_2', 'Tests/Core/Components/Include/Components/Variables.html')
             ?->fill('var', '2')
-            ?->render()
-        ;
+            ?->render();
         $expectedRender = "<p>Complex 2_1</p>\n<p>Complex 2_2</p>";
 
-        static::assertEquals($renderedValue, $expectedRender, "Expected render '{$expectedRender}' got '{$renderedValue}'");
+        static::assertEquals(
+            $renderedValue,
+            $expectedRender,
+            "Expected render '{$expectedRender}' got '{$renderedValue}'",
+        );
     }
 
     #[Test('Render multiple variables', priority: 2)]
@@ -86,29 +96,35 @@ class ComponentsTests extends AbstractTest
             ->get('complex_3', 'Tests/Core/Components/Include/Components/Variables.html')
             ?->fill('var1', 'var1')
             ?->fill('var2', 'var2')
-            ?->render()
-        ;
+            ?->render();
         $expectedRender = "<p>Complex var1_1</p>\n<p>Complex var1_2</p>\n<p>Complex var2</p>";
 
-        static::assertEquals($renderedValue, $expectedRender, "Expected render '{$expectedRender}' got '{$renderedValue}'");
+        static::assertEquals(
+            $renderedValue,
+            $expectedRender,
+            "Expected render '{$expectedRender}' got '{$renderedValue}'",
+        );
     }
 
     #[Test('Render a nested variables', priority: 1)]
     public function renderNestedComponent()
     {
-        $innerComponent = $this->componentService
-            ->get('use_me', 'Tests/Core/Components/Include/Components/Nested.html')
-            ?->fill('value', '(nested value)')
-        ;
+        $innerComponent = $this->componentService->get(
+            'use_me',
+            'Tests/Core/Components/Include/Components/Nested.html',
+        )?->fill('value', '(nested value)');
 
         $renderedValue = $this->componentService
             ->get('nested', 'Tests/Core/Components/Include/Components/Nested.html')
             ?->fill('value', $innerComponent ?? 'fail')
-            ?->render()
-        ;
+            ?->render();
 
         $expectedRender = '<p>Nested value (nested value)</p>';
 
-        static::assertEquals($renderedValue, $expectedRender, "Expected render '{$expectedRender}' got '{$renderedValue}'");
+        static::assertEquals(
+            $renderedValue,
+            $expectedRender,
+            "Expected render '{$expectedRender}' got '{$renderedValue}'",
+        );
     }
 }

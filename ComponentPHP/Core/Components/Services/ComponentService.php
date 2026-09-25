@@ -39,12 +39,12 @@ class ComponentService
         }
 
         $componentNames = [];
-        foreach ($componentMatches as $componentMatch)
-        {
+        foreach ($componentMatches as $componentMatch) {
             $componentName = $componentMatch['component_name'];
-            if (array_key_exists($componentName, $componentNames))
-            {
-                throw new \Exception("Cannot load component as another component with the same name exists '{$componentName}'");
+            if (array_key_exists($componentName, $componentNames)) {
+                throw new \Exception(
+                    "Cannot load component as another component with the same name exists '{$componentName}'",
+                );
             }
             $componentNames[$componentName] = true;
         }
@@ -60,7 +60,6 @@ class ComponentService
         /** @var array<string, Component> $components */
         $components = [];
         foreach ($componentMatches as $componentMatch) {
-
             /** @var array<string, string> $sockets */
             $sockets = [];
 
@@ -75,7 +74,7 @@ class ComponentService
             if ($componentBody[-1] === "\n") {
                 $componentBody = substr($componentBody, 0, -1);
             }
-            
+
             $variableMatches = [];
             preg_match_all(self::VARIABLE_PATTERN, $componentBody, $variableMatches, flags: PREG_SET_ORDER);
             foreach ($variableMatches as $index => $variable) {
@@ -93,7 +92,7 @@ class ComponentService
 
                 $componentBody = $split[1];
             }
-            $sockets["_socket_block_-1"] = $componentBody;
+            $sockets['_socket_block_-1'] = $componentBody;
 
             $componentName = $componentMatch['component_name'];
             $components[$componentName] = new Component($componentName, $sockets, $variableMap);

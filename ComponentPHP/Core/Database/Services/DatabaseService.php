@@ -23,8 +23,12 @@ class DatabaseService
         return static::$instance;
     }
 
-    public function connect(string $dsn, ?string $username = null, ?string $password = null, ?array $options = null): self
-    {
+    public function connect(
+        string $dsn,
+        ?string $username = null,
+        ?string $password = null,
+        ?array $options = null,
+    ): self {
         $this->connection = new \PDO($dsn, $username, $password, $options);
 
         return $this;
