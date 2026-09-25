@@ -38,8 +38,9 @@ $databaseService->connect("sqlite:{$path}");
 // $addUserComponent->fill('user', 'uma');
 // print_r($databaseService->query($addUserComponent));
 
+$singleUserComponent = $componentService->get('user', 'App/SQL/users.sql');
 $getUserComponent = $componentService->get('get_user', 'App/SQL/users.sql');
-$getUserComponent->fill('user', 'sam');
+$getUserComponent->fill('user', $singleUserComponent->fill('user', 'sam')->fill('user2', 'uma'));
 $result = $databaseService->query($getUserComponent);
 
 foreach ($result as $row)
@@ -47,10 +48,10 @@ foreach ($result as $row)
     print_r($row);
 }
 
-$getAllUsersComponent = $componentService->get('get_all_users', 'App/SQL/users.sql');
-$result = $databaseService->query($getAllUsersComponent);
+// $getAllUsersComponent = $componentService->get('get_all_users', 'App/SQL/users.sql');
+// $result = $databaseService->query($getAllUsersComponent);
 
-foreach ($result as $row)
-{
-    print_r($row);
-}
+// foreach ($result as $row)
+// {
+//     print_r($row);
+// }

@@ -36,13 +36,10 @@ class DatabaseService
             throw new \Exception('Cannot query without first connecting to DB');
         }
 
-        $values = [];
-        foreach ($query->variableMap as $variable => $pseudonyms) {
-            $values[$variable] = $query->sockets[array_first($pseudonyms)] ?? '';
-            $query->fill($variable, ":{$variable}");
-        }
+        $values = $this->recurseComponent($query);
+        $queryString = $query->render();
 
-        $statement = $this->connection->prepare($query->render());
+        $statement = $this->connection->prepare($queryString);
         if ($statement === false) {
             return null;
         }
@@ -53,5 +50,26 @@ class DatabaseService
         }
 
         return $statement;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function recurseComponent(Component $query): array
+    {
+        $values = [];
+        foreach ($query->variableMap as $variable => $pseudonyms) {
+            $socketValue = $query->sockets[array_first($pseudonyms)] ?? '';
+            if ($socketValue instanceof Component) {
+                $values += $this->recurseComponent($socketValue);
+
+                continue;
+            }
+
+            $values[$variable] = $socketValue;
+            $query->fill($variable, ":{$variable}");
+        }
+
+        return $values;
     }
 }
