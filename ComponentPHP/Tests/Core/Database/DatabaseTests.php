@@ -81,8 +81,8 @@ class DatabaseTests extends AbstractTest
 
         static::assertNotEquals($result, null, 'No PDO statement returned from query');
 
-        $rowsAffected = count($result->fetchAll());
-        static::assertEquals($rowsAffected, 3, "Query returned {$rowsAffected} rows instead of 3");
+        $numRows = count($result->fetchAll());
+        static::assertEquals($numRows, 3, "Query returned {$numRows} rows instead of 3");
     }
 
     #[Test('Select from database using a component and where clause')]
@@ -106,5 +106,41 @@ class DatabaseTests extends AbstractTest
             ['id' => 2, 'data' => 'data_item_2'],
             'Failed to select the specific row',
         );
+    }
+
+    #[Test('Multiple condition select where')]
+    public function nestedSelectWhereTest()
+    {
+        $nestedSelectWhereQuery = $this->componentService
+            ->get('select_all_where_nested', 'Tests/Core/Database/Include/Components/queries.sql')
+        ;
+
+        $orCondition = $this->componentService
+            ->get('or_condition', 'Tests/Core/Database/Include/Components/queries.sql')
+            ->fill('value1', 'data_item_1')
+            ->fill('value2', 'data_item_3')
+        ;
+
+        $nestedSelectWhereQuery->fill('condition', $orCondition);
+
+        $result = $this->database
+            ->query($nestedSelectWhereQuery)
+        ;
+
+        static::assertNotEquals($result, null, 'No PDO statement returned from query');
+
+        $rows = $result->fetchAll(\PDO::FETCH_ASSOC);
+        $numRows = count($rows);
+
+        static::assertEquals($numRows, 2, "Query returned {$numRows} rows instead of 2");
+        
+        if ($rows[0]['id'] === 1) {
+            static::assertEquals($rows[0], ['id' => 1, 'data' => 'data_item_1'], "Fetch 1 incorrect");
+            static::assertEquals($rows[1], ['id' => 3, 'data' => 'data_item_3'], "Fetch 2 incorrect");
+        }
+        else {
+            static::assertEquals($rows[1], ['id' => 1, 'data' => 'data_item_1'], "Fetch 1 incorrect");
+            static::assertEquals($rows[0], ['id' => 3, 'data' => 'data_item_3'], "Fetch 2 incorrect");
+        }
     }
 }

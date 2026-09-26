@@ -6,6 +6,7 @@ namespace Core;
 
 use Core\Debug\DebugMetrics;
 use Core\Routing\Router;
+use Core\Sessions\Services\SessionService;
 
 class Kernel
 {
@@ -26,15 +27,10 @@ class Kernel
 
     public function handleRequest(array $server, array $get, array $post, array $files, array $cookies): void
     {
-        $startOfHandleRequestPerformanceSlice = DebugMetrics::getPerformanceSlice('Start of handleRequest()');
-
-        frankenphp_log('Handling request', context: ['workerId' => $this->workerId]);
+        SessionService::startSession();
 
         $request = $this->router->buildRequest($server, $get, $post, $files, $cookies);
         $response = $this->router->handleRequest($request);
-
-        $endOfHandleRequestPerformanceSlice = DebugMetrics::getPerformanceSlice('End of handleRequest()');
-        // dump('Request took:', $endOfHandleRequestPerformanceSlice->since($startOfHandleRequestPerformanceSlice, 9));
 
         foreach ($response->headers as $name => $value) {
             header("{$name}: {$value}");
