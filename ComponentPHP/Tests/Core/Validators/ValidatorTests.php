@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Core\Validators;
 
-use Core\Testing\AbstractTest;
-use Core\Testing\Attributes\Test;
+use Core\Tests\AbstractTest;
+use Core\Tests\Attributes\Test;
 use Core\Utility\Validators\Services\ValidatorService;
 use Core\Utility\Validators\Types\IntOrStringIntValidator;
 use Core\Utility\Validators\Types\StringValidator;

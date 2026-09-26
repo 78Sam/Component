@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Core\Components;
 
 use Core\Components\Services\ComponentService;
-use Core\Testing\AbstractTest;
-use Core\Testing\Attributes\Test;
+use Core\Tests\AbstractTest;
+use Core\Tests\Attributes\Test;
 use Tests\Core\Components\Include\Templates\TestTemplate;
 
 class ComponentsTests extends AbstractTest

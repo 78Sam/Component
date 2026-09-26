@@ -6,11 +6,12 @@ use Core\Components\AbstractTemplate;
 use Core\Components\Services\ComponentService;
 use Core\Database\Services\DatabaseService;
 use Core\Routing\Router;
-use Core\Testing\AbstractTest;
-use Core\Testing\TestRunner;
+use Core\Tests\AbstractTest;
+use Core\Tests\TestRunner;
 use Core\Utility\ClassFinder;
 use Core\Utility\Validators\Services\ValidatorService;
 use Core\Utility\Validators\Types\StringValidator;
+use Tests\Core\Database\DatabaseTests;
 
 /** @var \Composer\Autoload\ClassLoader $classLoader */
 $classLoader = require_once dirname(__DIR__) . '/vendor/autoload.php';
@@ -24,7 +25,8 @@ foreach ($classLoader->getPrefixesPsr4() as $namespace => $paths) {
 define('PSR4_NAMESPACES', $psr4Namespaces);
 
 $tester = new TestRunner();
-$tester->runAllTests();
+// $tester->runAllTests();
+$tester->runTestClass(DatabaseTests::class);
 
 // $componentService = new ComponentService();
 // $databaseService = DatabaseService::getInstance();

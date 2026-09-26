@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Core\Testing;
+namespace Core\Tests;
 
-use Core\Testing\Attributes\Test;
+use Core\Tests\Attributes\Test;
 
 abstract class AbstractTest
 {

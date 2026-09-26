@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\Database\Services;
 
 use Core\Components\Models\Component;
+use Core\Database\Exceptions\NoConnectionException;
 
 class DatabaseService
 {
@@ -34,10 +35,10 @@ class DatabaseService
         return $this;
     }
 
-    public function queryString(string $query, array $values): ?\PDOStatement
+    public function queryString(string $query, array $values = []): ?\PDOStatement
     {
         if ($this->connection === null) {
-            throw new \Exception('Cannot query without first connecting to DB');
+            throw new NoConnectionException();
         }
 
         return $this->runQuery($query, $values);
@@ -46,13 +47,40 @@ class DatabaseService
     public function query(Component $query): ?\PDOStatement
     {
         if ($this->connection === null) {
-            throw new \Exception('Cannot query without first connecting to DB');
+            throw new NoConnectionException();
         }
 
         $values = $this->prepareComponent($query);
         $queryString = $query->render();
 
         return $this->runQuery($queryString, $values);
+    }
+
+    public function beginTransaction(): void
+    {
+        if ($this->connection === null) {
+            throw new NoConnectionException();
+        }
+
+        $this->connection->beginTransaction();
+    }
+
+    public function rollbackTransaction(): void
+    {
+        if ($this->connection === null) {
+            throw new NoConnectionException();
+        }
+
+        $this->connection->rollBack();
+    }
+
+    public function commitTransaction(): void
+    {
+        if ($this->connection === null) {
+            throw new NoConnectionException();
+        }
+
+        $this->connection->commit();
     }
 
     private function runQuery(string $queryString, array $values): ?\PDOStatement
