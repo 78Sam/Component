@@ -21,6 +21,7 @@ class SessionService
     {
         session_unset();
         session_destroy();
+        static::deleteSessionCookie();
     }
 
     public static function deleteSessionCookie(): void

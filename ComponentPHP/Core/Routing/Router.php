@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Routing;
 
+use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Models\Request;
@@ -77,10 +78,27 @@ final class Router
         }
 
         $siteMapEntry = $this->siteMapEntries[$request->path];
+
+        // Run middleware
+
+        $classMiddlewareResponse = $this->runMiddleware($siteMapEntry->class, $request);
+        if ($classMiddlewareResponse !== null) {
+            return $classMiddlewareResponse;
+        }
+
+        $methodMiddlewareResponse = $this->runMiddleware($siteMapEntry->method, $request);
+        if ($methodMiddlewareResponse !== null) {
+            return $methodMiddlewareResponse;
+        }
+
+        // Create and cache the controller instance
+
         if (!array_key_exists($request->path, $this->cachedControllers)) {
             $this->cachedControllers[$request->path] = new $siteMapEntry->method->class();
         }
         $controller = $this->cachedControllers[$request->path];
+
+        // Send request
 
         $response = $siteMapEntry->method->invoke($controller, $request);
         if (!$response instanceof Response) {
@@ -88,6 +106,25 @@ final class Router
         }
 
         return $response;
+    }
+
+    private function runMiddleware(\ReflectionClass|\ReflectionMethod $reflectionObject, Request $request): ?Response
+    {
+        /** @var list<\ReflectionAttribute<MiddlewareAttributeInterface>> $middlewareAttributes */
+        $middlewareAttributes = $reflectionObject->getAttributes(
+            MiddlewareAttributeInterface::class,
+            \ReflectionAttribute::IS_INSTANCEOF,
+        );
+
+        foreach ($middlewareAttributes as $methodMiddlewareAttribute) {
+            $methodMiddlewareAttributeInstance = $methodMiddlewareAttribute->newInstance();
+            $middlewareResult = $methodMiddlewareAttributeInstance->apply($request);
+            if ($middlewareResult !== null) {
+                return $middlewareResult;
+            }
+        }
+
+        return null;
     }
 
     private function createSiteMap(): void
@@ -114,7 +151,7 @@ final class Router
                         throw new \LogicException("Route already registered '{$route}'");
                     }
 
-                    $this->siteMapEntries[$route] = new SiteMapEntry($routeAttribute, $method);
+                    $this->siteMapEntries[$route] = new SiteMapEntry($routeAttribute, $controller, $method);
                 }
             }
         }

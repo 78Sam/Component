@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Routing\Attributes;
 
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class Route
 {
     /** @var list<string> */

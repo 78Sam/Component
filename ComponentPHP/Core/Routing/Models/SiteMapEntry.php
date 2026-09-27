@@ -10,6 +10,7 @@ class SiteMapEntry
 {
     public function __construct(
         public readonly Route $route,
+        public readonly \ReflectionClass $class,
         public readonly \ReflectionMethod $method,
     ) {}
 }
