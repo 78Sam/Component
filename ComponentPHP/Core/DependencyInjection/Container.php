@@ -6,6 +6,8 @@ namespace Core\DependencyInjection;
 
 class Container
 {
+    // TODO: Infinite recursion, clear state between requests (maybe implements DI cache interface to keep warm?)
+
     public array $classes = [];
 
     private static ?Container $instance = null;
