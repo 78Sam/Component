@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Templates\HTML;
 
 use Core\Components\Models\AbstractTemplate;
+use Core\Components\Services\ComponentService;
 
 class AuthTemplate extends AbstractTemplate
 {
-    #[\Override]
-    protected function init(): void
+    public function __construct(ComponentService $componentService)
     {
+        parent::__construct($componentService);
+
         $this->loadFile('App/Components/auth.html');
     }
 }

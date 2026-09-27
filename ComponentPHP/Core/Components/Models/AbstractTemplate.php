@@ -8,32 +8,15 @@ use Core\Components\Services\ComponentService;
 
 abstract class AbstractTemplate
 {
-    public readonly ComponentService $componentService;
-
     /** @var array<string, Component> */
     public array $componentsByName = [];
 
     /** @var array<string, array<string, Component>> */
     public array $componentsByFile = [];
 
-    protected static array $instances = [];
-
-    private function __construct()
-    {
-        $this->componentService = new ComponentService();
-        $this->init();
-    }
-
-    protected function init(): void {}
-
-    public static function getInstance(): self
-    {
-        $class = static::class;
-        if (!array_key_exists($class, static::$instances)) {
-            static::$instances[$class] = new static();
-        }
-
-        return static::$instances[$class];
+    public function __construct(
+        public readonly ComponentService $componentService,
+    ) {
     }
 
     public function loadFile(string $path, bool $absolutePath = false): self

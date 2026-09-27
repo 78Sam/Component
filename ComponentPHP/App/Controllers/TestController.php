@@ -13,11 +13,9 @@ use Core\Routing\Models\Response;
 #[Auth]
 class TestController extends AbstractController
 {
-    private readonly ComponentService $componentService;
-
-    public function __construct()
-    {
-        $this->componentService = new ComponentService();
+    public function __construct(
+        public readonly ComponentService $componentService,
+    ) {
     }
 
     #[Route(['/', '/index'], 'app_index')]

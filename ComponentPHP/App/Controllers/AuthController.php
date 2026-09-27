@@ -16,14 +16,11 @@ use Core\Sessions\Services\SessionService;
 
 class AuthController extends AbstractController
 {
-    private readonly RootTemplate $rootTemplate;
-    private readonly AuthTemplate $authTemplate;
-
     public function __construct(
-        private readonly AuthService $authService = new AuthService(),
+        private readonly AuthService $authService,
+        private readonly RootTemplate $rootTemplate,
+        private readonly AuthTemplate $authTemplate,
     ) {
-        $this->rootTemplate = RootTemplate::getInstance();
-        $this->authTemplate = AuthTemplate::getInstance();
     }
 
     #[Route(['/login'], 'app_login')]

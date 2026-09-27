@@ -6,7 +6,6 @@ namespace Core\Routing\Models;
 
 class RedirectResponse extends Response
 {
-    #[\Override]
     public function __construct(string $location)
     {
         parent::__construct(

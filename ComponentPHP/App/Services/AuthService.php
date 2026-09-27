@@ -14,14 +14,12 @@ use Core\Utility\Validators\Types\StringValidator;
 
 class AuthService
 {
-    public readonly UserTemplate $userTemplate;
-    public readonly DatabaseService $databaseService;
-
-    public function __construct() {
-        $this->userTemplate = UserTemplate::getInstance();
+    public function __construct(
+        private readonly UserTemplate $userTemplate,
+        private readonly DatabaseService $databaseService,
+    ) {
         $this->userTemplate->loadFile('App/SQL/users.sql');
 
-        $this->databaseService = DatabaseService::getInstance();
         $path = relativeToAbsolutePath('App/SQL/main.db');
         $this->databaseService->connect("sqlite:{$path}");
     }

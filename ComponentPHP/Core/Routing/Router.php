@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Routing;
 
+use Core\DependencyInjection\Container;
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
@@ -94,7 +95,8 @@ final class Router
         // Create and cache the controller instance
 
         if (!array_key_exists($request->path, $this->cachedControllers)) {
-            $this->cachedControllers[$request->path] = new $siteMapEntry->method->class();
+            // $this->cachedControllers[$request->path] = new $siteMapEntry->method->class();
+            $this->cachedControllers[$request->path] = Container::getInstance()->get($siteMapEntry->class->name);
         }
         $controller = $this->cachedControllers[$request->path];
 
