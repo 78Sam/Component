@@ -38,16 +38,11 @@ abstract class AbstractTemplate
 
     public function loadFile(string $path, bool $absolutePath = false): self
     {
-        if ($absolutePath === false) {
-            $path = relativeToAbsolutePath($path);
-        }
-        $path = normalisePath($path);
-
         if (array_key_exists($path, $this->componentsByFile)) {
             return $this;
         }
 
-        $components = $this->componentService->loadFile($path, true);
+        $components = $this->componentService->loadFile($path, $absolutePath);
         foreach ($components as $name => $component) {
             $this->componentsByName[$name] = $component;
             $this->componentsByFile[$path][$name] = $component;

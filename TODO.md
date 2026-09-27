@@ -2,3 +2,4 @@
 - Middleware
 - Logging
 - Sessions and Auth
+- DI container
