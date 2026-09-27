@@ -17,6 +17,12 @@ class SessionService
         // dump($_SESSION);
     }
 
+    public static function closeSession(): void
+    {
+        session_write_close();
+        session_unset();
+    }
+
     public static function destroySession(): void
     {
         session_unset();

@@ -32,6 +32,8 @@ class Kernel
         $request = $this->router->buildRequest($server, $get, $post, $files, $cookies);
         $response = $this->router->handleRequest($request);
 
+        SessionService::closeSession();
+
         foreach ($response->headers as $name => $value) {
             header("{$name}: {$value}");
         }
