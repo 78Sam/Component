@@ -16,8 +16,7 @@ abstract class AbstractTemplate
 
     public function __construct(
         public readonly ComponentService $componentService,
-    ) {
-    }
+    ) {}
 
     public function loadFile(string $path, bool $absolutePath = false): self
     {

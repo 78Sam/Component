@@ -12,8 +12,7 @@ final class TestRunner
 {
     public function __construct(
         public readonly ClassFinder $classFinder = new ClassFinder(),
-    ) {
-    }
+    ) {}
 
     public function runAllTests(): void
     {

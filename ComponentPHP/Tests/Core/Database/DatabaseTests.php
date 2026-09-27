@@ -44,9 +44,7 @@ class DatabaseTests extends AbstractTest
             );
             SQL;
 
-        $result = $this->database
-            ->queryString($createTableQuery)
-        ;
+        $result = $this->database->queryString($createTableQuery);
 
         static::assertNotEquals($result, null, 'No PDO statement returned from query');
     }
@@ -61,9 +59,7 @@ class DatabaseTests extends AbstractTest
             ('data_item_3');
             SQL;
 
-        $result = $this->database
-            ->queryString($insertQuery)
-        ;
+        $result = $this->database->queryString($insertQuery);
 
         static::assertNotEquals($result, null, 'No PDO statement returned from query');
     }
@@ -71,13 +67,12 @@ class DatabaseTests extends AbstractTest
     #[Test('Select all from database using a component')]
     public function selectAllTest(): void
     {
-        $selectAllQuery = $this->componentService
-            ->get('select_all', 'Tests/Core/Database/Include/Components/queries.sql')
-        ;
+        $selectAllQuery = $this->componentService->get(
+            'select_all',
+            'Tests/Core/Database/Include/Components/queries.sql',
+        );
 
-        $result = $this->database
-            ->query($selectAllQuery)
-        ;
+        $result = $this->database->query($selectAllQuery);
 
         static::assertNotEquals($result, null, 'No PDO statement returned from query');
 
@@ -88,44 +83,36 @@ class DatabaseTests extends AbstractTest
     #[Test('Select from database using a component and where clause')]
     public function selectWhereTest(): void
     {
-        $selectWhereQuery = $this->componentService
-            ->get('select_all_where', 'Tests/Core/Database/Include/Components/queries.sql')
-            ->fill('value', 'data_item_2')
-        ;
+        $selectWhereQuery = $this->componentService->get(
+            'select_all_where',
+            'Tests/Core/Database/Include/Components/queries.sql',
+        )->fill('value', 'data_item_2');
 
-        $result = $this->database
-            ->query($selectWhereQuery)
-        ;
+        $result = $this->database->query($selectWhereQuery);
 
         static::assertNotEquals($result, null, 'No PDO statement returned from query');
 
         $row = $result->fetch(\PDO::FETCH_ASSOC);
 
-        static::assertEquals(
-            $row,
-            ['id' => 2, 'data' => 'data_item_2'],
-            'Failed to select the specific row',
-        );
+        static::assertEquals($row, ['id' => 2, 'data' => 'data_item_2'], 'Failed to select the specific row');
     }
 
     #[Test('Multiple condition select where')]
     public function nestedSelectWhereTest()
     {
-        $nestedSelectWhereQuery = $this->componentService
-            ->get('select_all_where_nested', 'Tests/Core/Database/Include/Components/queries.sql')
-        ;
+        $nestedSelectWhereQuery = $this->componentService->get(
+            'select_all_where_nested',
+            'Tests/Core/Database/Include/Components/queries.sql',
+        );
 
         $orCondition = $this->componentService
             ->get('or_condition', 'Tests/Core/Database/Include/Components/queries.sql')
             ->fill('value1', 'data_item_1')
-            ->fill('value2', 'data_item_3')
-        ;
+            ->fill('value2', 'data_item_3');
 
         $nestedSelectWhereQuery->fill('condition', $orCondition);
 
-        $result = $this->database
-            ->query($nestedSelectWhereQuery)
-        ;
+        $result = $this->database->query($nestedSelectWhereQuery);
 
         static::assertNotEquals($result, null, 'No PDO statement returned from query');
 
@@ -133,14 +120,13 @@ class DatabaseTests extends AbstractTest
         $numRows = count($rows);
 
         static::assertEquals($numRows, 2, "Query returned {$numRows} rows instead of 2");
-        
+
         if ($rows[0]['id'] === 1) {
-            static::assertEquals($rows[0], ['id' => 1, 'data' => 'data_item_1'], "Fetch 1 incorrect");
-            static::assertEquals($rows[1], ['id' => 3, 'data' => 'data_item_3'], "Fetch 2 incorrect");
-        }
-        else {
-            static::assertEquals($rows[1], ['id' => 1, 'data' => 'data_item_1'], "Fetch 1 incorrect");
-            static::assertEquals($rows[0], ['id' => 3, 'data' => 'data_item_3'], "Fetch 2 incorrect");
+            static::assertEquals($rows[0], ['id' => 1, 'data' => 'data_item_1'], 'Fetch 1 incorrect');
+            static::assertEquals($rows[1], ['id' => 3, 'data' => 'data_item_3'], 'Fetch 2 incorrect');
+        } else {
+            static::assertEquals($rows[1], ['id' => 1, 'data' => 'data_item_1'], 'Fetch 1 incorrect');
+            static::assertEquals($rows[0], ['id' => 3, 'data' => 'data_item_3'], 'Fetch 2 incorrect');
         }
     }
 }

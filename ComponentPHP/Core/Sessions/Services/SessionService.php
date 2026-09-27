@@ -12,7 +12,6 @@ class SessionService
         session_regenerate_id(true);
 
         // $timestamp = (new \DateTimeImmutable('now'))->getTimestamp();
-
         // $_SESSION["sam - {$timestamp}"] = "hi - {$timestamp}";
         // dump($_SESSION);
     }

@@ -61,8 +61,7 @@ class Container
         foreach ($constructor->getParameters() as $parameter) {
             $type = $parameter->getType()->getName();
             if (in_array($type, ['int', 'bool', 'string', 'float', 'array', 'object', 'mixed'])) {
-                if (!$parameter->isOptional())
-                {
+                if (!$parameter->isOptional()) {
                     throw new \Exception("Cannot build DI due to required arguments of type '{$type}'");
                 }
                 continue;

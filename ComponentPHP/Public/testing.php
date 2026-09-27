@@ -18,4 +18,5 @@ define('PSR4_NAMESPACES', $psr4Namespaces);
 
 $tester = new TestRunner();
 $tester->runAllTests();
+
 // $tester->runTestClass(DatabaseTests::class);
