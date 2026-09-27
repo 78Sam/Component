@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Middleware\Auth;
 use Core\Components\Services\ComponentService;
-use Core\Middleware\Attributes\TestMiddleware;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Models\Response;
 
-#[TestMiddleware]
+#[Auth]
 class TestController extends AbstractController
 {
     private readonly ComponentService $componentService;
@@ -25,7 +25,6 @@ class TestController extends AbstractController
     {
         $component = $this->componentService
             ->get('app', 'App/Components/app.html')
-            ?->fill('name', 'Sam')
         ;
 
         return new Response($component ?? 'Unable to load component');
@@ -34,8 +33,6 @@ class TestController extends AbstractController
     #[Route(['/test'], 'app_test')]
     public function test(): Response
     {
-        error_log('made it');
-
         return new Response('Hello :)');
     }
 

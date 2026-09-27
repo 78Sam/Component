@@ -15,7 +15,7 @@ class TemplateTests extends AbstractTest
     #[\Override]
     public function preTest(Test $test): void
     {
-        $this->testTemplate = new TestTemplate();
+        $this->testTemplate = TestTemplate::getInstance();
     }
 
     #[Test('Load a simple component file via the template')]

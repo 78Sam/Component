@@ -11,10 +11,10 @@ class SessionService
         session_start();
         session_regenerate_id(true);
 
-        $timestamp = (new \DateTimeImmutable('now'))->getTimestamp();
+        // $timestamp = (new \DateTimeImmutable('now'))->getTimestamp();
 
-        $_SESSION["sam - {$timestamp}"] = "hi - {$timestamp}";
-        dump($_SESSION);
+        // $_SESSION["sam - {$timestamp}"] = "hi - {$timestamp}";
+        // dump($_SESSION);
     }
 
     public static function destroySession(): void

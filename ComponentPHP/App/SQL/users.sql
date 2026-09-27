@@ -1,15 +1,7 @@
-!@( component|get_user )
-SELECT * FROM Test WHERE !@( $user )
-!@( end )
+!@(component|get_user_by_username)
+SELECT * FROM Users WHERE username = !@($username);
+!@(end)
 
-!@( component|get_all_users )
-SELECT * FROM Test
-!@( end )
-
-!@( component|add_user )
-INSERT INTO Test (user) VALUES (!@( $user ))
-!@( end )
-
-!@( component|user )
-user = !@( $user ) OR user = !@( $user2 )
-!@( end )
+!@(component|create_user)
+INSERT INTO Users (username, password) VALUES (!@($username), !@($password));
+!@(end)

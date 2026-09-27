@@ -16,14 +16,38 @@ abstract class AbstractTemplate
     /** @var array<string, array<string, Component>> */
     public array $componentsByFile = [];
 
-    public function __construct()
+    protected static array $instances = [];
+
+    private function __construct()
     {
         $this->componentService = new ComponentService();
+        $this->init();
+    }
+
+    protected function init(): void {}
+
+    public static function getInstance(): self
+    {
+        $class = static::class;
+        if (!array_key_exists($class, static::$instances)) {
+            static::$instances[$class] = new static();
+        }
+
+        return static::$instances[$class];
     }
 
     public function loadFile(string $path, bool $absolutePath = false): self
     {
-        $components = $this->componentService->loadFile($path, $absolutePath);
+        if ($absolutePath === false) {
+            $path = relativeToAbsolutePath($path);
+        }
+        $path = normalisePath($path);
+
+        if (array_key_exists($path, $this->componentsByFile)) {
+            return $this;
+        }
+
+        $components = $this->componentService->loadFile($path, true);
         foreach ($components as $name => $component) {
             $this->componentsByName[$name] = $component;
             $this->componentsByFile[$path][$name] = $component;
