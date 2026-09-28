@@ -9,9 +9,9 @@ use App\Templates\HTML\AuthTemplate;
 use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
-use Core\Routing\Models\RedirectResponse;
+use Core\Routing\Models\Responses\RedirectResponse;
 use Core\Routing\Models\Request;
-use Core\Routing\Models\Response;
+use Core\Routing\Models\Responses\Response;
 use Core\Sessions\Services\SessionService;
 
 class AuthController extends AbstractController

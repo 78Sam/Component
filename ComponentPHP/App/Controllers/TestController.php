@@ -8,7 +8,7 @@ use App\Middleware\Auth;
 use Core\Components\Services\ComponentService;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
-use Core\Routing\Models\Response;
+use Core\Routing\Models\Responses\Response;
 
 #[Auth]
 class TestController extends AbstractController

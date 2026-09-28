@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Routing\Models;
+namespace Core\Routing\Models\Responses;
 
 class RedirectResponse extends Response
 {

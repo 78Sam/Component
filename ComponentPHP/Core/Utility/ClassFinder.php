@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Core\Utility;
 
+// TODO: Move to services
+
 class ClassFinder
 {
     public function __construct(

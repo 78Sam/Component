@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Core;
 
-use Core\Debug\DebugMetrics;
-use Core\Routing\Router;
+use Core\Routing\Services\RoutingService;
 use Core\Sessions\Services\SessionService;
 
 class Kernel
 {
-    public readonly Router $router;
+    public readonly RoutingService $routingService;
     public readonly bool $isFranken;
 
     public function __construct(
         public readonly string $workerId,
     ) {
         $this->isFranken = ($_SERVER['SERVER_SOFTWARE'] ?? null) === 'FrankenPHP';
-        $this->router = new Router();
+        $this->routingService = new RoutingService();
     }
 
     public function boot(): void
@@ -29,11 +28,12 @@ class Kernel
     {
         SessionService::startSession();
 
-        $request = $this->router->buildRequest($server, $get, $post, $files, $cookies);
-        $response = $this->router->handleRequest($request);
+        $request = $this->routingService->buildRequest($server, $get, $post, $files, $cookies);
+        $response = $this->routingService->handleRequest($request);
 
         SessionService::closeSession();
 
+        header("Content-Type: {$response->contentType}");
         foreach ($response->headers as $name => $value) {
             header("{$name}: {$value}");
         }

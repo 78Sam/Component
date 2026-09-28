@@ -8,7 +8,7 @@ use App\Services\TestService;
 use Core\DependencyInjection\Container;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
-use Core\Routing\Models\Response;
+use Core\Routing\Models\Responses\Response;
 
 class DIController extends AbstractController
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Core\Utility;
 
+// TODO: Move to services
+
 final class Console
 {
     public const string RESET = "\e[0m";
