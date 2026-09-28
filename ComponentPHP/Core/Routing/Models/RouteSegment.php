@@ -13,8 +13,7 @@ class RouteSegment
         public readonly string $value,
         public readonly ?string $variable = null,
         public readonly bool $regex = false,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

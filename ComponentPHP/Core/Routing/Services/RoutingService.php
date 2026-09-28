@@ -99,7 +99,10 @@ final class RoutingService
                 }
 
                 $siteMapEntry = $entry;
-                $explodedRoute = array_values(array_filter(explode('/', $request->path), fn(string $value): bool => $value !== ''));
+                $explodedRoute = array_values(array_filter(
+                    explode('/', $request->path),
+                    fn(string $value): bool => $value !== '',
+                ));
                 foreach ($siteMapEntry->segments as $index => $segment) {
                     if (!$segment->regex) {
                         continue;
@@ -260,11 +263,7 @@ final class RoutingService
             }
 
             if (preg_match(RouteSegment::PATTERN_PATTERN, $routeSegment, $matches) === 1) {
-                $segments[] = new RouteSegment(
-                    $matches['pattern'] ?? '[^/]+',
-                    $matches['variable'],
-                    true,
-                );
+                $segments[] = new RouteSegment($matches['pattern'] ?? '[^/]+', $matches['variable'], true);
 
                 continue;
             }
