@@ -1,5 +1,5 @@
 {
-    "name": "sammccormack/component-php",
+    "name": "sam/component-php",
     "type": "project",
     "autoload": {
         "psr-4": {
@@ -16,7 +16,7 @@
     "authors": [
         {
             "name": "Sam",
-            "email": "samvjsmccormack@gmail.com"
+            "email": "samspamvjs@gmail.com"
         }
     ],
     "require": {}
