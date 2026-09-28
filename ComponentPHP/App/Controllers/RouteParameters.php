@@ -7,15 +7,19 @@ namespace App\Controllers;
 use App\Middleware\Auth;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
+use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\JsonResponse;
 use Core\Routing\Models\Responses\Response;
 
 class RouteParameters extends AbstractController
 {
     #[Route(['/param/{intval:[0-9]+}'], name: 'app_param')]
-    public function getMe(int $intval): Response
+    public function getMe(int $intval, Request $request): Response
     {
-        return new Response('hi (param)' . $intval);
+        dump($intval);
+        dump($request);
+
+        return new Response("Value is '{$intval}'");
     }
 
     #[Auth]

@@ -81,35 +81,34 @@ final class RoutingService
 
     public function handleRequest(Request $request): Response
     {
-        // if (!array_key_exists($request->path, $this->siteMapEntries)) {
-        //     return new Response('<h1>404</h1>', 404);
-        // }
-
-        // dump($this->staticSiteMapEntries);
-        // dump($this->dynamicSiteMapEntries);
-
-        $routeArguments = [];
+        // Static routes
 
         $siteMapEntry = null;
         if (array_key_exists($request->path, $this->staticSiteMapEntries)) {
             $siteMapEntry = $this->staticSiteMapEntries[$request->path];
         }
 
+        // Dynamic routes
+
+        $dynamicParameters = [];
         if ($siteMapEntry === null) {
             foreach ($this->dynamicSiteMapEntries as $pattern => $entry) {
                 $matches = [];
-                if (preg_match("/^{$pattern}$/", $request->path, $matches) === 1) {
-                    $siteMapEntry = $entry;
-                    $explodedRoute = array_values(array_filter(explode('/', $request->path), fn(string $value): bool => $value !== ''));
-                    foreach ($siteMapEntry->segments as $index => $segment) {
-                        if (!$segment->regex) {
-                            continue;
-                        }
-                        $routeArguments[$segment->variable] = $explodedRoute[$index];
+                if (preg_match("/^{$pattern}$/", $request->path, $matches) !== 1) {
+                    continue;
+                }
+
+                $siteMapEntry = $entry;
+                $explodedRoute = array_values(array_filter(explode('/', $request->path), fn(string $value): bool => $value !== ''));
+                foreach ($siteMapEntry->segments as $index => $segment) {
+                    if (!$segment->regex) {
+                        continue;
                     }
 
-                    break;
+                    $dynamicParameters[$segment->variable] = $explodedRoute[$index];
                 }
+
+                break;
             }
         }
 
@@ -117,11 +116,31 @@ final class RoutingService
             return new Response('<h1>404</h1>', 404);
         }
 
-        // $siteMapEntry = $this->siteMapEntries[$request->path];
-
         $route = $siteMapEntry->route;
-        if ($route->HTTPVerbs !== [] && !in_array($request->method, $route->HTTPVerbs)) {
+        if ($route->HTTPVerbs !== [] && !in_array($request->method, $route->HTTPVerbs, true)) {
             return new Response('<h1>404</h1>', 404);
+        }
+
+        // Type arguments and add $request
+
+        $methodParameters = [];
+        foreach ($siteMapEntry->method->getParameters() as $parameter) {
+            $type = $parameter->getType()?->getName();
+            $parameterName = $parameter->getName();
+            if ($type === Request::class) {
+                $methodParameters[$parameterName] = $request;
+
+                continue;
+            }
+
+            if (array_key_exists($parameterName, $dynamicParameters)) {
+                $methodParameters[$parameterName] = match ($type) {
+                    'int' => (int) $dynamicParameters[$parameterName],
+                    'float' => (float) $dynamicParameters[$parameterName],
+                    'bool' => (bool) $dynamicParameters[$parameterName],
+                    default => $dynamicParameters[$parameterName],
+                };
+            }
         }
 
         // Run middleware
@@ -139,14 +158,13 @@ final class RoutingService
         // Create and cache the controller instance
 
         if (!array_key_exists($request->path, $this->cachedControllers)) {
-            // $this->cachedControllers[$request->path] = new $siteMapEntry->method->class();
             $this->cachedControllers[$request->path] = Container::getInstance()->get($siteMapEntry->class->name);
         }
         $controller = $this->cachedControllers[$request->path];
 
         // Send request
 
-        $response = $siteMapEntry->method->invoke($controller, ...$routeArguments); // TODO: Add request back sometimes using reflection
+        $response = $siteMapEntry->method->invoke($controller, ...$methodParameters);
         if (!$response instanceof Response) {
             throw new \LogicException("Controller method '{$siteMapEntry->method->name}' must return a Response");
         }
