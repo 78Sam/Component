@@ -6,6 +6,7 @@ namespace Core\Database\Services;
 
 use Core\Components\Models\Component;
 use Core\Database\Exceptions\NoConnectionException;
+use Core\Database\Exceptions\NoModelConstructorException;
 
 class DatabaseService
 {
@@ -83,10 +84,43 @@ class DatabaseService
         $this->connection->commit();
     }
 
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function getArrayResult(\PDOStatement $statement): array
+    {
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @template T
+     *
+     * @param class-string<T> $model
+     *
+     * @return list<T>
+     */
+    public function getResult(\PDOStatement $statement, string $model): array
+    {
+        // There is really no hand holding here, no checking of args or constructors, let it fail through
+
+        $rows = $this->getArrayResult($statement);
+        if ($rows === []) {
+            return [];
+        }
+
+        $reflectionModel = new \ReflectionClass($model);
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[] = $reflectionModel->newInstance(...$row);
+        }
+
+        return $result;
+    }
+
     private function runQuery(string $queryString, array $values): ?\PDOStatement
     {
         error_log($queryString);
-
         $statement = $this->connection->prepare($queryString);
         if ($statement === false) {
             return null;

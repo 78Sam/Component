@@ -22,18 +22,17 @@ class AuthService
 
     public static function isAuthenticated(): bool
     {
-        return ($_SESSION['username'] ?? null) !== null;
+        return ($_SESSION['user'] ?? null) !== null;
     }
 
     public static function getUser(): ?User
     {
-        $username = $_SESSION['username'] ?? null;
-        if ($username !== null) {
+        $user = $_SESSION['user'] ?? null;
+        if ($user !== null) {
             return null;
         }
 
-        // return new User($username);
-        return null;
+        return unserialize($user);
     }
 
     public function register(Request $request): ?User
@@ -63,9 +62,10 @@ class AuthService
             return null;
         }
 
-        $_SESSION['username'] = $username;
+        $user = new User($username, $joined, $role);
+        $_SESSION['user'] = serialize($user);
 
-        return new User($username, $joined, $role);
+        return $user;
     }
 
     public function login(Request $request): ?User
@@ -83,26 +83,28 @@ class AuthService
             ->fill('username', $username)
         ;
 
-        $result = $this->databaseService->query($getUserComponent);
-        if ($result === null) {
+        $statement = $this->databaseService->query($getUserComponent);
+        if ($statement === null) {
             return null;
         }
 
-        $dbUser = $result->fetchAll(\PDO::FETCH_ASSOC);
-        if (count($dbUser) !== 1) {
+        $dbUsers = $this->databaseService->getArrayResult($statement);
+        if (count($dbUsers) !== 1) {
+            return null;
+        }
+        $dbUser = $dbUsers[0];
+
+        if (!password_verify($password, $dbUser['password'])) {
             return null;
         }
 
-        if (!password_verify($password, $dbUser[0]['password'])) {
-            return null;
-        }
+        $joined = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dbUser['joined']);
+        $role = $dbUser['role'];
 
-        $joined = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dbUser[0]['joined']);
-        $role = $dbUser[0]['role'];
+        $user = new User($username, $joined, $role);
+        $_SESSION['user'] = serialize($user);
 
-        $_SESSION['username'] = $username;
-
-        return new User($username, $joined, $role);
+        return $user;
     }
 
     /**

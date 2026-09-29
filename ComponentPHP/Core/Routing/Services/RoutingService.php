@@ -21,9 +21,6 @@ use Core\Utility\Validators\Types\StringValidator;
 final class RoutingService
 {
     /** @var array<string, SiteMapEntry> */
-    public array $siteMapEntries = [];
-
-    /** @var array<string, SiteMapEntry> */
     public array $staticSiteMapEntries = [];
 
     /** @var array<string, SiteMapEntry> */
@@ -199,7 +196,7 @@ final class RoutingService
         );
 
         foreach ($middlewareAttributes as $methodMiddlewareAttribute) {
-            $methodMiddlewareAttributeInstance = $methodMiddlewareAttribute->newInstance();
+            $methodMiddlewareAttributeInstance = Container::getInstance()->get($methodMiddlewareAttribute->name);
             $middlewareResult = $methodMiddlewareAttributeInstance->apply($request);
             if ($middlewareResult !== null) {
                 return $middlewareResult;
@@ -229,8 +226,12 @@ final class RoutingService
                 $routeAttribute = $routeAttributes[0]->newInstance();
                 $routes = $routeAttribute->routes;
                 foreach ($routes as $route) {
-                    if (array_key_exists($route, $this->siteMapEntries)) {
-                        throw new \LogicException("Route already registered '{$route}'");
+                    if (array_key_exists($route, $this->staticSiteMapEntries)) {
+                        throw new \LogicException("Static route already registered '{$route}'");
+                    }
+
+                    if (array_key_exists($route, $this->dynamicSiteMapEntries)) {
+                        throw new \LogicException("Dynamic route already registered '{$route}'");
                     }
 
                     $routeSegments = $this->parseSegments($route);
@@ -252,8 +253,6 @@ final class RoutingService
                     }
 
                     $this->dynamicSiteMapEntries['\/' . implode('\/', $routeSegments)] = $siteMapEntry;
-
-                    // $this->siteMapEntries[$route] = new SiteMapEntry($routeAttribute, $controller, $method, []);
                 }
             }
         }

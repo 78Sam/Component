@@ -10,7 +10,7 @@ use Core\Database\Services\DatabaseService;
 use Core\Kernel;
 use Core\Utility\Services\PathService;
 
-final class Config extends AbstractConfig
+final class DatabaseConfig extends AbstractConfig
 {
     public function __construct(
         public readonly DatabaseService $databaseService,
