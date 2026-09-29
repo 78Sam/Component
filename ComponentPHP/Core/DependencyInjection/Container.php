@@ -4,9 +4,22 @@ declare(strict_types=1);
 
 namespace Core\DependencyInjection;
 
+use Core\DependencyInjection\Exceptions\InfiniteRecursionException;
+
 class Container
 {
-    // TODO: Infinite recursion, clear state between requests (maybe implements DI cache interface to keep warm?)
+    // TODO: Clear state between requests (maybe implements DI cache interface to keep warm?)
+    // TODO: Instead of clearing everything, could we save like a schema of how to build a container for fast build each request after the first without leaking state?
+
+    public const array NATIVE_TYPES = [
+        'int',
+        'bool',
+        'string',
+        'float',
+        'array',
+        'object',
+        'mixed',
+    ];
 
     public array $classes = [];
 
@@ -35,8 +48,13 @@ class Container
         return $object;
     }
 
-    private function buildDI(string $classname): object
+    private function buildDI(string $classname, array $walked = []): object
     {
+        if (array_key_exists($classname, $walked)) {
+            throw new InfiniteRecursionException($classname);
+        }
+        $walked[$classname] = true;
+
         $reflectionClass = new \ReflectionClass($classname);
         $constructor = $reflectionClass->getConstructor();
 
@@ -62,7 +80,7 @@ class Container
         $vals = [];
         foreach ($constructor->getParameters() as $parameter) {
             $type = $parameter->getType()->getName();
-            if (in_array($type, ['int', 'bool', 'string', 'float', 'array', 'object', 'mixed'])) {
+            if (in_array($type, self::NATIVE_TYPES, true)) {
                 if (!$parameter->isOptional()) {
                     throw new \Exception("Cannot build DI due to required arguments of type '{$type}'");
                 }
@@ -70,7 +88,7 @@ class Container
             }
 
             if (!array_key_exists($type, $this->classes)) {
-                $this->classes[$type] = $this->buildDI($type);
+                $this->classes[$type] = $this->buildDI($type, $walked);
             }
 
             $vals[$parameter->getName()] = $this->classes[$type];

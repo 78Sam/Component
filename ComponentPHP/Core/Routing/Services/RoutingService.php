@@ -129,12 +129,20 @@ final class RoutingService
         $methodParameters = [];
         foreach ($siteMapEntry->method->getParameters() as $parameter) {
             $type = $parameter->getType()?->getName();
+            if ($type === null) {
+                continue;
+            }
+
+            // Request
+
             $parameterName = $parameter->getName();
             if ($type === Request::class) {
                 $methodParameters[$parameterName] = $request;
 
                 continue;
             }
+
+            // Dynamic route parameters
 
             if (array_key_exists($parameterName, $dynamicParameters)) {
                 $methodParameters[$parameterName] = match ($type) {
@@ -143,6 +151,14 @@ final class RoutingService
                     'bool' => (bool) $dynamicParameters[$parameterName],
                     default => $dynamicParameters[$parameterName],
                 };
+
+                continue;
+            }
+
+            // DI Container
+
+            if (!in_array($type, Container::NATIVE_TYPES, true)) {
+                $methodParameters[$parameterName] = Container::getInstance()->get($type);
             }
         }
 
