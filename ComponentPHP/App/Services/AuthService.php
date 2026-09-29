@@ -18,10 +18,6 @@ class AuthService
         private readonly UserTemplate $userTemplate,
         private readonly DatabaseService $databaseService,
     ) {
-        $this->userTemplate->loadFile('App/SQL/users.sql');
-
-        $path = relativeToAbsolutePath('App/SQL/main.db');
-        $this->databaseService->connect("sqlite:{$path}");
     }
 
     public static function isAuthenticated(): bool
@@ -36,7 +32,8 @@ class AuthService
             return null;
         }
 
-        return new User($username);
+        // return new User($username);
+        return null;
     }
 
     public function register(Request $request): ?User
@@ -48,11 +45,17 @@ class AuthService
 
         $username = $registrationDetails['username'];
         $password = $registrationDetails['password'];
+        $joined = new \DateTimeImmutable('now');
+        $role = 0;
 
         $getUserComponent = $this->userTemplate
             ->get('create_user')
-            ->fill('username', $username)
-            ->fill('password', password_hash($password, PASSWORD_DEFAULT))
+            ->fillAll([
+                'username' => $username,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'joined' => $joined->format('Y-m-d H:i:s'),
+                'role' => (string) $role,
+            ])
         ;
 
         $result = $this->databaseService->query($getUserComponent);
@@ -62,7 +65,7 @@ class AuthService
 
         $_SESSION['username'] = $username;
 
-        return new User($username);
+        return new User($username, $joined, $role);
     }
 
     public function login(Request $request): ?User
@@ -94,9 +97,12 @@ class AuthService
             return null;
         }
 
+        $joined = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dbUser[0]['joined']);
+        $role = $dbUser[0]['role'];
+
         $_SESSION['username'] = $username;
 
-        return new User($username);
+        return new User($username, $joined, $role);
     }
 
     /**

@@ -3,5 +3,5 @@ SELECT * FROM Users WHERE username = !@($username);
 !@(end)
 
 !@(component|create_user)
-INSERT INTO Users (username, password) VALUES (!@($username), !@($password));
+INSERT INTO Users (username, password, joined, role) VALUES (!@($username), !@($password), !@($joined), !@($role));
 !@(end)

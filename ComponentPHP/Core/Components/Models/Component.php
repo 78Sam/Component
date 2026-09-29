@@ -41,4 +41,17 @@ class Component
 
         return $this;
     }
+
+    /**
+     * @param array<string, string|Component> $values
+     */
+    public function fillAll(array $values): self
+    {
+        foreach ($values as $name => $value)
+        {
+            $this->fill($name, $value);
+        }
+
+        return $this;
+    }
 }

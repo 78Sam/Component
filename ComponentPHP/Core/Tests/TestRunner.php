@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Core\Tests;
 
 use Core\Tests\Attributes\Test;
-use Core\Utility\ClassFinder;
 use Core\Utility\Console;
+use Core\Utility\Services\ClassFinderService;
 
 final class TestRunner
 {
     public function __construct(
-        public readonly ClassFinder $classFinder = new ClassFinder(),
+        public readonly ClassFinderService $classFinder = new ClassFinderService(),
     ) {}
 
     public function runAllTests(): void

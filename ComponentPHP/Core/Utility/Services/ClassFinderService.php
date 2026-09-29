@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Core\Utility;
+namespace Core\Utility\Services;
 
-// TODO: Move to services
-
-class ClassFinder
+final class ClassFinderService
 {
     public function __construct(
         public bool $recursive = true,

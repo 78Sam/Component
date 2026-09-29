@@ -16,7 +16,9 @@ abstract class AbstractTemplate
 
     public function __construct(
         public readonly ComponentService $componentService,
-    ) {}
+    ) {
+        $this->loadFiles();
+    }
 
     public function loadFile(string $path, bool $absolutePath = false): self
     {
@@ -42,4 +44,6 @@ abstract class AbstractTemplate
 
         return $component === null ? null : clone $component;
     }
+    
+    protected function loadFiles(): void {}
 }

@@ -85,6 +85,8 @@ class DatabaseService
 
     private function runQuery(string $queryString, array $values): ?\PDOStatement
     {
+        error_log($queryString);
+
         $statement = $this->connection->prepare($queryString);
         if ($statement === false) {
             return null;

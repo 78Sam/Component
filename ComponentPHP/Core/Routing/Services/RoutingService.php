@@ -12,7 +12,7 @@ use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
 use Core\Routing\Models\RouteSegment;
 use Core\Routing\Models\SiteMapEntry;
-use Core\Utility\ClassFinder;
+use Core\Utility\Services\ClassFinderService;
 use Core\Utility\Validators\Exceptions\ValidationException;
 use Core\Utility\Validators\Services\ValidatorService;
 use Core\Utility\Validators\Types\IntOrStringIntValidator;
@@ -20,8 +20,6 @@ use Core\Utility\Validators\Types\StringValidator;
 
 final class RoutingService
 {
-    private ClassFinder $classFinder;
-
     /** @var array<string, SiteMapEntry> */
     public array $siteMapEntries = [];
 
@@ -34,9 +32,10 @@ final class RoutingService
     /** @var array<string, AbstractController> */
     public array $cachedControllers = [];
 
-    public function __construct()
+    public function __construct(
+        public readonly ClassFinderService $classFinderService,
+    )
     {
-        $this->classFinder = new ClassFinder();
         $this->createSiteMap();
     }
 
@@ -212,7 +211,7 @@ final class RoutingService
 
     private function createSiteMap(): void
     {
-        $controllers = $this->classFinder->byExtension('App/Controllers', AbstractController::class);
+        $controllers = $this->classFinderService->byExtension('App/Controllers', AbstractController::class);
         foreach ($controllers as $controller) {
             foreach ($controller->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
                 $routeAttributes = $method->getAttributes(Route::class);
