@@ -44,6 +44,6 @@ abstract class AbstractTemplate
 
         return $component === null ? null : clone $component;
     }
-    
+
     protected function loadFiles(): void {}
 }

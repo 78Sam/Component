@@ -47,8 +47,7 @@ class Component
      */
     public function fillAll(array $values): self
     {
-        foreach ($values as $name => $value)
-        {
+        foreach ($values as $name => $value) {
             $this->fill($name, $value);
         }
 

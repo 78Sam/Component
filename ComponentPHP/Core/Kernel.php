@@ -61,8 +61,7 @@ class Kernel
             }
             http_response_code($response->responseCode);
             echo $response->content;
-        }
-        catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             $exception = $th;
         }
 

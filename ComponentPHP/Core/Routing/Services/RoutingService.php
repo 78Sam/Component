@@ -31,8 +31,7 @@ final class RoutingService
 
     public function __construct(
         public readonly ClassFinderService $classFinderService,
-    )
-    {
+    ) {
         $this->createSiteMap();
     }
 
