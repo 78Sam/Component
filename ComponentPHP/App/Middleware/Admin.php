@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Models\User;
-use App\Services\UserService;
+use App\Services\AuthService;
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
@@ -14,14 +14,14 @@ use Core\Routing\Models\Responses\Response;
 final class Admin implements MiddlewareAttributeInterface
 {
     public function __construct(
-        public readonly UserService $userService,
+        public readonly AuthService $authService,
     ) {
     }
 
     #[\Override]
     public function apply(Request $request): ?Response
     {
-        if ($this->userService->getUser()?->role === User::ROLE_ADMIN) {
+        if ($this->authService->getUser()?->role === User::ROLE_ADMIN) {
             return null;
         }
 

@@ -13,5 +13,6 @@ class RootTemplate extends AbstractTemplate
     protected function loadFiles(): void
     {
         $this->loadFile(PathService::fromProjectDirectory('App', 'Components', 'HTML', 'app.html'), true);
+        $this->loadFile(PathService::fromProjectDirectory('App', 'Components', 'HTML', 'upload.html'), true);
     }
 }

@@ -22,13 +22,13 @@ class AuthService
 
     public static function isAuthenticated(): bool
     {
-        return ($_SESSION['user'] ?? null) !== null;
+        return static::getUser() !== null;
     }
 
     public static function getUser(): ?User
     {
         $user = $_SESSION['user'] ?? null;
-        if ($user !== null) {
+        if ($user === null) {
             return null;
         }
 

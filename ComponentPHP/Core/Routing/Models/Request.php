@@ -6,6 +6,11 @@ namespace Core\Routing\Models;
 
 final readonly class Request
 {
+    public const string METHOD_GET = 'GET';
+    public const string METHOD_POST = 'POST';
+    public const string METHOD_PUT = 'PUT';
+    public const string METHOD_PATCH = 'PATCH';
+
     public function __construct(
         public string $host,
         public string $scheme,
