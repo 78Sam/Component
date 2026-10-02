@@ -13,6 +13,7 @@ use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
+use Core\Utility\Services\PathService;
 
 #[Auth]
 final class HomeController extends AbstractController
@@ -37,6 +38,16 @@ final class HomeController extends AbstractController
     {
         if ($request->method === Request::METHOD_POST) {
             dump($request);
+            $out = [];
+
+            $file = $request->files['file'];
+
+            dump($file);
+
+            move_uploaded_file(
+                $file['tmp_name'],
+                PathService::fromProjectDirectory('Public', 'Assets', $file['name']),
+            );
         }
 
         $form = $this->rootTemplate
