@@ -96,10 +96,11 @@ class DatabaseService
      * @template T
      *
      * @param class-string<T> $model
+     * @param \Closure(array<string, mixed> $row): array<string, mixed> $normaliser
      *
      * @return list<T>
      */
-    public function getResult(\PDOStatement $statement, string $model): array
+    public function getResult(\PDOStatement $statement, string $model, $normaliser = null): array
     {
         // There is really no hand holding here, no checking of args or constructors, let it fail through
 
@@ -112,10 +113,45 @@ class DatabaseService
 
         $result = [];
         foreach ($rows as $row) {
+            if ($normaliser !== null) {
+                $row = $normaliser($row);
+            }
+            dump($row);
             $result[] = $reflectionModel->newInstance(...$row);
         }
 
         return $result;
+    }
+
+    /**
+     * @template T
+     *
+     * @param class-string<T> $model
+     * @param \Closure(array<string, mixed> $row): array<string, mixed> $normaliser
+     *
+     * @return ?T
+     */
+    public function getOneOrNullResult(\PDOStatement $statement, string $model, $normaliser = null): ?object
+    {
+        $results = $this->getResult($statement, $model, $normaliser);
+        if (count($results) !== 1) {
+            return null;
+        }
+
+        return $results[0];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getOneOrNullArrayResult(\PDOStatement $statement): ?array
+    {
+        $arrayResults = $this->getArrayResult($statement);
+        if (count($arrayResults) !== 1) {
+            return null;
+        }
+
+        return $arrayResults[0];
     }
 
     private function runQuery(string $queryString, array $values): ?\PDOStatement

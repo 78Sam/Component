@@ -17,5 +17,7 @@ CREATE TABLE Songs (
     artist INTEGER NOT NULL REFERENCES Artists (id) ON UPDATE CASCADE ON DELETE CASCADE,
     added_by INTEGER NOT NULL REFERENCES Users (id) ON UPDATE CASCADE ON DELETE CASCADE,
     added_at TEXT NOT NULL,
-    duration TEXT NOT NULL
+    duration TEXT NOT NULL,
+    lookup_key TEXT NOT NULL
+    -- TODO: Add an index across title artist
 );

@@ -37,17 +37,7 @@ final class HomeController extends AbstractController
     public function upload(Request $request): Response
     {
         if ($request->method === Request::METHOD_POST) {
-            dump($request);
-            $out = [];
-
-            $file = $request->files['file'];
-
-            dump($file);
-
-            move_uploaded_file(
-                $file['tmp_name'],
-                PathService::fromProjectDirectory('Public', 'Assets', $file['name']),
-            );
+            $this->musicService->uploadSong($request);
         }
 
         $form = $this->rootTemplate

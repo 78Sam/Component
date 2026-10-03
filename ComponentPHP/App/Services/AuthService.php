@@ -47,22 +47,22 @@ class AuthService
         $joined = new \DateTimeImmutable('now');
         $role = 0;
 
-        $getUserComponent = $this->userTemplate
+        $createUserComponent = $this->userTemplate
             ->get('create_user')
             ->fillAll([
                 'username' => $username,
                 'password' => password_hash($password, PASSWORD_DEFAULT),
-                'joined' => $joined->format('Y-m-d H:i:s'),
+                'joined' => DateTimeService::toString($joined),
                 'role' => (string) $role,
             ])
         ;
 
-        $result = $this->databaseService->query($getUserComponent);
+        $result = $this->databaseService->query($createUserComponent);
         if ($result === null) {
             return null;
         }
 
-        $user = new User($username, $joined, $role);
+        $user = new User(-1, $username, $joined, $role); // TODO: Proper id
         $_SESSION['user'] = serialize($user);
 
         return $user;
@@ -79,7 +79,7 @@ class AuthService
         $password = $loginDetails['password'];
 
         $getUserComponent = $this->userTemplate
-            ->get('get_user_by_username')
+            ->get('get_login_user_by_username')
             ->fill('username', $username)
         ;
 
@@ -88,20 +88,20 @@ class AuthService
             return null;
         }
 
-        $dbUsers = $this->databaseService->getArrayResult($statement);
-        if (count($dbUsers) !== 1) {
+        $dbUser = $this->databaseService->getOneOrNullArrayResult($statement);
+        if ($dbUser === null) {
             return null;
         }
-        $dbUser = $dbUsers[0];
 
         if (!password_verify($password, $dbUser['password'])) {
             return null;
         }
 
-        $joined = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dbUser['joined']);
+        $id = $dbUser['id'];
+        $joined = DateTimeService::fromString($dbUser['joined']);
         $role = $dbUser['role'];
 
-        $user = new User($username, $joined, $role);
+        $user = new User($id, $username, $joined, $role);
         $_SESSION['user'] = serialize($user);
 
         return $user;

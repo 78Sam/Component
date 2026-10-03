@@ -27,7 +27,7 @@ final class DatabaseConfig extends AbstractConfig
         $this->databaseService->connect("sqlite:{$databasePath}");
         if (!$databaseExists) {
             $schema = file_get_contents(PathService::fromProjectDirectory('App', 'Database', 'schema.sql'));
-            $this->databaseService->queryString($schema);
+            $this->databaseService->connection->exec($schema);
 
             $createUserComponent = $this->userTemplate
                 ->get('create_user')
