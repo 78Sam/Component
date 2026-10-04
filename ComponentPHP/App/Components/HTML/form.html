@@ -1,0 +1,21 @@
+!@(component|form)
+<form action="!@($route)" method="!@($method)" style="box-sizing: border-box; padding: 50px;">
+    <h1 class="mb-3">!@($title)</h1>
+    !@($rows)
+    <input type="submit" class="btn btn-primary mb-3" value="!@($submit)">
+    !@($lower_text)
+</form>
+!@(end)
+
+!@(component|form_row)
+<div class="mb-3">
+    <label class="form-label" for="!@($field)">!@($label)</label>
+    <input class="form-control" type="!@($type)" name="!@($field)" placeholder="!@($field)" !@($properties)>
+</div>
+!@(end)
+
+!@(component|lower_text)
+<div class="form-text">
+    !@($text)
+</div>
+!@(end)

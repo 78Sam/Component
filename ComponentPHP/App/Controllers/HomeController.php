@@ -8,12 +8,11 @@ use App\Middleware\Admin;
 use App\Middleware\Auth;
 use App\Services\AuthService;
 use App\Services\MusicService;
+use App\Templates\HTML\MusicTemplate;
 use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
-use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
-use Core\Utility\Services\PathService;
 
 #[Auth]
 final class HomeController extends AbstractController
@@ -21,6 +20,7 @@ final class HomeController extends AbstractController
     public function __construct(
         public readonly AuthService $authService,
         public readonly RootTemplate $rootTemplate,
+        public readonly MusicTemplate $musicTemplate,
         public readonly MusicService $musicService,
     ) {
     }
@@ -28,24 +28,12 @@ final class HomeController extends AbstractController
     #[Route(['/'], 'app_home')]
     public function index(): Response
     {
-        dump($this->authService->getUser());
-
-        return new Response('Hi!');
-    }
-
-    #[Route(['/upload'], 'app_upload')]
-    public function upload(Request $request): Response
-    {
-        if ($request->method === Request::METHOD_POST) {
-            $this->musicService->uploadSong($request);
-        }
-
-        $form = $this->rootTemplate
+        $component = $this->rootTemplate
             ->get('app')
-            ->fill('body', $this->rootTemplate->get('upload_form'))
+            ->fill('body', $this->rootTemplate->get('nav_bar'))
         ;
 
-        return new Response($form);
+        return new Response($component);
     }
 
     #[Admin]

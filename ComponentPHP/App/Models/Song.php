@@ -10,10 +10,10 @@ final readonly class Song
         public int $id,
         public string $title,
         public string $artist,
-        public User $added_by,
-        public \DateTimeImmutable $added_at,
+        public User $addedBy,
+        public \DateTimeImmutable $addedAt,
         public int $duration,
-        public string $md5,
+        public string $lookup_key,
     ) {
     }
 }

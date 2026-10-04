@@ -276,7 +276,7 @@ final class RoutingService
             }
 
             if (preg_match(RouteSegment::PATTERN_PATTERN, $routeSegment, $matches) === 1) {
-                $segments[] = new RouteSegment($matches['pattern'] ?? '[^/]+', $matches['variable'], true);
+                $segments[] = new RouteSegment($matches['pattern'] ?? '.+', $matches['variable'], true);
 
                 continue;
             }

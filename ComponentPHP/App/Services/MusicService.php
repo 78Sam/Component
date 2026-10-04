@@ -9,12 +9,12 @@ use App\Models\User;
 use App\Templates\SQL\MusicTemplate;
 use Core\Database\Services\DatabaseService;
 use Core\Routing\Models\Request;
+use Core\Routing\Models\Responses\Response;
 use Core\Utility\Services\PathService;
 use Core\Utility\Validators\Exceptions\ValidationException;
 use Core\Utility\Validators\Services\ValidatorService;
 use Core\Utility\Validators\Types\IntOrStringIntValidator;
 use Core\Utility\Validators\Types\StringValidator;
-use DateTimeImmutable;
 
 final class MusicService
 {
@@ -68,7 +68,7 @@ final class MusicService
             return null;
         }
 
-        $existingSong = $this->getSong($title, $artist);
+        $existingSong = $this->getSongByTitleAndArtist($title, $artist);
         if ($existingSong !== null) {
             return null;
         }
@@ -80,9 +80,9 @@ final class MusicService
             ->fillAll([
                 'title' => $title,
                 'artist' => $artist,
-                'added_by' => (string) $this->authService->getUser()->id,
+                'added_by' => $this->authService->getUser()->id,
                 'added_at' => DateTimeService::stringNow(),
-                'duration' => "{$minutes}:{$seconds}",
+                'duration' => self::durationToString($minutes, $seconds),
                 'lookup_key' => $lookupKey,
             ])
         ;
@@ -93,47 +93,90 @@ final class MusicService
             PathService::fromProjectDirectory('Public', 'Assets', $lookupKey),
         );
 
-        return $this->getSong($title, $artist);
+        return $this->getSongByTitleAndArtist($title, $artist);
     }
 
-    public function getSong(string $title, string $artist): ?Song
+    public function getSongByTitleAndArtist(string $title, string $artist): ?Song
     {
         $findSongComponent = $this->musicTemplate
             ->get('get_song_by_title_artist')
             ->fill('title', $title, true)
             ->fill('artist', $artist, true)
         ;
-
         $statement = $this->databaseService->query($findSongComponent);
 
-        $song = $this->databaseService->getOneOrNullResult($statement, Song::class, function(array $row): array {
-            $row['user'] = $this->userService->getUserById($row['id']);
-            $row['added_at'] = DateTimeService::fromString($row['added_at']);
+        return $this->databaseService->getOneOrNullResult($statement, Song::class, $this->formatDatabaseRow(...));
+    }
 
-            [$minutes, $seconds] = explode(':', $row['duration']);
-            $row['duration'] = (((int) $minutes) * 60) + (int) $seconds;
+    public function getSongById(int $id): ?Song
+    {
+        $getAllSongsComponent = $this->musicTemplate
+            ->get('get_song_by_id')
+            ->fill('id', $id)
+        ;
+        $statement = $this->databaseService->query($getAllSongsComponent);
 
-            return $row;
-        });
+        return $this->databaseService->getOneOrNullResult($statement, Song::class, $this->formatDatabaseRow(...));
+    }
 
-        return $song;
+    /**
+     * @return list<Song>
+     */
+    public function getAllSongs(): array
+    {
+        $getAllSongsComponent = $this->musicTemplate
+            ->get('get_all_songs')
+        ;
+        $statement = $this->databaseService->query($getAllSongsComponent);
 
-        $song = $this->databaseService->getOneOrNullArrayResult($statement);
+        return $this->databaseService->getResult($statement, Song::class, $this->formatDatabaseRow(...));
+    }
+
+    public function deleteSongById(int $id): Response
+    {
+        $song = $this->getSongById($id);
         if ($song === null) {
-            return null;
+            return new Response('Failed to delete song as it could not be found', responseCode: 500);
         }
 
-        [$minutes, $seconds] = explode(':', $song['duration']);
-        $duration = (((int) $minutes) * 60) + (int) $seconds;
+        $currentUser = $this->authService->getUser();
+        if ($song->addedBy->id !== $currentUser->id) {
+            return new Response('You cannot delete this song', responseCode: 403);
+        }
 
-        return new Song(
-            $song['id'],
-            $song['title'],
-            $song['artist'],
-            $this->userService->getUserById($song['userId']), // TODO: Could just build the user but this is easier
-            DateTimeService::fromString($song['added_at']),
-            $duration,
-            $song['lookup_key'],
+        $deleteComponent = $this->musicTemplate
+            ->get('delete_song_by_id')
+            ->fill('id', $song->id)
+        ;
+        $this->databaseService->query($deleteComponent);
+
+        return new Response("Successfully deleted song {$song->title} by {$song->artist}");
+    }
+
+    private static function durationToString(int $minutes, int $seconds): string
+    {
+        return "{$minutes}:{$seconds}";
+    }
+
+    private static function durationFromString(string $duration): int
+    {
+        [$minutes, $seconds] = explode(':', $duration);
+
+        return (((int) $minutes) * 60) + (int) $seconds;
+    }
+
+    private function formatDatabaseRow(array $row): array
+    {
+        $row['addedBy'] = new User(
+            $row['user_id'],
+            $row['username'],
+            DateTimeService::fromString($row['joined']),
+            $row['role'],
         );
+
+        $row['addedAt'] = DateTimeService::fromString($row['added_at']);
+        $row['duration'] = self::durationFromString($row['duration']);
+
+        return $row;
     }
 }

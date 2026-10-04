@@ -6,7 +6,6 @@ namespace Core\Database\Services;
 
 use Core\Components\Models\Component;
 use Core\Database\Exceptions\NoConnectionException;
-use Core\Database\Exceptions\NoModelConstructorException;
 
 class DatabaseService
 {
@@ -110,13 +109,23 @@ class DatabaseService
         }
 
         $reflectionModel = new \ReflectionClass($model);
+        $reflectionConstructorArguments = $reflectionModel->getConstructor()?->getParameters() ?? [];
+
+        $constructorArguments = [];
+        foreach ($reflectionConstructorArguments as $argument) {
+            $constructorArguments[$argument->name] = true;
+        }
 
         $result = [];
         foreach ($rows as $row) {
             if ($normaliser !== null) {
                 $row = $normaliser($row);
             }
-            dump($row);
+            foreach ($row as $key => $_) {
+                if (!array_key_exists($key, $constructorArguments)) {
+                    unset($row[$key]);
+                }
+            }
             $result[] = $reflectionModel->newInstance(...$row);
         }
 
@@ -134,11 +143,8 @@ class DatabaseService
     public function getOneOrNullResult(\PDOStatement $statement, string $model, $normaliser = null): ?object
     {
         $results = $this->getResult($statement, $model, $normaliser);
-        if (count($results) !== 1) {
-            return null;
-        }
 
-        return $results[0];
+        return count($results) !== 1 ? null : $results[0];
     }
 
     /**
@@ -147,11 +153,8 @@ class DatabaseService
     public function getOneOrNullArrayResult(\PDOStatement $statement): ?array
     {
         $arrayResults = $this->getArrayResult($statement);
-        if (count($arrayResults) !== 1) {
-            return null;
-        }
 
-        return $arrayResults[0];
+        return count($arrayResults) !== 1 ? null : $arrayResults[0];
     }
 
     private function runQuery(string $queryString, array $values): ?\PDOStatement

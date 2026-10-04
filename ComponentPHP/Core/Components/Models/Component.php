@@ -26,8 +26,12 @@ class Component
         return $this->__toString();
     }
 
-    public function fill(string $name, string|Component $value, bool $raw = false): self
+    public function fill(string $name, int|string|Component $value, bool $raw = false): self
     {
+        if (is_int($value)) {
+            $value = "{$value}";
+        }
+
         if (!array_key_exists($name, $this->variableMap)) {
             $options = implode(',', array_keys($this->variableMap));
 
@@ -43,12 +47,12 @@ class Component
     }
 
     /**
-     * @param array<string, string|Component> $values
+     * @param array<string, int|string|Component> $values
      */
-    public function fillAll(array $values): self
+    public function fillAll(array $values, bool $raw = false): self
     {
         foreach ($values as $name => $value) {
-            $this->fill($name, $value);
+            $this->fill($name, $value, $raw);
         }
 
         return $this;

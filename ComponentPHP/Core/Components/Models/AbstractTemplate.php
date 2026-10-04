@@ -45,5 +45,43 @@ abstract class AbstractTemplate
         return $component === null ? null : clone $component;
     }
 
+    /**
+     * @param list<array<string, int|string|Component>> $values
+     * 
+     * @return list<Component>
+     */
+    public function stack(string $component, array $values, bool $raw = false): array
+    {
+        $components = [];
+        foreach ($values as $value) {
+            $components[] = $this->get($component)->fillAll($value, $raw);
+        }
+
+        return $components;
+    }
+
+    /**
+     * @param list<string|Component> $items
+     */
+    public function collect(array $items, string $separator = ''): Component
+    {
+        $sockets = [];
+        for ($chunk = 0; $chunk < \count($items); $chunk++) {
+            $sockets["_chunk_{$chunk}"] = $items[$chunk];
+            $sockets['_chunk_' . ($chunk + 1)] = $separator;
+        }
+        array_pop($sockets);
+
+        return new Component('', $sockets, []);
+    }
+
+    /**
+     * @param list<array<string, int|string|Component>> $values
+     */
+    public function quickCollect(string $component, array $values, string $separator = '', bool $raw = false): Component
+    {
+        return $this->collect($this->stack($component, $values, $raw), $separator);
+    }
+
     protected function loadFiles(): void {}
 }
