@@ -27,7 +27,8 @@ final class MusicService
     }
 
     public function uploadSong(Request $request): ?Song
-    {       
+    {
+        dump($request);
         $file = $request->files['file'];
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $temporaryPath = $file['tmp_name'];
@@ -90,7 +91,7 @@ final class MusicService
 
         move_uploaded_file(
             $file['tmp_name'],
-            PathService::fromProjectDirectory('Public', 'Assets', $lookupKey),
+            PathService::fromProjectDirectory('Public', 'Assets', 'Music', $lookupKey),
         );
 
         return $this->getSongByTitleAndArtist($title, $artist);

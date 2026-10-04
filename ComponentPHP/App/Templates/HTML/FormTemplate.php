@@ -83,7 +83,7 @@ final class FormTemplate extends AbstractTemplate
                 'field_2' => 'seconds',
                 'type_2' => 'number',
                 'properties_2' => 'min="0" step="1" required',
-            ])
+            ], true)
         ;
 
         $rows[] = $this
@@ -99,13 +99,13 @@ final class FormTemplate extends AbstractTemplate
         return $this
             ->get('form')
             ->fillAll([
-                'route' => '/upload',
+                'route' => '/songs/upload',
                 'method' => 'POST',
                 'title' => 'Upload',
                 'submit' => 'Upload',
                 'properties' => 'enctype="multipart/form-data"',
                 'rows' => $this->collect($rows),
-            ])
+            ], true)
         ;
     }
 
