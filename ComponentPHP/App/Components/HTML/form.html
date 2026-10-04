@@ -1,5 +1,5 @@
 !@(component|form)
-<form action="!@($route)" method="!@($method)" style="box-sizing: border-box; padding: 50px;">
+<form action="!@($route)" method="!@($method)" !@($properties)>
     <h1 class="mb-3">!@($title)</h1>
     !@($rows)
     <input type="submit" class="btn btn-primary mb-3" value="!@($submit)">
@@ -11,6 +11,16 @@
 <div class="mb-3">
     <label class="form-label" for="!@($field)">!@($label)</label>
     <input class="form-control" type="!@($type)" name="!@($field)" placeholder="!@($field)" !@($properties)>
+</div>
+!@(end)
+
+!@(component|dual_form_row)
+<div class="mb-3">
+    <label class="form-label" for="!@($field_1)">!@($label)</label>
+    <div class="d-flex">
+        <input class="form-control me-3" type="!@($type_1)" name="!@($field_1)" placeholder="!@($field_1)" !@($properties_1)>
+        <input class="form-control" type="!@($type_2)" name="!@($field_2)" placeholder="!@($field_2)" !@($properties_2)>
+    </div>
 </div>
 !@(end)
 

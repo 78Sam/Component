@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Services\AuthService;
 use App\Templates\HTML\FormTemplate;
+use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Models\Responses\RedirectResponse;
@@ -17,6 +18,7 @@ class AuthController extends AbstractController
 {
     public function __construct(
         private readonly AuthService $authService,
+        private readonly RootTemplate $rootTemplate,
         private readonly FormTemplate $formTemplate,
     ) {
     }
@@ -31,7 +33,12 @@ class AuthController extends AbstractController
             }
         }
 
-        return new Response($this->formTemplate->getLoginForm());
+        $comp = $this->rootTemplate
+            ->get('app')
+            ->fill('body', $this->formTemplate->getLoginForm())
+        ;
+
+        return new Response($comp);
     }
 
     #[Route(['/register'], 'app_register')]
@@ -44,7 +51,12 @@ class AuthController extends AbstractController
             }
         }
 
-        return new Response($this->formTemplate->getRegisterForm());
+        $comp = $this->rootTemplate
+            ->get('app')
+            ->fill('body', $this->formTemplate->getRegisterForm())
+        ;
+
+        return new Response($comp);
     }
 
     #[Route(['/logout'], 'app_logout')]

@@ -56,6 +56,59 @@ final class FormTemplate extends AbstractTemplate
         return $form;
     }
 
+    public function getUploadForm(): Component
+    {
+        $rows = $this->stack('form_row', [
+            [
+                'field' => 'title',
+                'label' => 'Title',
+                'type' => 'text',
+                'properties' => 'required',
+            ],
+            [
+                'field' => 'artist',
+                'label' => 'Artist',
+                'type' => 'text',
+                'properties' => 'required',
+            ],
+        ]);
+
+        $rows[] = $this
+            ->get('dual_form_row')
+            ->fillAll([
+                'label' => 'Duration',
+                'field_1' => 'minutes',
+                'type_1' => 'number',
+                'properties_1' => 'min="0" step="1" required',
+                'field_2' => 'seconds',
+                'type_2' => 'number',
+                'properties_2' => 'min="0" step="1" required',
+            ])
+        ;
+
+        $rows[] = $this
+            ->get('form_row')
+            ->fillAll([
+                'field' => 'file',
+                'label' => 'File',
+                'type' => 'file',
+                'properties' => 'required',
+            ])
+        ;
+
+        return $this
+            ->get('form')
+            ->fillAll([
+                'route' => '/upload',
+                'method' => 'POST',
+                'title' => 'Upload',
+                'submit' => 'Upload',
+                'properties' => 'enctype="multipart/form-data"',
+                'rows' => $this->collect($rows),
+            ])
+        ;
+    }
+
     private function getAuthFormRows(): Component
     {
         return $this->quickCollect('form_row', [

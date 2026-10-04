@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Middleware\Auth;
 use App\Services\MusicService;
+use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\MusicTemplate;
 use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
@@ -19,6 +20,7 @@ final class SongsController extends AbstractController
     public function __construct(
         public readonly RootTemplate $rootTemplate,
         public readonly MusicTemplate $musicTemplate,
+        public readonly FormTemplate $formTemplate,
         public readonly MusicService $musicService,
     ) {
     }
@@ -42,7 +44,7 @@ final class SongsController extends AbstractController
             ->fill('songs', $this->musicTemplate->collect($songComponents))
         ;
 
-        return new Response($songsComponent);
+        return new Response($this->rootTemplate->getApp($songsComponent));
     }
 
     #[Route(['/songs/upload'], 'app_uploadSong')]
@@ -52,7 +54,7 @@ final class SongsController extends AbstractController
             $this->musicService->uploadSong($request);
         }
 
-        return new Response($this->musicTemplate->get('upload_form'));
+        return new Response($this->rootTemplate->getApp($this->formTemplate->getUploadForm()));
     }
 
     #[Route(['/songs/{id}/view'], 'app_viewSong')]
