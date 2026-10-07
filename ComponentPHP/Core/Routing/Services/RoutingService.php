@@ -13,6 +13,7 @@ use Core\Routing\Models\Responses\Response;
 use Core\Routing\Models\RouteSegment;
 use Core\Routing\Models\SiteMapEntry;
 use Core\Utility\Services\ClassFinderService;
+use Core\Utility\Services\PathService;
 use Core\Utility\Validators\Exceptions\ValidationException;
 use Core\Utility\Validators\Services\ValidatorService;
 use Core\Utility\Validators\Types\IntOrStringIntValidator;
@@ -207,7 +208,8 @@ final class RoutingService
 
     private function createSiteMap(): void
     {
-        $controllers = $this->classFinderService->byExtension('App/Controllers', AbstractController::class);
+        // $controllers = $this->classFinderService->byExtension('App/Controllers', AbstractController::class);
+        $controllers = $this->classFinderService->byExtension(PathService::fromProjectDirectory('App', 'Controllers'), AbstractController::class);
         foreach ($controllers as $controller) {
             foreach ($controller->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
                 $routeAttributes = $method->getAttributes(Route::class);

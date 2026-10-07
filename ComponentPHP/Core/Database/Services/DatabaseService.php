@@ -159,13 +159,20 @@ class DatabaseService
 
     private function runQuery(string $queryString, array $values): ?\PDOStatement
     {
-        error_log($queryString);
         $statement = $this->connection->prepare($queryString);
         if ($statement === false) {
             return null;
         }
 
-        $result = $statement->execute($values);
+        try {
+            $result = $statement->execute($values);
+        } catch (\Throwable $e) {
+            error_log($statement->queryString);
+            error_log(var_export($values, true));
+
+            throw $e;
+        }
+
         if ($result === false) {
             return null;
         }

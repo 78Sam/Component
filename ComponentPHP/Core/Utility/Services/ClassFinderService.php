@@ -21,12 +21,11 @@ final class ClassFinderService
     public function byExtension(string $path, string $parentClassString): array
     {
         $results = [];
-        $fullPath = relativeToAbsolutePath($path);
-        if (!file_exists($fullPath) || !is_dir($fullPath)) {
+        if (!file_exists($path) || !is_dir($path)) {
             return [];
         }
 
-        $iterator = $this->getIterator($fullPath);
+        $iterator = $this->getIterator($path);
         /** @var \SplFileInfo $file */
         foreach ($iterator as $file) {
             $classString = fileToClassString($file);

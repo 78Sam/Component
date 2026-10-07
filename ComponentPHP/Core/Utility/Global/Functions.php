@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Core\Debug\DebugMetrics;
-use Core\Utility\Config;
+use Core\Utility\Services\PathService;
 
 if (!function_exists('dump')) {
     function dump(mixed ...$values): void
@@ -21,21 +21,6 @@ if (!function_exists('dump')) {
     }
 }
 
-function normalisePath(string $path): string
-{
-    $path = str_replace('\\\\', '/', $path);
-    $path = str_replace('\\', '/', $path);
-    $path = str_replace('//', '/', $path);
-    $path = '/' . trim($path, '/');
-
-    return $path;
-}
-
-function relativeToAbsolutePath(string $relativePath): string
-{
-    return Config::ROOT_DIR . normalisePath($relativePath);
-}
-
 /**
  * @return ?class-string
  */
@@ -51,7 +36,7 @@ function fileToClassString(\SplFileInfo $file): ?string
         return null;
     }
 
-    $filePath = substr(normalisePath($realPath), 0, -4);
+    $filePath = substr(PathService::normalisePath($realPath), 0, -4);
     foreach (PSR4_NAMESPACES as $path => $namespace) {
         if (str_contains($filePath, $path)) {
             $classString = str_replace('/', '\\', str_replace($path, $namespace, $filePath));

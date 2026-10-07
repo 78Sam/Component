@@ -56,7 +56,7 @@ final class FormTemplate extends AbstractTemplate
         return $form;
     }
 
-    public function getUploadForm(): Component
+    public function getUploadForm(?string $error = null): Component
     {
         $rows = $this->stack('form_row', [
             [
@@ -96,7 +96,7 @@ final class FormTemplate extends AbstractTemplate
             ])
         ;
 
-        return $this
+        $form = $this
             ->get('form')
             ->fillAll([
                 'route' => '/songs/upload',
@@ -107,6 +107,11 @@ final class FormTemplate extends AbstractTemplate
                 'rows' => $this->collect($rows),
             ], true)
         ;
+        if ($error !== null) {
+            $form->fill('error', $this->get('error')->fill('error', $error));
+        }
+
+        return $form;
     }
 
     private function getAuthFormRows(): Component

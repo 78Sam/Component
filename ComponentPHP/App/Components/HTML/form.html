@@ -1,6 +1,7 @@
 !@(component|form)
 <form action="!@($route)" method="!@($method)" !@($properties)>
     <h1 class="mb-3">!@($title)</h1>
+    !@($error)
     !@($rows)
     <input type="submit" class="btn btn-primary mb-3" value="!@($submit)">
     !@($lower_text)
@@ -27,5 +28,11 @@
 !@(component|lower_text)
 <div class="form-text">
     !@($text)
+</div>
+!@(end)
+
+!@(component|error)
+<div class="alert alert-danger">
+    !@($error)
 </div>
 !@(end)

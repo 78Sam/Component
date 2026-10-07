@@ -7,6 +7,7 @@ namespace Core\Tests;
 use Core\Tests\Attributes\Test;
 use Core\Utility\Console;
 use Core\Utility\Services\ClassFinderService;
+use Core\Utility\Services\PathService;
 
 final class TestRunner
 {
@@ -17,7 +18,8 @@ final class TestRunner
     public function runAllTests(): void
     {
         /** @var list<\ReflectionClass<AbstractTest>> $testClasses */
-        $testClasses = $this->classFinder->byExtension('Tests', AbstractTest::class);
+        $testClasses = $this->classFinder->byExtension(PathService::fromProjectDirectory('Tests'), AbstractTest::class);
+        // $testClasses = $this->classFinder->byExtension('Tests', AbstractTest::class);
         foreach ($testClasses as $testClass) {
             $this->runSpecificTestClass($testClass);
         }

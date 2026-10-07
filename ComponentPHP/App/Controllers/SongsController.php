@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Exceptions\Music\UploadException;
 use App\Middleware\Auth;
 use App\Services\MusicService;
 use App\Templates\HTML\FormTemplate;
@@ -50,11 +51,16 @@ final class SongsController extends AbstractController
     #[Route(['/songs/upload'], 'app_uploadSong')]
     public function uploadSong(Request $request): Response
     {
+        $error = null;
         if ($request->method === Request::METHOD_POST) {
-            $this->musicService->uploadSong($request);
+            try {
+                $this->musicService->uploadSong($request);
+            } catch (UploadException $e) {
+                $error = $e->getMessage();
+            }
         }
 
-        return new Response($this->rootTemplate->getApp($this->formTemplate->getUploadForm()));
+        return new Response($this->rootTemplate->getApp($this->formTemplate->getUploadForm($error)));
     }
 
     #[Route(['/songs/{id}/view'], 'app_viewSong')]

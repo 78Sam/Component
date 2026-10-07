@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Exceptions\Music\UploadException;
 use App\Models\Song;
 use App\Models\User;
 use App\Templates\SQL\MusicTemplate;
@@ -28,13 +29,23 @@ final class MusicService
 
     public function uploadSong(Request $request): ?Song
     {
-        dump($request);
-        $file = $request->files['file'];
+        $file = $request->files['file'] ?? null;
+        if ($file === null) {
+            throw new UploadException('No file was uploaded');
+        }
+
+        if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            throw new UploadException('Failed to upload file with code: ' . $file['error']);
+        }
+
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $temporaryPath = $file['tmp_name'];
+        if ($temporaryPath === '') {
+            throw new UploadException("Upload seems to have failed, as it has no temporary path");
+        }
         $mimeType = mime_content_type($temporaryPath);
 
-        if (!in_array($extension, ['mp3', 'wav'], true) || !in_array($mimeType, ['audio/mpeg'], true)) {
+        if (!in_array($extension, ['mp3'], true) || !in_array($mimeType, ['audio/mpeg'], true)) {
             unlink($temporaryPath);
 
             return null;

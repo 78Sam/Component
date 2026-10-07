@@ -9,6 +9,7 @@ use Core\DependencyInjection\Container;
 use Core\Routing\Services\RoutingService;
 use Core\Sessions\Services\SessionService;
 use Core\Utility\Services\ClassFinderService;
+use Core\Utility\Services\PathService;
 
 class Kernel
 {
@@ -28,7 +29,8 @@ class Kernel
         $this->routingService = $this->container->get(RoutingService::class);
         $this->classFinderService = $this->container->get(ClassFinderService::class);
 
-        $configFileReflectionClasses = $this->classFinderService->byExtension('App/Config', AbstractConfig::class);
+        // $configFileReflectionClasses = $this->classFinderService->byExtension('App/Config', AbstractConfig::class);
+        $configFileReflectionClasses = $this->classFinderService->byExtension(PathService::fromProjectDirectory('App', 'Config'), AbstractConfig::class);
         foreach ($configFileReflectionClasses as $configFileReflectionClass) {
             $this->configFiles[] = $this->container->get($configFileReflectionClass->name);
         }

@@ -8,7 +8,7 @@ SELECT
     Users.joined,
     Users.role
 FROM Songs
-JOIN Users ON Songs.added_by = Users.id;
+JOIN Users ON Songs.added_by = Users.id
 WHERE title = !@($title) AND artist = !@($artist);
 !@(end)
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\Components\Services;
 
 use Core\Components\Models\Component;
+use Core\Utility\Services\PathService;
 
 class ComponentService
 {
@@ -22,9 +23,11 @@ class ComponentService
     public function loadFile(string $path, bool $absolutePath = false): array
     {
         if ($absolutePath === false) {
-            $path = relativeToAbsolutePath($path);
+            $path = PathService::fromProjectDirectory($path);
+            dump($path);
         }
-        $path = normalisePath($path);
+        // $path = normalisePath($path);
+        $path = PathService::normalisePath($path);
 
         $content = file_get_contents($path);
         if ($content === false) {
