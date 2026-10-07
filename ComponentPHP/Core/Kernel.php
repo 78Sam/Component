@@ -81,6 +81,6 @@ class Kernel
             $configFile->preKernelShutdown($this);
         }
         $this->loggingService->log("Shutting down ({$this->workerId})");
-        $this->loggingService->writeLogs(PathService::fromProjectDirectory('logs', 'log.log'));
+        $this->loggingService->writeLogs(PathService::fromProjectDirectory('Logs', 'log.log'));
     }
 }
