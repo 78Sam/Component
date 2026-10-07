@@ -32,9 +32,3 @@ final class PathService
         return static::normalisePath(static::getProjectDirectory() . '/' . implode('/', $segments));
     }
 }
-
-// echo PathService::getProjectDirectory() . PHP_EOL;
-// echo PathService::normalisePath('\\\///awd/awds//\as') . PHP_EOL;
-// echo PathService::combineSegments('\\\///awd/awds//\as', 'a', 'a', '\\\\b//b/') . PHP_EOL;
-// echo PathService::combineSegments('\\C:/', 'awd/awds//\as', 'a', 'a', '\\\\b//b/') . PHP_EOL;
-// echo PathService::fromProjectDirectory('\\\///awd/awds//\as', 'a', 'a', '\\\\b//b/') . PHP_EOL;

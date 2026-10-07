@@ -5,8 +5,15 @@
 !@(end)
 
 !@(component|song)
-<div>
+<div class="container" hx-get="/songs/!@($id)/play" hx-trigger="click" hx-target="#app-player-target" hx-swap="innerHTML">
+    <p>!@($id)</p>
     <p>!@($title)</p>
     <p>!@($artist)</p>
+</div>
+!@(end)
+
+!@(component|player)
+<div>
+    <audio src="!@($source)" controls></audio>
 </div>
 !@(end)

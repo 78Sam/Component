@@ -6,6 +6,7 @@ namespace Core;
 
 use Core\Config\AbstractConfig;
 use Core\DependencyInjection\Container;
+use Core\Logging\Services\LoggingService;
 use Core\Routing\Services\RoutingService;
 use Core\Sessions\Services\SessionService;
 use Core\Utility\Services\ClassFinderService;
@@ -17,6 +18,7 @@ class Kernel
     public readonly Container $container;
     public readonly RoutingService $routingService;
     public readonly ClassFinderService $classFinderService;
+    private readonly LoggingService $loggingService;
 
     /** @var list<AbstractConfig> */
     private array $configFiles = [];
@@ -28,8 +30,8 @@ class Kernel
         $this->container = Container::getInstance();
         $this->routingService = $this->container->get(RoutingService::class);
         $this->classFinderService = $this->container->get(ClassFinderService::class);
+        $this->loggingService = $this->container->get(LoggingService::class);
 
-        // $configFileReflectionClasses = $this->classFinderService->byExtension('App/Config', AbstractConfig::class);
         $configFileReflectionClasses = $this->classFinderService->byExtension(PathService::fromProjectDirectory('App', 'Config'), AbstractConfig::class);
         foreach ($configFileReflectionClasses as $configFileReflectionClass) {
             $this->configFiles[] = $this->container->get($configFileReflectionClass->name);
@@ -41,8 +43,7 @@ class Kernel
         foreach ($this->configFiles as $configFile) {
             $configFile->onKernelBoot($this);
         }
-
-        frankenphp_log('Booting kernel', context: ['workerId' => $this->workerId]);
+        $this->loggingService->log("Booting kernel ({$this->workerId})");
     }
 
     public function handleRequest(array $server, array $get, array $post, array $files, array $cookies): void
@@ -79,7 +80,7 @@ class Kernel
         foreach ($this->configFiles as $configFile) {
             $configFile->preKernelShutdown($this);
         }
-
-        frankenphp_log('Shutting down', context: ['workerId' => $this->workerId]);
+        $this->loggingService->log("Shutting down ({$this->workerId})");
+        $this->loggingService->writeLogs(PathService::fromProjectDirectory('logs', 'log.log'));
     }
 }

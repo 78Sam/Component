@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Templates\SQL\UserTemplate;
 use Core\Database\Services\DatabaseService;
+use Core\Utility\Services\DateTimeService;
 
 final class UserService
 {

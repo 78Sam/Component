@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\Routing\Services;
 
 use Core\DependencyInjection\Container;
+use Core\Logging\Services\LoggingService;
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
@@ -31,7 +32,8 @@ final class RoutingService
     public array $cachedControllers = [];
 
     public function __construct(
-        public readonly ClassFinderService $classFinderService,
+        private readonly ClassFinderService $classFinderService,
+        private readonly LoggingService $loggingService,
     ) {
         $this->createSiteMap();
     }
@@ -68,10 +70,12 @@ final class RoutingService
             method: $requirements['REQUEST_METHOD']->getValue(),
             requestTime: $requirements['REQUEST_TIME']->getValue(),
             serverTime: time(),
+            isHTMX: array_key_exists('HTTP_HX_REQUEST', $server), // TODO: Can we have a whole model for the HTMX request, there are other good headers besides this one
             get: $get,
             post: $post,
             files: $files,
             cookies: $cookies,
+            server: $server,
         );
     }
 
@@ -119,6 +123,8 @@ final class RoutingService
         if ($route->HTTPVerbs !== [] && !in_array($request->method, $route->HTTPVerbs, true)) {
             return new Response('<h1>404</h1>', 404);
         }
+
+        $this->loggingService->log("Routing '{$request->path}'");
 
         // Type arguments and add $request
 

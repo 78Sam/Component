@@ -8,6 +8,7 @@ use App\Templates\SQL\UserTemplate;
 use Core\Config\AbstractConfig;
 use Core\Database\Services\DatabaseService;
 use Core\Kernel;
+use Core\Logging\Services\LoggingService;
 use Core\Utility\Services\PathService;
 
 final class DatabaseConfig extends AbstractConfig
@@ -15,12 +16,15 @@ final class DatabaseConfig extends AbstractConfig
     public function __construct(
         public readonly DatabaseService $databaseService,
         public readonly UserTemplate $userTemplate,
+        private readonly LoggingService $loggingService,
     ) {
     }
 
     #[\Override]
     public function onKernelBoot(Kernel $kernel): void
     {
+        $this->loggingService->log('Pre boot database config');
+
         $databasePath = PathService::fromProjectDirectory('App', 'Database', 'main.db');
         $databaseExists = file_exists($databasePath);
 
@@ -40,7 +44,5 @@ final class DatabaseConfig extends AbstractConfig
             ;
             $this->databaseService->query($createUserComponent);
         }
-
-        error_log('PRE BOOT');
     }
 }

@@ -13,7 +13,7 @@ final readonly class Song
         public User $addedBy,
         public \DateTimeImmutable $addedAt,
         public int $duration,
-        public string $lookup_key,
+        public string $lookupKey,
     ) {
     }
 }

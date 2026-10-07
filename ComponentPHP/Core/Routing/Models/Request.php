@@ -20,9 +20,11 @@ final readonly class Request
         public string $method,
         public int $requestTime,
         public int $serverTime,
+        public bool $isHTMX,
         public array $get = [],
         public array $post = [],
         public array $files = [],
         public array $cookies = [],
+        public array $server = [],
     ) {}
 }

@@ -9,8 +9,10 @@ use App\Models\Song;
 use App\Models\User;
 use App\Templates\SQL\MusicTemplate;
 use Core\Database\Services\DatabaseService;
+use Core\Logging\Services\LoggingService;
 use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
+use Core\Utility\Services\DateTimeService;
 use Core\Utility\Services\PathService;
 use Core\Utility\Validators\Exceptions\ValidationException;
 use Core\Utility\Validators\Services\ValidatorService;
@@ -20,10 +22,10 @@ use Core\Utility\Validators\Types\StringValidator;
 final class MusicService
 {
     public function __construct(
-        public readonly MusicTemplate $musicTemplate,
-        public readonly DatabaseService $databaseService,
-        public readonly UserService $userService,
-        public readonly AuthService $authService,
+        private readonly MusicTemplate $musicTemplate,
+        private readonly DatabaseService $databaseService,
+        private readonly AuthService $authService,
+        private readonly LoggingService $loggingService,
     ){
     }
 
@@ -82,10 +84,25 @@ final class MusicService
 
         $existingSong = $this->getSongByTitleAndArtist($title, $artist);
         if ($existingSong !== null) {
-            return null;
+            throw new UploadException('Song already exists');
         }
 
         $lookupKey = md5("{$title}{$artist}") . ".{$extension}";
+
+        $destination = PathService::fromProjectDirectory('Public', 'Assets', 'Music', $lookupKey);
+        $this->loggingService->log("Uploading song to from '{$temporaryPath}' '{$destination}'");
+
+        if (!is_dir(dirname($destination))) {
+            mkdir(dirname($destination), recursive: true);
+        }
+
+        if (move_uploaded_file($temporaryPath, $destination) === false) {
+            unlink($temporaryPath);
+            unlink($destination);
+            $this->loggingService->log('Failed to move file', LoggingService::LEVEL_ERROR);
+
+            return null;
+        }
 
         $createSongComponent = $this->musicTemplate
             ->get('add_song')
@@ -99,11 +116,6 @@ final class MusicService
             ])
         ;
         $this->databaseService->query($createSongComponent);
-
-        move_uploaded_file(
-            $file['tmp_name'],
-            PathService::fromProjectDirectory('Public', 'Assets', 'Music', $lookupKey),
-        );
 
         return $this->getSongByTitleAndArtist($title, $artist);
     }
@@ -188,6 +200,7 @@ final class MusicService
 
         $row['addedAt'] = DateTimeService::fromString($row['added_at']);
         $row['duration'] = self::durationFromString($row['duration']);
+        $row['lookupKey'] = $row['lookup_key'];
 
         return $row;
     }

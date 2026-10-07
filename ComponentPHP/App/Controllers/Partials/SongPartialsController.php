@@ -2,30 +2,34 @@
 
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace App\Controllers\Partials;
 
 use App\Exceptions\Music\UploadException;
 use App\Middleware\Auth;
+use App\Middleware\Partial;
+use App\Models\Song;
 use App\Services\MusicService;
 use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\MusicTemplate;
-use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Models\Request;
+use Core\Routing\Models\Responses\RedirectResponse;
 use Core\Routing\Models\Responses\Response;
+use Core\Sessions\Services\SessionService;
+use Core\Utility\Services\PathService;
 
 #[Auth]
-final class SongsController extends AbstractController
+final class SongPartialsController extends AbstractController
 {
     public function __construct(
-        public readonly RootTemplate $rootTemplate,
         public readonly MusicTemplate $musicTemplate,
         public readonly FormTemplate $formTemplate,
         public readonly MusicService $musicService,
     ) {
     }
 
+    #[Partial]
     #[Route(['/songs'], 'app_viewAllSongs')]
     public function viewSongs(): Response
     {
@@ -33,11 +37,7 @@ final class SongsController extends AbstractController
 
         $songComponents = [];
         foreach ($songs as $song) {
-            $songComponents[] = $this->musicTemplate
-                ->get('song')
-                ->fill('title', $song->title)
-                ->fill('artist', $song->artist)
-            ;
+            $songComponents[] = $this->musicTemplate->getSong($song);
         }
 
         $songsComponent = $this->musicTemplate
@@ -45,7 +45,7 @@ final class SongsController extends AbstractController
             ->fill('songs', $this->musicTemplate->collect($songComponents))
         ;
 
-        return new Response($this->rootTemplate->getApp($songsComponent));
+        return new Response($songsComponent);
     }
 
     #[Route(['/songs/upload'], 'app_uploadSong')]
@@ -54,29 +54,61 @@ final class SongsController extends AbstractController
         $error = null;
         if ($request->method === Request::METHOD_POST) {
             try {
-                $this->musicService->uploadSong($request);
+                if ($this->musicService->uploadSong($request) instanceof Song) {
+                    $error = 'Success';
+                }
             } catch (UploadException $e) {
                 $error = $e->getMessage();
             }
         }
 
-        return new Response($this->rootTemplate->getApp($this->formTemplate->getUploadForm($error)));
+        $form = $this->formTemplate->getUploadForm($error);
+        if (!$request->isHTMX) {
+            SessionService::sessionWrite('htmx', $form->render());
+
+            return new RedirectResponse('/');
+        }
+
+        return new Response($form);
     }
 
     #[Route(['/songs/{id}/view'], 'app_viewSong')]
     public function viewSong(int $id): Response
     {
         $song = $this->musicService->getSongById($id);
+        if ($song === null) {
+            return new Response('');
+        }
 
-        return new Response($this->musicTemplate->get('song')->fillAll([
-            'title' => $song->title,
-            'artist' => $song->artist,
-        ]));
+        return new Response($this->musicTemplate->getSong($song));
     }
 
     #[Route(['/songs/{id}/delete'], 'app_deleteSong')]
     public function deleteSong(int $id): Response
     {
         return $this->musicService->deleteSongById($id);
+    }
+
+    #[Route(['/songs/{id:[0-9]+}/play'], 'app_playSong')]
+    public function playSong(int $id): Response
+    {
+        $song = $this->musicService->getSongById($id);
+        $source = '';
+        if ($song !== null) {
+            $source = PathService::combineSegments('Assets', 'Music', $song->lookupKey);
+        }
+
+        $player = $this->musicTemplate
+            ->get('player')
+            ->fill('source', $source)
+        ;
+
+        return new Response($player);
+    }
+
+    #[Route(['/songs/test'], 'app_testSongs')]
+    public function testSongs(Request $request): Response
+    {
+        return new Response(var_export($request, true));
     }
 }

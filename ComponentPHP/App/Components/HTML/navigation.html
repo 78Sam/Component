@@ -1,7 +1,8 @@
 !@(component|nav_bar)
 <nav class="mb-3">
-    <a href="/songs">Songs</a>
-    <a href="/songs/upload">Upload</a>
+    <a class="link" hx-get="/songs" hx-trigger="click" hx-target="#app-body-target" hx-swap="innerHTML">Songs</a>
+    <a class="link" hx-get="/songs/test" hx-trigger="click" hx-target="#app-body-target" hx-swap="innerHTML">Test</a>
+    <a class="link" hx-get="/songs/upload" hx-trigger="click" hx-target="#app-body-target" hx-swap="innerHTML">Upload</a>
     <a href="/logout">Logout</a>
 </nav>
 !@(end)

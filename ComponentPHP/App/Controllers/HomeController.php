@@ -12,7 +12,9 @@ use App\Templates\HTML\MusicTemplate;
 use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
+use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
+use Core\Sessions\Services\SessionService;
 
 #[Auth]
 final class HomeController extends AbstractController
@@ -26,12 +28,17 @@ final class HomeController extends AbstractController
     }
 
     #[Route(['/'], 'app_home')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $component = $this->rootTemplate
             ->get('app')
             ->fill('body', $this->rootTemplate->get('nav_bar'))
         ;
+
+        $htmxRedirectData = SessionService::sessionPop('htmx');
+        if ($htmxRedirectData !== null) {
+            $component->fill('htmxBodyPreload', $htmxRedirectData, raw: true);
+        }
 
         return new Response($component);
     }

@@ -6,6 +6,7 @@ namespace Core\Database\Services;
 
 use Core\Components\Models\Component;
 use Core\Database\Exceptions\NoConnectionException;
+use Core\Logging\Services\LoggingService;
 
 class DatabaseService
 {
@@ -13,12 +14,18 @@ class DatabaseService
 
     public ?\PDO $connection = null;
 
-    private function __construct() {}
+    private LoggingService $loggingService;
 
-    public static function getInstance()
+    private function __construct(
+        LoggingService $loggingService,
+    ) {
+        $this->loggingService = $loggingService;
+    }
+
+    public static function getInstance(LoggingService $loggingService)
     {
         if (static::$instance === null) {
-            static::$instance = new DatabaseService();
+            static::$instance = new DatabaseService($loggingService);
         }
 
         return static::$instance;
@@ -167,8 +174,7 @@ class DatabaseService
         try {
             $result = $statement->execute($values);
         } catch (\Throwable $e) {
-            error_log($statement->queryString);
-            error_log(var_export($values, true));
+            $this->loggingService->log("Failed query: '{$statement->queryString}'", LoggingService::LEVEL_ERROR);
 
             throw $e;
         }
@@ -195,7 +201,7 @@ class DatabaseService
             }
 
             $values[$variable] = $socketValue;
-            $query->fill($variable, ":{$variable}");
+            $query->fill($variable, ":{$variable}", raw: true);
         }
 
         return $values;

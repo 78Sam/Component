@@ -55,11 +55,14 @@ final class Console
         string $foreground = '',
         string $background = '',
         string $em = '',
+        bool $newline = true,
     ): string {
         $codes = [$em, $foreground, $background];
         $codes = array_filter($codes, fn(string $code): bool => $code !== '');
         $code = implode(';', $codes);
 
-        return "\e[{$code}m{$message}" . self::RESET . PHP_EOL;
+        $message = "\e[{$code}m{$message}" . self::RESET;
+
+        return $newline ? "{$message}\n" : $message;
     }
 }
