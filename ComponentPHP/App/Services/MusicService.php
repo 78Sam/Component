@@ -174,15 +174,33 @@ final class MusicService
         ;
         $this->databaseService->query($deleteComponent);
 
+        unlink(PathService::fromProjectDirectory('Public', 'Assets', 'Music', $song->lookupKey));
+
         return new Response("Successfully deleted song {$song->title} by {$song->artist}");
     }
 
-    private static function durationToString(int $minutes, int $seconds): string
+    public static function secondsDurationToString(int $seconds): string
     {
+        $minutes = intdiv($seconds, 60);
+        $seconds = $seconds % 60;
+
+        return static::durationToString($minutes, $seconds);
+    }
+
+    public static function durationToString(int $minutes, int $seconds): string
+    {
+        if ($minutes === 0) {
+            $minutes = "00";
+        }
+
+        if ($seconds === 0) {
+            $seconds = "00";
+        }
+
         return "{$minutes}:{$seconds}";
     }
 
-    private static function durationFromString(string $duration): int
+    public static function durationFromString(string $duration): int
     {
         [$minutes, $seconds] = explode(':', $duration);
 

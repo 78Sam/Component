@@ -32,7 +32,7 @@ final class HomeController extends AbstractController
     {
         $component = $this->rootTemplate
             ->get('app')
-            ->fill('body', $this->rootTemplate->get('nav_bar'))
+            ->fill('navigation', $this->rootTemplate->get('nav_bar'))
         ;
 
         $htmxRedirectData = SessionService::sessionPop('htmx');

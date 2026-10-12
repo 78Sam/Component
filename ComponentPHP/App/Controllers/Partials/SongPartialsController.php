@@ -8,6 +8,7 @@ use App\Exceptions\Music\UploadException;
 use App\Middleware\Auth;
 use App\Middleware\Partial;
 use App\Models\Song;
+use App\Services\AuthService;
 use App\Services\MusicService;
 use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\MusicTemplate;
@@ -23,9 +24,10 @@ use Core\Utility\Services\PathService;
 final class SongPartialsController extends AbstractController
 {
     public function __construct(
-        public readonly MusicTemplate $musicTemplate,
-        public readonly FormTemplate $formTemplate,
-        public readonly MusicService $musicService,
+        private readonly MusicTemplate $musicTemplate,
+        private readonly FormTemplate $formTemplate,
+        private readonly MusicService $musicService,
+        private readonly AuthService $authService,
     ) {
     }
 
@@ -37,7 +39,7 @@ final class SongPartialsController extends AbstractController
 
         $songComponents = [];
         foreach ($songs as $song) {
-            $songComponents[] = $this->musicTemplate->getSong($song);
+            $songComponents[] = $this->musicTemplate->getSong($song, $this->authService->getRequiredUser());
         }
 
         $songsComponent = $this->musicTemplate
@@ -80,7 +82,7 @@ final class SongPartialsController extends AbstractController
             return new Response('');
         }
 
-        return new Response($this->musicTemplate->getSong($song));
+        return new Response($this->musicTemplate->getSong($song, $this->authService->getRequiredUser()));
     }
 
     #[Route(['/songs/{id}/delete'], 'app_deleteSong')]
@@ -101,6 +103,8 @@ final class SongPartialsController extends AbstractController
         $player = $this->musicTemplate
             ->get('player')
             ->fill('source', $source)
+            ->fill('title', $song->title)
+            ->fill('artist', $song->artist)
         ;
 
         return new Response($player);

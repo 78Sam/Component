@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght,MONO@0,300..800,1;1,300..800,1&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Google Sans Code', monospace;
+}
+
+:root {
+    --danger: rgb(255, 81, 81);
+}
+
+main {
+    padding: 50px;
+}
+
+.danger {
+    color: var(--danger);
+}
+
+/* Nav bar */
+
+nav {
+    width: 100%;
+    height: 50px;
+    padding: 15px 50px 15px 50px;
+}
+
+/* Flex */
+
+.flex {
+    display: flex;
+}
+
+.inline {
+    align-items: center;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+/* Songs */
+
+.song-wrapper {
+    width: 100%;
+    padding: 10px;
+    background-color: rgb(36, 36, 36);
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.song {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    margin-bottom: 10px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 50px;
+
+    border-radius: 5px;
+    cursor: pointer;
+
+    background-color: rgb(240, 240, 240);
+
+    transition: all 0.5s ease;
+}
+
+.song:hover {
+    background-color: rgb(107, 230, 107);
+}
+
+.credits {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 12px;
+
+    i {
+        margin-right: 5px;
+    }
+}

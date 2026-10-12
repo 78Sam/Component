@@ -5,15 +5,20 @@
 !@(end)
 
 !@(component|song)
-<div class="container" hx-get="/songs/!@($id)/play" hx-trigger="click" hx-target="#app-player-target" hx-swap="innerHTML">
-    <p>!@($id)</p>
-    <p>!@($title)</p>
-    <p>!@($artist)</p>
+<div class="song-wrapper">
+    <div class="song" hx-get="/songs/!@($id)/play" hx-trigger="click" hx-target="#app-player-target" hx-swap="innerHTML">
+        <p>!@($title)</p>
+        <p>!@($artist)</p>
+        <p>!@($duration)</p>
+    </div>
+    <div class="credits space-between">
+        !@($name)
+        <a class="danger" href="/songs/!@($id)/delete">!@($delete)</a>
+    </div>
 </div>
 !@(end)
 
 !@(component|player)
-<div>
-    <audio src="!@($source)" controls></audio>
-</div>
+<p>!@($title) - !@($artist)</p>
+<audio src="!@($source)" controls autoplay></audio>
 !@(end)

@@ -36,6 +36,16 @@ class AuthService
         return unserialize($user);
     }
 
+    public static function getRequiredUser(): User
+    {
+        $user = static::getUser();
+        if ($user === null) {
+            throw new \Exception('Failed to get user');
+        }
+
+        return $user;
+    }
+
     public function register(Request $request): ?User
     {
         $registrationDetails = $this->parseUsernamePassword($request);
