@@ -7,28 +7,25 @@ namespace App\Controllers;
 use App\Middleware\Admin;
 use App\Middleware\Auth;
 use App\Services\AuthService;
-use App\Services\MusicService;
-use App\Templates\HTML\MusicTemplate;
 use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
-use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
+use Core\Routing\Services\RoutingService;
 use Core\Sessions\Services\SessionService;
 
 #[Auth]
 final class HomeController extends AbstractController
 {
     public function __construct(
-        public readonly AuthService $authService,
-        public readonly RootTemplate $rootTemplate,
-        public readonly MusicTemplate $musicTemplate,
-        public readonly MusicService $musicService,
+        private readonly AuthService $authService,
+        private readonly RootTemplate $rootTemplate,
+        private readonly RoutingService $routingService,
     ) {
     }
 
     #[Route(['/'], 'app_home')]
-    public function index(Request $request): Response
+    public function index(): Response
     {
         $component = $this->rootTemplate
             ->get('app')
@@ -38,6 +35,9 @@ final class HomeController extends AbstractController
         $htmxRedirectData = SessionService::sessionPop('htmx');
         if ($htmxRedirectData !== null) {
             $component->fill('htmxBodyPreload', $htmxRedirectData, raw: true);
+        }
+        else {
+            $component->fill('htmxBodyPreload', $this->routingService->tunnelRequest('app_viewAllSongs')->content, raw: true);
         }
 
         return new Response($component);

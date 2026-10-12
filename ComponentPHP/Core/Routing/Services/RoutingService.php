@@ -13,7 +13,6 @@ use Core\Routing\Enums\RequestMethods;
 use Core\Routing\Enums\ResponseCode;
 use Core\Routing\Models\HTMXRequest;
 use Core\Routing\Models\Request;
-use Core\Routing\Models\Responses\HTMXResponse;
 use Core\Routing\Models\Responses\Response;
 use Core\Routing\Models\RouteSegment;
 use Core\Routing\Models\SiteMapEntry;
@@ -31,6 +30,9 @@ final class RoutingService
 
     /** @var array<string, SiteMapEntry> */
     public array $dynamicSiteMapEntries = [];
+
+    /** @var array<string, SiteMapEntry> */
+    public array $routeNameToSiteMapEntry = [];
 
     /** @var array<string, AbstractController> */
     public array $cachedControllers = [];
@@ -200,6 +202,26 @@ final class RoutingService
         return $response;
     }
 
+    /**
+     * @param array<string, mixed> $methodParameters
+     */
+    public function tunnelRequest(string $routeName, array $methodParameters = []): Response
+    {
+        if (!array_key_exists($routeName, $this->routeNameToSiteMapEntry)) {
+            throw new \Exception("Unknown route name when tunnelling request: '{$routeName}'");
+        }
+
+        $siteMapEntry = $this->routeNameToSiteMapEntry[$routeName];
+        $controller = Container::getInstance()->get($siteMapEntry->class->name);
+
+        $response = $siteMapEntry->method->invoke($controller, ...$methodParameters);
+        if (!$response instanceof Response) {
+            throw new \LogicException("Controller method '{$siteMapEntry->method->name}' must return a Response");
+        }
+
+        return $response;
+    }
+
     private function runMiddleware(\ReflectionClass|\ReflectionMethod $reflectionObject, Request $request): ?Response
     {
         /** @var list<\ReflectionAttribute<MiddlewareAttributeInterface>> $middlewareAttributes */
@@ -262,6 +284,7 @@ final class RoutingService
                     }
 
                     $siteMapEntry = new SiteMapEntry($routeAttribute, $controller, $method, $routeSegments);
+                    $this->routeNameToSiteMapEntry[$routeAttribute->name] = $siteMapEntry;
 
                     if ($staticRoute) {
                         $this->staticSiteMapEntries['/' . implode('/', $routeSegments)] = $siteMapEntry;
