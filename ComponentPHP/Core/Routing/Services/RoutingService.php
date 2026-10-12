@@ -222,7 +222,10 @@ final class RoutingService
     private function createSiteMap(): void
     {
         // $controllers = $this->classFinderService->byExtension('App/Controllers', AbstractController::class);
-        $controllers = $this->classFinderService->byExtension(PathService::fromProjectDirectory('App', 'Controllers'), AbstractController::class);
+        $controllers = $this->classFinderService->byExtension(
+            PathService::fromProjectDirectory('App', 'Controllers'),
+            AbstractController::class,
+        );
         foreach ($controllers as $controller) {
             foreach ($controller->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
                 $routeAttributes = $method->getAttributes(Route::class);

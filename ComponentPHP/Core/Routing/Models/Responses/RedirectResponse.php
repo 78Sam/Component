@@ -13,6 +13,7 @@ readonly class RedirectResponse extends Response
      */
     public function __construct(string $location, array $headers = [])
     {
-        parent::__construct(content: '', responseCode: ResponseCode::Found, headers: ['Location' => $location] + $headers);
+        parent::__construct(content: '', responseCode: ResponseCode::Found, headers: ['Location' => $location]
+        + $headers);
     }
 }

@@ -32,7 +32,10 @@ class Kernel
         $this->classFinderService = $this->container->get(ClassFinderService::class);
         $this->loggingService = $this->container->get(LoggingService::class);
 
-        $configFileReflectionClasses = $this->classFinderService->byExtension(PathService::fromProjectDirectory('App', 'Config'), AbstractConfig::class);
+        $configFileReflectionClasses = $this->classFinderService->byExtension(
+            PathService::fromProjectDirectory('App', 'Config'),
+            AbstractConfig::class,
+        );
         foreach ($configFileReflectionClasses as $configFileReflectionClass) {
             $this->configFiles[] = $this->container->get($configFileReflectionClass->name);
         }

@@ -33,7 +33,10 @@ class LoggingService
         $log = "[{$now}] ({$backtrace})";
         static::$logs[] = "{$log} | {$message}";
 
-        file_put_contents('php://stderr', Console::message($log, background: $background, newline: false) . " | {$message}\n");
+        file_put_contents(
+            'php://stderr',
+            Console::message($log, background: $background, newline: false) . " | {$message}\n",
+        );
     }
 
     public function writeLogs(string $path): void

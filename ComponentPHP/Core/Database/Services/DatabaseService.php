@@ -16,9 +16,8 @@ class DatabaseService
 
     private LoggingService $loggingService;
 
-    private function __construct(
-        LoggingService $loggingService,
-    ) {
+    private function __construct(LoggingService $loggingService)
+    {
         $this->loggingService = $loggingService;
     }
 

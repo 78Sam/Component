@@ -47,7 +47,7 @@ abstract class AbstractTemplate
 
     /**
      * @param list<array<string, int|string|Component>> $values
-     * 
+     *
      * @return list<Component>
      */
     public function stack(string $component, array $values, bool $raw = false): array
@@ -68,7 +68,7 @@ abstract class AbstractTemplate
         $sockets = [];
         for ($chunk = 0; $chunk < \count($items); $chunk++) {
             $item = $items[$chunk];
-            if ((!$item instanceof Component) && !is_string($item)) {
+            if (!$item instanceof Component && !is_string($item)) {
                 $type = gettype($item);
 
                 throw new \Exception("Cannot collect item that is not a string or component: '{$type}'");
