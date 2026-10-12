@@ -14,7 +14,10 @@ use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\MusicTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
+use Core\Routing\Enums\RequestMethods;
+use Core\Routing\Models\HTMXRequest;
 use Core\Routing\Models\Request;
+use Core\Routing\Models\Responses\HTMXResponse;
 use Core\Routing\Models\Responses\RedirectResponse;
 use Core\Routing\Models\Responses\Response;
 use Core\Sessions\Services\SessionService;
@@ -32,29 +35,28 @@ final class SongPartialsController extends AbstractController
     }
 
     #[Partial]
-    #[Route(['/songs'], 'app_viewAllSongs')]
-    public function viewSongs(): Response
+    #[Route(['/songs'], 'app_viewAllSongs', [RequestMethods::Get])]
+    public function viewSongs(): HTMXResponse
     {
-        $songs = $this->musicService->getAllSongs();
-
-        $songComponents = [];
-        foreach ($songs as $song) {
-            $songComponents[] = $this->musicTemplate->getSong($song, $this->authService->getRequiredUser());
-        }
-
-        $songsComponent = $this->musicTemplate
-            ->get('songs')
-            ->fill('songs', $this->musicTemplate->collect($songComponents))
-        ;
-
-        return new Response($songsComponent);
+        return new HTMXResponse($this->musicTemplate->getAllSongs($this->musicService->getAllSongs(), $this->authService->getRequiredUser()));
     }
 
-    #[Route(['/songs/upload'], 'app_uploadSong')]
+    #[Route(['/songs/{id}/view'], 'app_viewSong', [RequestMethods::Get])]
+    public function viewSong(int $id): HTMXResponse
+    {
+        $song = $this->musicService->getSongById($id);
+        if ($song === null) {
+            return new HTMXResponse('');
+        }
+
+        return new HTMXResponse($this->musicTemplate->getSong($song, $this->authService->getRequiredUser()));
+    }
+
+    #[Route(['/songs/upload'], 'app_uploadSong', [RequestMethods::Get, RequestMethods::Post])]
     public function uploadSong(Request $request): Response
     {
         $error = null;
-        if ($request->method === Request::METHOD_POST) {
+        if ($request->method === RequestMethods::Post) {
             try {
                 if ($this->musicService->uploadSong($request) instanceof Song) {
                     $error = 'Success';
@@ -65,7 +67,7 @@ final class SongPartialsController extends AbstractController
         }
 
         $form = $this->formTemplate->getUploadForm($error);
-        if (!$request->isHTMX) {
+        if (!$request instanceof HTMXRequest) {
             SessionService::sessionWrite('htmx', $form->render());
 
             return new RedirectResponse('/');
@@ -74,25 +76,14 @@ final class SongPartialsController extends AbstractController
         return new Response($form);
     }
 
-    #[Route(['/songs/{id}/view'], 'app_viewSong')]
-    public function viewSong(int $id): Response
-    {
-        $song = $this->musicService->getSongById($id);
-        if ($song === null) {
-            return new Response('');
-        }
-
-        return new Response($this->musicTemplate->getSong($song, $this->authService->getRequiredUser()));
-    }
-
     #[Route(['/songs/{id}/delete'], 'app_deleteSong')]
     public function deleteSong(int $id): Response
     {
         return $this->musicService->deleteSongById($id);
     }
 
-    #[Route(['/songs/{id:[0-9]+}/play'], 'app_playSong')]
-    public function playSong(int $id): Response
+    #[Route(['/songs/{id:[0-9]+}/play'], 'app_playSong', [RequestMethods::Get])]
+    public function playSong(int $id): HTMXResponse
     {
         $song = $this->musicService->getSongById($id);
         $source = '';
@@ -107,12 +98,27 @@ final class SongPartialsController extends AbstractController
             ->fill('artist', $song->artist)
         ;
 
-        return new Response($player);
+        return new HTMXResponse($player);
     }
 
     #[Route(['/songs/test'], 'app_testSongs')]
-    public function testSongs(Request $request): Response
+    public function testSongs(Request $request): HTMXResponse
     {
-        return new Response(var_export($request, true));
+        if (!$request instanceof HTMXRequest) {
+            return new HTMXResponse('Nope');
+        }
+
+        $resp = "";
+        foreach ($request->server as $key => $value) {
+            $resp .= "{$key} => {$value}<br>";
+        }
+
+        return new HTMXResponse($resp);
+    }
+
+    #[Route(['/songs/test2'], 'app_testSongs')]
+    public function testSongs2(Request $request): Response
+    {
+        return new HTMXResponse('surp', hxRetarget: "#newtarget");
     }
 }

@@ -62,7 +62,7 @@ class Kernel
             foreach ($response->headers as $name => $value) {
                 header("{$name}: {$value}");
             }
-            http_response_code($response->responseCode);
+            http_response_code($response->responseCode->value);
             echo $response->content;
         } catch (\Throwable $th) {
             $exception = $th;

@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Services\MusicService;
 use Core\Components\Models\AbstractTemplate;
 use Core\Components\Models\Component;
-use Core\Components\Services\ComponentService;
 use Core\Utility\Services\PathService;
 
 final class MusicTemplate extends AbstractTemplate
@@ -39,5 +38,13 @@ final class MusicTemplate extends AbstractTemplate
         }
 
         return $songComponent;
+    }
+
+    /**
+     * @param list<Song> $songs
+     */
+    public function getAllSongs(array $songs, User $user): Component
+    {
+        return $this->collect(array_map(fn(Song $song): Component => $this->getSong($song, $user), $songs));
     }
 }

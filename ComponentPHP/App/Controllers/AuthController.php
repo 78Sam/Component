@@ -9,6 +9,7 @@ use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
+use Core\Routing\Enums\RequestMethods;
 use Core\Routing\Models\Responses\RedirectResponse;
 use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
@@ -26,7 +27,7 @@ class AuthController extends AbstractController
     #[Route(['/login'], 'app_login')]
     public function login(Request $request): Response
     {
-        if ($request->method === "POST") {
+        if ($request->method === RequestMethods::Post) {
             $user = $this->authService->login($request);
             if ($user !== null) {
                 return new RedirectResponse('/');
@@ -44,7 +45,7 @@ class AuthController extends AbstractController
     #[Route(['/register'], 'app_register')]
     public function register(Request $request): Response
     {
-        if ($request->method === "POST") {
+        if ($request->method === RequestMethods::Post) {
             $user = $this->authService->register($request);
             if ($user !== null) {
                 return new RedirectResponse('/');

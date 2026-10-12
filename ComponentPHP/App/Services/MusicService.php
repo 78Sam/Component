@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Templates\SQL\MusicTemplate;
 use Core\Database\Services\DatabaseService;
 use Core\Logging\Services\LoggingService;
+use Core\Routing\Enums\ResponseCode;
 use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
 use Core\Utility\Services\DateTimeService;
@@ -160,12 +161,12 @@ final class MusicService
     {
         $song = $this->getSongById($id);
         if ($song === null) {
-            return new Response('Failed to delete song as it could not be found', responseCode: 500);
+            return new Response('Failed to delete song as it could not be found', responseCode: ResponseCode::InternalServerError);
         }
 
         $currentUser = $this->authService->getUser();
         if ($song->addedBy->id !== $currentUser->id) {
-            return new Response('You cannot delete this song', responseCode: 403);
+            return new Response('You cannot delete this song', responseCode: ResponseCode::Forbidden);
         }
 
         $deleteComponent = $this->musicTemplate

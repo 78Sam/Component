@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Core\Routing\Attributes;
 
+use Core\Routing\Enums\RequestMethods;
+
 #[\Attribute(\Attribute::TARGET_METHOD)]
 final class Route
 {
@@ -12,7 +14,7 @@ final class Route
 
     /**
      * @param list<string> $routes
-     * @param list<string> $HTTPVerbs
+     * @param list<RequestMethods> $HTTPVerbs
      */
     public function __construct(
         array $routes,

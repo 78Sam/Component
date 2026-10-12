@@ -18,6 +18,7 @@ class AuthService
     public function __construct(
         private readonly UserTemplate $userTemplate,
         private readonly DatabaseService $databaseService,
+        private readonly UserService $userService,
     ) {
     }
 
@@ -54,6 +55,10 @@ class AuthService
         }
 
         $username = $registrationDetails['username'];
+        if ($this->userService->getUserByUsername($username) !== null) {
+            return null;
+        }
+
         $password = $registrationDetails['password'];
         $joined = new \DateTimeImmutable('now');
         $role = 0;

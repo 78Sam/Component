@@ -9,7 +9,11 @@ use Core\Logging\Services\LoggingService;
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
+use Core\Routing\Enums\RequestMethods;
+use Core\Routing\Enums\ResponseCode;
+use Core\Routing\Models\HTMXRequest;
 use Core\Routing\Models\Request;
+use Core\Routing\Models\Responses\HTMXResponse;
 use Core\Routing\Models\Responses\Response;
 use Core\Routing\Models\RouteSegment;
 use Core\Routing\Models\SiteMapEntry;
@@ -61,22 +65,25 @@ final class RoutingService
 
         $httpsScheme = in_array($requirements['HTTPS']->getValueWithDefault(''), ['', 'off'], true) ? 'HTTP' : 'HTTPS';
 
-        return new Request(
+        $request = new Request(
             host: $requirements['SERVER_NAME']->getValue(),
             scheme: strtoupper($requirements['REQUEST_SCHEME']->getValueWithDefault($httpsScheme)),
             path: '/' . trim(parse_url($requirements['REQUEST_URI']->getValue(), PHP_URL_PATH), '/'),
             port: $requirements['SERVER_PORT']->getValue(),
             queryString: $requirements['QUERY_STRING']->getValueWithDefault(''),
-            method: $requirements['REQUEST_METHOD']->getValue(),
+            method: RequestMethods::from(strtoupper($requirements['REQUEST_METHOD']->getValue())),
             requestTime: $requirements['REQUEST_TIME']->getValue(),
             serverTime: time(),
-            isHTMX: array_key_exists('HTTP_HX_REQUEST', $server), // TODO: Can we have a whole model for the HTMX request, there are other good headers besides this one
             get: $get,
             post: $post,
             files: $files,
             cookies: $cookies,
             server: $server,
         );
+
+        $htmxRequest = HTMXRequest::fromRequest($request);
+
+        return $htmxRequest !== null ? $htmxRequest : $request;
     }
 
     public function handleRequest(Request $request): Response
@@ -116,12 +123,12 @@ final class RoutingService
         }
 
         if ($siteMapEntry === null) {
-            return new Response('<h1>404</h1>', 404);
+            return new Response('<h1>404</h1>', ResponseCode::NotFound);
         }
 
         $route = $siteMapEntry->route;
         if ($route->HTTPVerbs !== [] && !in_array($request->method, $route->HTTPVerbs, true)) {
-            return new Response('<h1>404</h1>', 404);
+            return new Response('<h1>404</h1>', ResponseCode::NotFound);
         }
 
         $this->loggingService->log("Routing '{$request->path}'");
