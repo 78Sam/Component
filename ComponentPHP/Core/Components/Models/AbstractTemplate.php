@@ -74,8 +74,8 @@ abstract class AbstractTemplate
                 throw new \Exception("Cannot collect item that is not a string or component: '{$type}'");
             }
 
-            $sockets["_chunk_{$chunk}"] = $item;
-            $sockets['_chunk_' . ($chunk + 1)] = $separator;
+            $sockets["_chunk_" . ($chunk * 2)] = $item;
+            $sockets['_chunk_' . (($chunk * 2) + 1)] = $separator;
         }
         array_pop($sockets);
 

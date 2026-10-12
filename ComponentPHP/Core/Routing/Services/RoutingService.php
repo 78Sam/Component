@@ -207,6 +207,7 @@ final class RoutingService
      */
     public function tunnelRequest(string $routeName, array $methodParameters = []): Response
     {
+        // TODO: Tbh this should probably take an actual Request object
         if (!array_key_exists($routeName, $this->routeNameToSiteMapEntry)) {
             throw new \Exception("Unknown route name when tunnelling request: '{$routeName}'");
         }
@@ -243,7 +244,6 @@ final class RoutingService
 
     private function createSiteMap(): void
     {
-        // $controllers = $this->classFinderService->byExtension('App/Controllers', AbstractController::class);
         $controllers = $this->classFinderService->byExtension(
             PathService::fromProjectDirectory('App', 'Controllers'),
             AbstractController::class,
