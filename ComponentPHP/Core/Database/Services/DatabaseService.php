@@ -122,6 +122,8 @@ class DatabaseService
             $constructorArguments[$argument->name] = true;
         }
 
+        // TODO: Use new container method argument thing
+
         $result = [];
         foreach ($rows as $row) {
             if ($normaliser !== null) {
@@ -200,7 +202,7 @@ class DatabaseService
             }
 
             $values[$variable] = $socketValue;
-            $query->fill($variable, ":{$variable}", raw: true);
+            $query->fill($variable, ":{$variable}", raw: true); // TODO: This doesn't stop `'` (single quotes) from being fucked, maybe other stuff too
         }
 
         return $values;

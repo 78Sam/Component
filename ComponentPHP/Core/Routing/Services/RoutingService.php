@@ -90,99 +90,48 @@ final class RoutingService
 
     public function handleRequest(Request $request): Response
     {
-        // Static routes
-
-        $siteMapEntry = null;
-        if (array_key_exists($request->path, $this->staticSiteMapEntries)) {
-            $siteMapEntry = $this->staticSiteMapEntries[$request->path];
-        }
-
-        // Dynamic routes
-
-        $dynamicParameters = [];
-        if ($siteMapEntry === null) {
-            foreach ($this->dynamicSiteMapEntries as $pattern => $entry) {
-                $matches = [];
-                if (preg_match("/^{$pattern}$/", $request->path, $matches) !== 1) {
-                    continue;
-                }
-
-                $siteMapEntry = $entry;
-                $explodedRoute = array_values(array_filter(
-                    explode('/', $request->path),
-                    fn(string $value): bool => $value !== '',
-                ));
-                foreach ($siteMapEntry->segments as $index => $segment) {
-                    if (!$segment->regex) {
-                        continue;
-                    }
-
-                    $dynamicParameters[$segment->variable] = $explodedRoute[$index];
-                }
-
-                break;
-            }
-        }
-
+        $siteMapEntry = $this->matchSiteMapEntry($request);
         if ($siteMapEntry === null) {
             return new Response('<h1>404</h1>', ResponseCode::NotFound);
         }
 
         $route = $siteMapEntry->route;
         if ($route->HTTPVerbs !== [] && !in_array($request->method, $route->HTTPVerbs, true)) {
-            return new Response('<h1>404</h1>', ResponseCode::NotFound);
+            return new Response('<h1>405</h1>', ResponseCode::MethodNotAllowed);
         }
 
         $this->loggingService->log("Routing '{$request->path}'");
 
-        // Type arguments and add $request
+        // If its a dynamic route match the route segments to the method arguments
 
-        $methodParameters = [];
-        foreach ($siteMapEntry->method->getParameters() as $parameter) {
-            $type = $parameter->getType()?->getName();
-            if ($type === null) {
-                continue;
-            }
+        $dynamicParameters = [];
+        if ($siteMapEntry->isDynamic()) {
+            $explodedRoute = array_values(array_filter(
+                explode('/', $request->path),
+                fn(string $value): bool => $value !== '',
+            ));
 
-            // Request
+            foreach ($siteMapEntry->segments as $index => $segment) {
+                if (!$segment->regex) {
+                    continue;
+                }
 
-            $parameterName = $parameter->getName();
-            if ($type === Request::class) {
-                $methodParameters[$parameterName] = $request;
-
-                continue;
-            }
-
-            // Dynamic route parameters
-
-            if (array_key_exists($parameterName, $dynamicParameters)) {
-                $methodParameters[$parameterName] = match ($type) {
-                    'int' => (int) $dynamicParameters[$parameterName],
-                    'float' => (float) $dynamicParameters[$parameterName],
-                    'bool' => (bool) $dynamicParameters[$parameterName],
-                    default => $dynamicParameters[$parameterName],
-                };
-
-                continue;
-            }
-
-            // DI Container
-
-            if (!in_array($type, Container::NATIVE_TYPES, true)) {
-                $methodParameters[$parameterName] = Container::getInstance()->get($type);
+                $dynamicParameters[$segment->variable] = $explodedRoute[$index];
             }
         }
+
+        foreach ($siteMapEntry->method->getParameters() as $parameter) {
+            if (Container::getType($parameter) === Request::class) {
+                $dynamicParameters[$parameter->name] = $request;
+            }
+        }
+        $methodParameters = Container::getInstance()->buildMethodParameters($siteMapEntry->method, $dynamicParameters);
 
         // Run middleware
 
-        $classMiddlewareResponse = $this->runMiddleware($siteMapEntry->class, $request);
-        if ($classMiddlewareResponse !== null) {
-            return $classMiddlewareResponse;
-        }
-
-        $methodMiddlewareResponse = $this->runMiddleware($siteMapEntry->method, $request);
-        if ($methodMiddlewareResponse !== null) {
-            return $methodMiddlewareResponse;
+        $middlewareResult = $this->runMiddleware($siteMapEntry, $request);
+        if ($middlewareResult !== null) {
+            return $middlewareResult;
         }
 
         // Create and cache the controller instance
@@ -223,20 +172,54 @@ final class RoutingService
         return $response;
     }
 
-    private function runMiddleware(\ReflectionClass|\ReflectionMethod $reflectionObject, Request $request): ?Response
+    private function matchSiteMapEntry(Request $request): ?SiteMapEntry
     {
-        /** @var list<\ReflectionAttribute<MiddlewareAttributeInterface>> $middlewareAttributes */
-        $middlewareAttributes = $reflectionObject->getAttributes(
-            MiddlewareAttributeInterface::class,
-            \ReflectionAttribute::IS_INSTANCEOF,
-        );
+        // Static routes
 
-        foreach ($middlewareAttributes as $methodMiddlewareAttribute) {
-            $methodMiddlewareAttributeInstance = Container::getInstance()->get($methodMiddlewareAttribute->name);
-            $middlewareResult = $methodMiddlewareAttributeInstance->apply($request);
-            if ($middlewareResult !== null) {
-                return $middlewareResult;
+        if (array_key_exists($request->path, $this->staticSiteMapEntries)) {
+            return $this->staticSiteMapEntries[$request->path];
+        }
+
+        // Dynamic routes
+
+        foreach ($this->dynamicSiteMapEntries as $pattern => $entry) {
+            if (preg_match("/^{$pattern}$/", $request->path) === 1) {
+                return $entry;
             }
+        }
+
+        return null;
+    }
+
+    private function runMiddleware(SiteMapEntry $siteMapEntry, Request $request): ?Response
+    {
+        $applyMiddleware = static function(\ReflectionClass|\ReflectionMethod $middlewareTarget, Request $request): ?Response {
+            /** @var list<\ReflectionAttribute<MiddlewareAttributeInterface>> $middlewareAttributes */
+            $middlewareAttributes = $middlewareTarget->getAttributes(
+                MiddlewareAttributeInterface::class,
+                \ReflectionAttribute::IS_INSTANCEOF,
+            );
+
+            foreach ($middlewareAttributes as $methodMiddlewareAttribute) {
+                /** @var MiddlewareAttributeInterface $methodMiddlewareAttributeInstance */
+                $methodMiddlewareAttributeInstance = Container::getInstance()->get($methodMiddlewareAttribute->name);
+                $middlewareResult = $methodMiddlewareAttributeInstance->apply($request);
+                if ($middlewareResult !== null) {
+                    return $middlewareResult;
+                }
+            }
+
+            return null;
+        };
+
+        $classMiddlewareResponse = $applyMiddleware($siteMapEntry->class, $request);
+        if ($classMiddlewareResponse !== null) {
+            return $classMiddlewareResponse;
+        }
+
+        $methodMiddlewareResponse = $applyMiddleware($siteMapEntry->method, $request);
+        if ($methodMiddlewareResponse !== null) {
+            return $methodMiddlewareResponse;
         }
 
         return null;
@@ -317,7 +300,7 @@ final class RoutingService
             }
 
             if (preg_match(RouteSegment::PATTERN_PATTERN, $routeSegment, $matches) === 1) {
-                $segments[] = new RouteSegment($matches['pattern'] ?? '.+', $matches['variable'], true);
+                $segments[] = new RouteSegment($matches['pattern'] ?? '[^\\/]+', $matches['variable'], true);
 
                 continue;
             }

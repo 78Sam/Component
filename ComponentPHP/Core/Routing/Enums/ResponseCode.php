@@ -12,6 +12,7 @@ enum ResponseCode: int
 
     case Forbidden = 403;
     case NotFound = 404;
+    case MethodNotAllowed = 405;
 
     case InternalServerError = 500;
 }
