@@ -46,7 +46,7 @@ final class Container
 
             // If we don't have the parameter and its an object, try and create it with the container
             if (!array_key_exists($parameterName, $parameters) && !ReflectionService::isNativeType($parameter)) {
-                $parameters[$parameterName] = $this->get(ReflectionService::getType($parameter)); // getType shouldn't be null
+                $parameters[$parameterName] = $this->get(ReflectionService::getType($parameter));
             }
         }
 
