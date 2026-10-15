@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Core\Components;
 
+use Core\DependencyInjection\Container;
 use Core\Tests\AbstractTest;
 use Core\Tests\Attributes\Test;
 use Tests\Core\Components\Include\Templates\TestTemplate;
@@ -15,7 +16,7 @@ class TemplateTests extends AbstractTest
     #[\Override]
     public function preTest(Test $test): void
     {
-        $this->testTemplate = TestTemplate::getInstance();
+        $this->testTemplate = Container::getInstance()->get(TestTemplate::class);
     }
 
     #[Test('Load a simple component file via the template')]

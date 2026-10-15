@@ -6,6 +6,7 @@ namespace Tests\Core\Database;
 
 use Core\Components\Services\ComponentService;
 use Core\Database\Services\DatabaseService;
+use Core\DependencyInjection\Container;
 use Core\Tests\AbstractTest;
 use Core\Tests\Attributes\Test;
 
@@ -18,7 +19,7 @@ class DatabaseTests extends AbstractTest
     public function setup(): void
     {
         $this->componentService = new ComponentService();
-        $this->database = DatabaseService::getInstance();
+        $this->database = Container::getInstance()->get(DatabaseService::class);
         $this->database->connect('sqlite::memory:');
     }
 

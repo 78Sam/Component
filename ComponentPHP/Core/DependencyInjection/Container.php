@@ -5,39 +5,21 @@ declare(strict_types=1);
 namespace Core\DependencyInjection;
 
 use Core\DependencyInjection\Exceptions\InfiniteRecursionException;
+use Core\DependencyInjection\Services\ReflectionService;
 
 final class Container
 {
     // TODO: Clear state between requests (maybe implements DI cache interface to keep warm?)
     // TODO: Instead of clearing everything, could we save like a schema of how to build a container for fast build each request after the first without leaking state?
 
-    public const string NATIVE_TYPE_ARRAY = 'array';
-    public const string NATIVE_TYPE_BOOL = 'bool';
-    public const string NATIVE_TYPE_DOUBLE = 'double';
-    public const string NATIVE_TYPE_FLOAT = 'float';
-    public const string NATIVE_TYPE_INT = 'int';
-    public const string NATIVE_TYPE_MIXED = 'mixed';
-    public const string NATIVE_TYPE_NULL = 'null';
-    public const string NATIVE_TYPE_OBJECT = 'object';
-    public const string NATIVE_TYPE_STRING = 'string';
-
-    public const array NATIVE_TYPES = [
-        self::NATIVE_TYPE_ARRAY,
-        self::NATIVE_TYPE_BOOL,
-        self::NATIVE_TYPE_DOUBLE,
-        self::NATIVE_TYPE_FLOAT,
-        self::NATIVE_TYPE_INT,
-        self::NATIVE_TYPE_MIXED,
-        self::NATIVE_TYPE_NULL,
-        self::NATIVE_TYPE_OBJECT,
-        self::NATIVE_TYPE_STRING,
-    ];
-
     public array $classes = [];
 
     private static ?Container $instance = null;
+    // private static ReflectionService $reflectionService;
 
-    private function __construct() {}
+    private function __construct() {
+        // self::$reflectionService = $this->get(ReflectionService::class);
+    }
 
     public static function getInstance(): self
     {
@@ -46,57 +28,6 @@ final class Container
         }
 
         return self::$instance;
-    }
-
-    public static function getType(\ReflectionParameter $parameter): string
-    {
-        return $parameter->getType()?->getName() ?? 'mixed';
-    }
-
-    public static function isNativeType(\ReflectionParameter $parameter): bool
-    {
-        return in_array(self::getType($parameter), self::NATIVE_TYPES, true);
-    }
-
-    public static function doesTypeMatch(\ReflectionParameter $parameter, mixed $value): bool
-    {
-        $type = self::getType($parameter);
-        if ($type === self::NATIVE_TYPE_MIXED) {
-            return true;
-        }
-
-        return match($type) {
-            self::NATIVE_TYPE_ARRAY => is_array($value),
-            self::NATIVE_TYPE_BOOL => is_bool($value),
-            self::NATIVE_TYPE_DOUBLE => is_double($value),
-            self::NATIVE_TYPE_FLOAT => is_float($value),
-            self::NATIVE_TYPE_INT => is_int($value),
-            self::NATIVE_TYPE_NULL => is_null($value),
-            self::NATIVE_TYPE_OBJECT => is_object($value),
-            self::NATIVE_TYPE_STRING => is_string($value),
-            // default => throw new \LogicException("Unchecked type: '{$type}'")
-            default => $type === $value::class,
-        };
-    }
-
-    public static function castType(\ReflectionParameter $parameter, mixed $value): mixed
-    {
-        $type = self::getType($parameter);
-        if ($type === self::NATIVE_TYPE_MIXED) {
-            return $value;
-        }
-
-        return match($type) {
-            self::NATIVE_TYPE_ARRAY => (array) $value,
-            self::NATIVE_TYPE_BOOL => (bool) $value,
-            self::NATIVE_TYPE_DOUBLE, self::NATIVE_TYPE_FLOAT => (float) $value,
-            self::NATIVE_TYPE_INT => (int) $value,
-            self::NATIVE_TYPE_NULL => null,
-            self::NATIVE_TYPE_OBJECT => (object) $value,
-            self::NATIVE_TYPE_STRING => (string) $value,
-            // default => throw new \LogicException("Uncastable type: '{$type}'")
-            default => $value,
-        };
     }
 
     /**
@@ -114,8 +45,8 @@ final class Container
             $methodParameters[$parameterName] = $parameter;
 
             // If we don't have the parameter and its an object, try and create it with the container
-            if (!array_key_exists($parameterName, $parameters) && !self::isNativeType($parameter)) {
-                $parameters[$parameterName] = $this->get(self::getType($parameter)); // getType shouldn't be null
+            if (!array_key_exists($parameterName, $parameters) && !ReflectionService::isNativeType($parameter)) {
+                $parameters[$parameterName] = $this->get(ReflectionService::getType($parameter)); // getType shouldn't be null
             }
         }
 
@@ -128,14 +59,21 @@ final class Container
             }
 
             $methodParameter = $methodParameters[$name];
-            if (!self::doesTypeMatch($methodParameter, $value)) {
-                $parameters[$name] = self::castType($methodParameter, $value);
+            if (!ReflectionService::doesTypeMatch($methodParameter, $value)) {
+                $parameters[$name] = ReflectionService::castType($methodParameter, $value);
             }
         }
 
         return $parameters;
     }
 
+    /**
+     * @template T of object
+     *
+     * @param class-string<T> $classname
+     *
+     * @return T
+     */
     public function get(string $classname): object
     {
         if (array_key_exists($classname, $this->classes)) {
@@ -180,7 +118,7 @@ final class Container
         $vals = [];
         foreach ($constructor->getParameters() as $parameter) {
             $type = $parameter->getType()->getName();
-            if (self::isNativeType($parameter)) {
+            if (ReflectionService::isNativeType($parameter)) {
                 if (!$parameter->isOptional()) {
                     throw new \Exception("Cannot build DI due to required arguments of type '{$type}'");
                 }

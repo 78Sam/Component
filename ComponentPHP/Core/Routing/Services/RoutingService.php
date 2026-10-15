@@ -34,9 +34,6 @@ final class RoutingService
     /** @var array<string, SiteMapEntry> */
     public array $routeNameToSiteMapEntry = [];
 
-    /** @var array<string, AbstractController> */
-    public array $cachedControllers = [];
-
     public function __construct(
         private readonly ClassFinderService $classFinderService,
         private readonly LoggingService $loggingService,
@@ -134,12 +131,9 @@ final class RoutingService
             return $middlewareResult;
         }
 
-        // Create and cache the controller instance
+        // Create the controller
 
-        if (!array_key_exists($request->path, $this->cachedControllers)) {
-            $this->cachedControllers[$request->path] = Container::getInstance()->get($siteMapEntry->class->name);
-        }
-        $controller = $this->cachedControllers[$request->path];
+        $controller = Container::getInstance()->get($siteMapEntry->class->name);
 
         // Send request
 

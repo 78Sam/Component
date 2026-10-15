@@ -12,14 +12,13 @@ use Core\Utility\Services\PathService;
 final class TestRunner
 {
     public function __construct(
-        public readonly ClassFinderService $classFinder = new ClassFinderService(),
+        private readonly ClassFinderService $classFinder,
     ) {}
 
     public function runAllTests(): void
     {
         /** @var list<\ReflectionClass<AbstractTest>> $testClasses */
         $testClasses = $this->classFinder->byExtension(PathService::fromProjectDirectory('Tests'), AbstractTest::class);
-        // $testClasses = $this->classFinder->byExtension('Tests', AbstractTest::class);
         foreach ($testClasses as $testClass) {
             $this->runSpecificTestClass($testClass);
         }
@@ -63,7 +62,7 @@ final class TestRunner
      */
     private function runTests(\ReflectionClass $class, array $tests): void
     {
-        print_r("Running tests for class {$class->name}\n");
+        $fullMessage = "Running tests for class {$class->name}\n";
 
         uasort($tests, function (array $testA, array $testB) {
             if ($testA['test']->priority === 0) {
@@ -91,12 +90,9 @@ final class TestRunner
             $testMessage = "{$method->name} [{$testAttribute->description}]";
             try {
                 $method->invoke($class);
-                print_r(' - ' . Console::message($testMessage, background: Console::BG_COLOUR_GREEN));
+                $fullMessage .= ' - ' . Console::message($testMessage, background: Console::BG_COLOUR_GREEN);
             } catch (\Throwable $th) {
-                print_r(
-                    ' - '
-                        . Console::message("{$testMessage} ({$th->getMessage()})", background: Console::BG_COLOUR_RED),
-                );
+                $fullMessage .= ' - ' . Console::message("{$testMessage} ({$th->getMessage()})", background: Console::BG_COLOUR_RED);
             }
 
             if (!$testAttribute->skipPostTest) {
@@ -106,6 +102,6 @@ final class TestRunner
 
         $class->teardown();
 
-        print_r("\n");
+        print_r("\n{$fullMessage}");
     }
 }

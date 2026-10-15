@@ -24,9 +24,7 @@ class ComponentService
     {
         if ($absolutePath === false) {
             $path = PathService::fromProjectDirectory($path);
-            dump($path);
         }
-        // $path = normalisePath($path);
         $path = PathService::normalisePath($path);
 
         $content = file_get_contents($path);
