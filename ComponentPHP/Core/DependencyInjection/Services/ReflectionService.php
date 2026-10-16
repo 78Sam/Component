@@ -82,7 +82,6 @@ class ReflectionService
                 self::NATIVE_TYPE_NULL => is_null($value),
                 self::NATIVE_TYPE_OBJECT => is_object($value),
                 self::NATIVE_TYPE_STRING => is_string($value),
-                // default => throw new \LogicException("Unchecked type: '{$type}'")
                 default => $type === $value::class,
             };
             if ($isMatch) {
@@ -121,7 +120,6 @@ class ReflectionService
             self::NATIVE_TYPE_NULL => null,
             self::NATIVE_TYPE_OBJECT => (object) $value,
             self::NATIVE_TYPE_STRING => (string) $value,
-            // default => throw new \LogicException("Uncastable type: '{$type}'")
             default => $value,
         };
     }
