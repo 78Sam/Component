@@ -45,4 +45,14 @@ abstract class AbstractTest
             throw new \AssertionError($message);
         }
     }
+
+    /**
+     * @throws \AssertionError
+     */
+    public static function assertFalse(bool $result, string $message): void
+    {
+        if ($result) {
+            throw new \AssertionError($message);
+        }
+    }
 }

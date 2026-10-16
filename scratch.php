@@ -22,8 +22,7 @@ declare(strict_types=1);
 // echo gettype(['10']) . PHP_EOL;
 // echo gettype(2.2) . PHP_EOL;
 
-// $x = 'int';
+$p = (int) 'hi';
 
-// $p = ($x) '10';
+// echo preg_match('/^\\/songs\\/test2\\/[^\\/]+\\/view$/', '/songs/test2/12/view');
 
-echo preg_match('/^\\/songs\\/test2\\/[^\\/]+\\/view$/', '/songs/test2/12/view');

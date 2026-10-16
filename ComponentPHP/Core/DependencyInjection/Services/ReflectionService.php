@@ -95,30 +95,34 @@ class ReflectionService
 
     public static function castType(\ReflectionParameter $parameter, mixed $value): mixed
     {
-        // $type = self::getType($parameter);
-        // if ($type === self::NATIVE_TYPE_MIXED) {
-        //     return $value;
-        // }
-
-        // return match($type) {
-        //     self::NATIVE_TYPE_ARRAY => (array) $value,
-        //     self::NATIVE_TYPE_BOOL => (bool) $value,
-        //     self::NATIVE_TYPE_DOUBLE, self::NATIVE_TYPE_FLOAT => (float) $value,
-        //     self::NATIVE_TYPE_INT => (int) $value,
-        //     self::NATIVE_TYPE_NULL => null,
-        //     self::NATIVE_TYPE_OBJECT => (object) $value,
-        //     self::NATIVE_TYPE_STRING => (string) $value,
-        //     // default => throw new \LogicException("Uncastable type: '{$type}'")
-        //     default => $value,
-        // };
-
-        // If its a union type what do we cast it as, or do we...
-
         $types = self::getTypes($parameter);
-        if ($types === [self::NATIVE_TYPE_MIXED]) {
-            return $value;
+        foreach ($types as $type) {
+            if ($type === self::NATIVE_TYPE_MIXED) {
+                return $value;
+            }
         }
 
-        return 'TO BE CONTINUED!';
+        if (count($types) > 1) {
+            $typesString = implode(',', $types);
+
+            throw new \LogicException("Cannot cast when there is more than one possible type: '{$typesString}'");
+        }
+        $type = array_first($types);
+
+        if (!self::isNativeType($parameter) && !is_object($value)) {
+            throw new \LogicException("Unable to cast to type '{$type}' if not already an object");
+        }
+
+        return match($type) {
+            self::NATIVE_TYPE_ARRAY => (array) $value,
+            self::NATIVE_TYPE_BOOL => (bool) $value,
+            self::NATIVE_TYPE_DOUBLE, self::NATIVE_TYPE_FLOAT => (float) $value,
+            self::NATIVE_TYPE_INT => (int) $value,
+            self::NATIVE_TYPE_NULL => null,
+            self::NATIVE_TYPE_OBJECT => (object) $value,
+            self::NATIVE_TYPE_STRING => (string) $value,
+            // default => throw new \LogicException("Uncastable type: '{$type}'")
+            default => $value,
+        };
     }
 }
