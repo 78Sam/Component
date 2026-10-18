@@ -15,11 +15,6 @@ final class Container
     public array $classes = [];
 
     private static ?Container $instance = null;
-    // private static ReflectionService $reflectionService;
-
-    private function __construct() {
-        // self::$reflectionService = $this->get(ReflectionService::class);
-    }
 
     public static function getInstance(): self
     {

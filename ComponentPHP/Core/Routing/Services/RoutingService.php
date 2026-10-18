@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\Routing\Services;
 
 use Core\DependencyInjection\Container;
+use Core\DependencyInjection\Services\ReflectionService;
 use Core\Logging\Services\LoggingService;
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Attributes\Route;
@@ -118,7 +119,7 @@ final class RoutingService
         }
 
         foreach ($siteMapEntry->method->getParameters() as $parameter) {
-            if (Container::getType($parameter) === Request::class) {
+            if (ReflectionService::getTypes($parameter) === [Request::class]) {
                 $dynamicParameters[$parameter->name] = $request;
             }
         }

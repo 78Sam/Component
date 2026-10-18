@@ -94,12 +94,16 @@ class ReflectionService
 
     public static function castType(\ReflectionParameter $parameter, mixed $value): mixed
     {
+        // If any type is mixed then don't bother trying to cast
+
         $types = self::getTypes($parameter);
         foreach ($types as $type) {
             if ($type === self::NATIVE_TYPE_MIXED) {
                 return $value;
             }
         }
+
+        // If there's more than one type throw an exception for now, maybe come back to this later
 
         if (count($types) > 1) {
             $typesString = implode(',', $types);
@@ -108,9 +112,13 @@ class ReflectionService
         }
         $type = array_first($types);
 
+        // If its a class type and the initial value isn't an object, throw
+
         if (!self::isNativeType($parameter) && !is_object($value)) {
             throw new \LogicException("Unable to cast to type '{$type}' if not already an object");
         }
+
+        // Cast
 
         return match($type) {
             self::NATIVE_TYPE_ARRAY => (array) $value,

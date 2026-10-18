@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Core\Reflection\Include;
 
-use Core\DependencyInjection\Services\ReflectionService;
-
 class TestClass
 {
     public function arrayMethod(array $x): void
@@ -33,5 +31,11 @@ class TestClass
     {}
 
     public function classMethod(TestClass $x): void
+    {}
+
+    public function intStringUnionMethod(int|string $x): void
+    {}
+
+    public function intClassNullUnionMethod(int|TestClass|null $x): void
     {}
 }

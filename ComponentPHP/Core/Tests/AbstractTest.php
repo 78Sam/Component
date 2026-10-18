@@ -26,6 +26,14 @@ abstract class AbstractTest
         }
     }
 
+    public static function assertArrayValuesEquals(array $value1, array $value2, string $message): void
+    {
+        sort($value1);
+        sort($value2);
+
+        static::assertEquals($value1, $value2, $message);
+    }
+
     /**
      * @throws \AssertionError
      */

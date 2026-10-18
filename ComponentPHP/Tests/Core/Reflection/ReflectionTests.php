@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Core\Reflection;
 
 use Core\DependencyInjection\Services\ReflectionService;
+use Core\Routing\Attributes\Route;
 use Core\Tests\AbstractTest;
 use Core\Tests\Attributes\Test;
 use Tests\Core\Reflection\Include\TestClass;
@@ -20,113 +21,55 @@ class ReflectionTests extends AbstractTest
         $this->testClass = new \ReflectionClass(TestClass::class);
     }
 
-    // ! Native single types
+    // ! Single types
 
     #[Test('Single array param')]
     public function singleArrayParamTest(): void
     {
-        $method = $this->testClass->getMethod('arrayMethod');
-        $parameter = array_first($method->getParameters());
-
-        $types = ReflectionService::getTypes($parameter);
-        $typesString = implode(',', $types);
-
-        static::assertEquals($types, [ReflectionService::NATIVE_TYPE_ARRAY], "Not a native array type, got: '{$typesString}'");
-        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single array not found to be native');
+        $this->runSingleTypeTest('array', ReflectionService::NATIVE_TYPE_ARRAY);
     }
 
     #[Test('Single bool param')]
     public function singleBoolParamTest(): void
     {
-        $method = $this->testClass->getMethod('boolMethod');
-        $parameter = array_first($method->getParameters());
-
-        $types = ReflectionService::getTypes($parameter);
-        $typesString = implode(',', $types);
-
-        static::assertEquals($types, [ReflectionService::NATIVE_TYPE_BOOL], "Not a native bool type, got: '{$typesString}'");
-        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single bool not found to be native');
+        $this->runSingleTypeTest('bool', ReflectionService::NATIVE_TYPE_BOOL);
     }
 
     #[Test('Single float param')]
     public function singleFloatParamTest(): void
     {
-        $method = $this->testClass->getMethod('floatMethod');
-        $parameter = array_first($method->getParameters());
-
-        $types = ReflectionService::getTypes($parameter);
-        $typesString = implode(',', $types);
-
-        static::assertEquals($types, [ReflectionService::NATIVE_TYPE_FLOAT], "Not a native float type, got: '{$typesString}'");
-        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single float not found to be native');
+        $this->runSingleTypeTest('float', ReflectionService::NATIVE_TYPE_FLOAT);
     }
 
     #[Test('Single int param')]
     public function singleIntParamTest(): void
     {
-        $method = $this->testClass->getMethod('intMethod');
-        $parameter = array_first($method->getParameters());
-
-        $types = ReflectionService::getTypes($parameter);
-        $typesString = implode(',', $types);
-
-        static::assertEquals($types, [ReflectionService::NATIVE_TYPE_INT], "Not a native int type, got: '{$typesString}'");
-        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single int not found to be native');
+        $this->runSingleTypeTest('int', ReflectionService::NATIVE_TYPE_INT);
     }
 
     #[Test('Single mixed param')]
     public function singleMixedParamTest(): void
     {
-        $method = $this->testClass->getMethod('mixedMethod');
-        $parameter = array_first($method->getParameters());
-
-        $types = ReflectionService::getTypes($parameter);
-        $typesString = implode(',', $types);
-
-        static::assertEquals($types, [ReflectionService::NATIVE_TYPE_MIXED], "Not a native mixed type, got: '{$typesString}'");
-        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single mixed not found to be native');
+        $this->runSingleTypeTest('mixed', ReflectionService::NATIVE_TYPE_MIXED);
     }
 
     #[Test('Single null param')]
     public function singleNullParamTest(): void
     {
-        $method = $this->testClass->getMethod('nullMethod');
-        $parameter = array_first($method->getParameters());
-
-        $types = ReflectionService::getTypes($parameter);
-        $typesString = implode(',', $types);
-
-        static::assertEquals($types, [ReflectionService::NATIVE_TYPE_NULL], "Not a native null type, got: '{$typesString}'");
-        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single null not found to be native');
+        $this->runSingleTypeTest('null', ReflectionService::NATIVE_TYPE_NULL);
     }
 
     #[Test('Single object param')]
     public function singleObjectParamTest(): void
     {
-        $method = $this->testClass->getMethod('objectMethod');
-        $parameter = array_first($method->getParameters());
-
-        $types = ReflectionService::getTypes($parameter);
-        $typesString = implode(',', $types);
-
-        static::assertEquals($types, [ReflectionService::NATIVE_TYPE_OBJECT], "Not a native object type, got: '{$typesString}'");
-        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single object not found to be native');
+        $this->runSingleTypeTest('object', ReflectionService::NATIVE_TYPE_OBJECT);
     }
 
     #[Test('Single string param')]
     public function singleStringParamTest(): void
     {
-        $method = $this->testClass->getMethod('stringMethod');
-        $parameter = array_first($method->getParameters());
-
-        $types = ReflectionService::getTypes($parameter);
-        $typesString = implode(',', $types);
-
-        static::assertEquals($types, [ReflectionService::NATIVE_TYPE_STRING], "Not a native string type, got: '{$typesString}'");
-        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single string not found to be native');
+        $this->runSingleTypeTest('string', ReflectionService::NATIVE_TYPE_STRING);
     }
-
-    // ! Single custom class
 
     #[Test('Single class param')]
     public function singleClassParamTest(): void
@@ -139,5 +82,53 @@ class ReflectionTests extends AbstractTest
 
         static::assertEquals($types, [TestClass::class], "Not a native class type, got: '{$typesString}'");
         static::assertFalse(ReflectionService::isNativeType($parameter), 'Single class found to be native');
+    }
+
+    // ! Union tests
+
+    #[Test('Union int string class param')]
+    public function unionIntStringClassParamTest(): void
+    {
+        $method = $this->testClass->getMethod('intStringUnionMethod');
+        $parameter = array_first($method->getParameters());
+
+        $types = ReflectionService::getTypes($parameter);
+        $typesString = implode(',', $types);
+
+        static::assertArrayValuesEquals(
+            $types,
+            [ReflectionService::NATIVE_TYPE_INT, ReflectionService::NATIVE_TYPE_STRING],
+            "Not a union of int and string, got: '{$typesString}'",
+        );
+        static::assertTrue(ReflectionService::isNativeType($parameter), 'Single class found to be native');
+    }
+
+    #[Test('Union int class null class param')]
+    public function unionIntClassNullClassParamTest(): void
+    {
+        $method = $this->testClass->getMethod('intClassNullUnionMethod');
+        $parameter = array_first($method->getParameters());
+
+        $types = ReflectionService::getTypes($parameter);
+        $typesString = implode(',', $types);
+
+        static::assertArrayValuesEquals(
+            $types,
+            [ReflectionService::NATIVE_TYPE_INT, TestClass::class, ReflectionService::NATIVE_TYPE_NULL],
+            "Not a union of int TestClass and string, got: '{$typesString}'",
+        );
+        static::assertFalse(ReflectionService::isNativeType($parameter), 'Single class found to be native');
+    }
+
+    private function runSingleTypeTest(string $typeString, string $reflectionType): void
+    {
+        $method = $this->testClass->getMethod("{$typeString}Method");
+        $parameter = array_first($method->getParameters());
+
+        $types = ReflectionService::getTypes($parameter);
+        $typesString = implode(',', $types);
+
+        static::assertEquals($types, [$reflectionType], "Not a native string type, got: '{$typesString}'");
+        static::assertTrue(ReflectionService::isNativeType($parameter), "Single {$typeString} not found to be native");
     }
 }
