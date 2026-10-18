@@ -22,6 +22,7 @@ $container = Container::getInstance();
 
 $tester = $container->get(TestRunner::class);
 $tester->runTestClass(ReflectionTests::class);
+
 // $tester->runAllTests();
 
 // $reflectionService = $container->get(ReflectionService::class);

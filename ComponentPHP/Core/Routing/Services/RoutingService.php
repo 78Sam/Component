@@ -188,7 +188,10 @@ final class RoutingService
 
     private function runMiddleware(SiteMapEntry $siteMapEntry, Request $request): ?Response
     {
-        $applyMiddleware = static function(\ReflectionClass|\ReflectionMethod $middlewareTarget, Request $request): ?Response {
+        $applyMiddleware = static function (
+            \ReflectionClass|\ReflectionMethod $middlewareTarget,
+            Request $request,
+        ): ?Response {
             /** @var list<\ReflectionAttribute<MiddlewareAttributeInterface>> $middlewareAttributes */
             $middlewareAttributes = $middlewareTarget->getAttributes(
                 MiddlewareAttributeInterface::class,

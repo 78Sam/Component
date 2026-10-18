@@ -73,7 +73,7 @@ class ReflectionService
         }
 
         foreach ($types as $type) {
-            $isMatch = match($type) {
+            $isMatch = match ($type) {
                 self::NATIVE_TYPE_ARRAY => is_array($value),
                 self::NATIVE_TYPE_BOOL => is_bool($value),
                 self::NATIVE_TYPE_DOUBLE => is_double($value),
@@ -120,7 +120,7 @@ class ReflectionService
 
         // Cast
 
-        return match($type) {
+        return match ($type) {
             self::NATIVE_TYPE_ARRAY => (array) $value,
             self::NATIVE_TYPE_BOOL => (bool) $value,
             self::NATIVE_TYPE_DOUBLE, self::NATIVE_TYPE_FLOAT => (float) $value,

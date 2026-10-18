@@ -92,7 +92,9 @@ final class TestRunner
                 $method->invoke($class);
                 $fullMessage .= ' - ' . Console::message($testMessage, background: Console::BG_COLOUR_GREEN);
             } catch (\Throwable $th) {
-                $fullMessage .= ' - ' . Console::message("{$testMessage} ({$th->getMessage()})", background: Console::BG_COLOUR_RED);
+                $fullMessage .=
+                    ' - '
+                    . Console::message("{$testMessage} ({$th->getMessage()})", background: Console::BG_COLOUR_RED);
             }
 
             if (!$testAttribute->skipPostTest) {

@@ -29,7 +29,7 @@ final class Container
      * Strip parameters that don't exist in the method, attempt to type cast, and container fetch objects
      *
      * @param array<string, mixed> $parameters
-     * 
+     *
      * @return array<string, mixed>
      */
     public function buildMethodParameters(\ReflectionMethod $method, array $parameters): array
