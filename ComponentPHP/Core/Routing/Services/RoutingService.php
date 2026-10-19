@@ -70,7 +70,7 @@ final class RoutingService
         $request = new Request(
             host: $requirements['SERVER_NAME']->getValue(),
             scheme: strtoupper($requirements['REQUEST_SCHEME']->getValueWithDefault($httpsScheme)),
-            path: '/' . trim(parse_url($requirements['REQUEST_URI']->getValue(), PHP_URL_PATH), '/'),
+            route: '/' . trim(parse_url($requirements['REQUEST_URI']->getValue(), PHP_URL_PATH), '/'),
             port: $requirements['SERVER_PORT']->getValue(),
             queryString: $requirements['QUERY_STRING']->getValueWithDefault(''),
             method: RequestMethods::from(strtoupper($requirements['REQUEST_METHOD']->getValue())),
@@ -100,14 +100,14 @@ final class RoutingService
             return new Response('<h1>405</h1>', ResponseCode::MethodNotAllowed);
         }
 
-        $this->loggingService->log("Routing '{$request->path}'");
+        $this->loggingService->log("Routing '{$request->route}'");
 
         // If its a dynamic route match the route segments to the method arguments
 
         $dynamicParameters = [];
         if ($siteMapEntry->isDynamic()) {
             $explodedRoute = array_values(array_filter(
-                explode('/', $request->path),
+                explode('/', $request->route),
                 fn(string $value): bool => $value !== '',
             ));
 
@@ -173,14 +173,14 @@ final class RoutingService
     {
         // Static routes
 
-        if (array_key_exists($request->path, $this->staticSiteMapEntries)) {
-            return $this->staticSiteMapEntries[$request->path];
+        if (array_key_exists($request->route, $this->staticSiteMapEntries)) {
+            return $this->staticSiteMapEntries[$request->route];
         }
 
         // Dynamic routes
 
         foreach ($this->dynamicSiteMapEntries as $pattern => $entry) {
-            if (preg_match("/^{$pattern}$/", $request->path) === 1) {
+            if (preg_match("/^{$pattern}$/", $request->route) === 1) {
                 return $entry;
             }
         }

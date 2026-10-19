@@ -67,7 +67,7 @@ final readonly class HTMXRequest extends Request
         return new self(
             $request->host,
             $request->scheme,
-            $request->path,
+            $request->route,
             $request->port,
             $request->queryString,
             $request->method,

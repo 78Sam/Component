@@ -6,45 +6,43 @@ namespace Core\Routing\Models;
 
 class SiteMap
 {
-    private readonly array $siteMapEntriesByRoute;
-    private readonly array $siteMapEntriesByRouteName;
+    /** @var array<string, SiteMapEntry2> */
+    private array $siteMapEntriesByName = [];
 
-    /**
-     * @param list<SiteMapEntry> $siteMapEntries
-     */
-    public function __construct(array $siteMapEntries)
+    /** @var array<string, SiteMapEntry2> */
+    private array $siteMapEntriesByRoute = [];
+
+    public function add(SiteMapEntry2 $siteMapEntry2): self
     {
-        $siteMapEntriesByRoute = [];
-        $siteMapEntriesByRouteName = [];
-
-        foreach ($siteMapEntries as $siteMapEntry) {
-            $routeAttribute = $siteMapEntry->route;
-            foreach ($routeAttribute->routes as $route) {
-                $siteMapEntriesByRoute[$route] = $siteMapEntry;
-            }
-            $siteMapEntriesByRouteName[$routeAttribute->name] = $siteMapEntry;
+        if (array_key_exists($siteMapEntry2->name, $this->siteMapEntriesByName)) {
+            throw new \Exception("Site map entry already exists for name: '{$siteMapEntry2->name}'");
         }
 
-        $this->siteMapEntriesByRoute = $siteMapEntriesByRoute;
-        $this->siteMapEntriesByRouteName = $siteMapEntriesByRouteName;
+        if (array_key_exists($siteMapEntry2->route, $this->siteMapEntriesByRoute)) {
+            throw new \Exception("Site map entry already exists for route: '{$siteMapEntry2->route}'");
+        }
+
+        $this->siteMapEntriesByName[$siteMapEntry2->name] = $siteMapEntry2; 
+        $this->siteMapEntriesByRoute[$siteMapEntry2->route] = $siteMapEntry2; 
+
+        return $this;
     }
 
-    public function getEntryFromRequest(Request $request): ?SiteMapEntry
+    public function getSiteMapEntryByName(string $name): ?SiteMapEntry2
     {
-        // Static routes
+        return $this->siteMapEntriesByName[$name] ?? null;
+    }
 
-        if (array_key_exists($request->path, $this->staticSiteMapEntries)) {
-            return $this->staticSiteMapEntries[$request->path];
-        }
+    public function getSiteMapEntryByRoute(string $route): ?SiteMapEntry2
+    {
+        return $this->siteMapEntriesByRoute[$route] ?? null;
+    }
 
-        // Dynamic routes
-
-        foreach ($this->dynamicSiteMapEntries as $pattern => $entry) {
-            if (preg_match("/^{$pattern}$/", $request->path) === 1) {
-                return $entry;
-            }
-        }
-
-        return null;
+    /**
+     * @return list<SiteMapEntry2>
+     */
+    public function getDynamicSiteMapEntries(): array
+    {
+        return array_filter($this->siteMapEntriesByName, fn(SiteMapEntry2 $siteMapEntry): bool => $siteMapEntry->isDynamic);
     }
 }

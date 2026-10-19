@@ -138,4 +138,23 @@ class ReflectionService
             default => $value,
         };
     }
+
+    /**
+     * @template T of object
+     * 
+     * @param class-string<T> $attribute
+     * 
+     * @return list<\ReflectionAttribute<T>>
+     */
+    public static function getAttributesInClass(\ReflectionClass $class, string $attribute): array
+    {
+        $attributes = $class->getAttributes($attribute);
+        foreach ($class->getMethods() as $method) {
+            foreach ($method->getAttributes($attribute) as $methodAttribute) {
+                $attributes[] = $methodAttribute;
+            }
+        }
+
+        return $attributes;
+    }
 }

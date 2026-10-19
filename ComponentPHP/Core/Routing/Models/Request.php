@@ -11,7 +11,7 @@ readonly class Request
     public function __construct(
         public string $host,
         public string $scheme,
-        public string $path,
+        public string $route,
         public int $port,
         public string $queryString,
         public RequestMethods $method,

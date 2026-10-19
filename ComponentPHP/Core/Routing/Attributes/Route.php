@@ -6,7 +6,7 @@ namespace Core\Routing\Attributes;
 
 use Core\Routing\Enums\RequestMethods;
 
-#[\Attribute(\Attribute::TARGET_METHOD)]
+#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 final class Route
 {
     /** @var list<string> */
