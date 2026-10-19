@@ -8,6 +8,8 @@ use Core\Components\Services\ComponentService;
 
 abstract class AbstractTemplate
 {
+    // TODO: This could also probably use having an interface, that way we could have an AbstractSQLTemplate and a generic template
+
     /** @var array<string, Component> */
     public array $componentsByName = [];
 

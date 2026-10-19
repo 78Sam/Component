@@ -42,6 +42,8 @@ final class RoutingService
         $this->createSiteMap();
     }
 
+    // TODO: RouterInterface -> AbstractRouter (implements creating the sitemap) -> This router that handles actually taking requests and providing responses
+
     public function buildRequest(array $server, array $get, array $post, array $files, array $cookies): Request
     {
         $requirements = [

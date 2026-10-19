@@ -14,8 +14,8 @@ use Core\Utility\Services\PathService;
 final class DatabaseConfig extends AbstractConfig
 {
     public function __construct(
-        public readonly DatabaseService $databaseService,
-        public readonly UserTemplate $userTemplate,
+        private readonly DatabaseService $databaseService,
+        private readonly UserTemplate $userTemplate,
         private readonly LoggingService $loggingService,
     ) {
     }

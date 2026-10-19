@@ -7,11 +7,8 @@ namespace Core\Config;
 use Core\Kernel;
 use Core\Routing\Models\Request;
 
-abstract class AbstractConfig
+abstract class AbstractConfig implements ConfigInterface
 {
-    /**
-     * Once before entering the worker request cycle, especially useful for FrankenPHP
-     */
     public function onKernelBoot(Kernel $kernel): void {}
 
     public function preRequest(Kernel $kernel, Request $request): void {}

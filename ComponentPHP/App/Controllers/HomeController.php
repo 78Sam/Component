@@ -27,6 +27,8 @@ final class HomeController extends AbstractController
     #[Route(['/'], 'app_home')]
     public function index(): Response
     {
+        // TODO: All component work should solely live in templates I think
+
         $component = $this->rootTemplate
             ->get('app')
             ->fill('navigation', $this->rootTemplate->get('nav_bar'))

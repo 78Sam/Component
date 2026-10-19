@@ -16,8 +16,9 @@ class Kernel
 {
     public readonly bool $isFranken;
     public readonly Container $container;
-    public readonly RoutingService $routingService;
-    public readonly ClassFinderService $classFinderService;
+
+    private readonly RoutingService $routingService;
+    private readonly ClassFinderService $classFinderService;
     private readonly LoggingService $loggingService;
 
     /** @var list<AbstractConfig> */
@@ -51,6 +52,8 @@ class Kernel
 
     public function handleRequest(array $server, array $get, array $post, array $files, array $cookies): void
     {
+        $this->container->clearCache();
+
         $exception = null;
         try {
             SessionService::startSession();

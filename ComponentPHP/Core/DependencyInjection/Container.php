@@ -9,12 +9,14 @@ use Core\DependencyInjection\Services\ReflectionService;
 
 final class Container
 {
-    // TODO: Clear state between requests (maybe implements DI cache interface to keep warm?)
     // TODO: Instead of clearing everything, could we save like a schema of how to build a container for fast build each request after the first without leaking state?
-
-    public array $classes = [];
-
     private static ?Container $instance = null;
+
+    /** @var array<class-string, object> */
+    private array $classes = [];
+
+    /** @var array<class-string, array{object: object, requires: list<class-string>}> */
+    private array $classMap = [];
 
     public static function getInstance(): self
     {
@@ -23,6 +25,16 @@ final class Container
         }
 
         return self::$instance;
+    }
+
+    public function clearCache(): self
+    {
+        // TODO: Clear state between requests (maybe implements DI cache interface to keep warm?)
+        // I think this will use the classMap variable
+
+        $this->classes = [];
+
+        return $this;
     }
 
     /**
@@ -88,6 +100,10 @@ final class Container
             throw new InfiniteRecursionException($classname);
         }
         $walked[$classname] = true;
+
+        if (array_key_exists($classname, $this->classes)) {
+            return $this->classes[$classname];
+        }
 
         $reflectionClass = new \ReflectionClass($classname);
         $constructor = $reflectionClass->getConstructor();

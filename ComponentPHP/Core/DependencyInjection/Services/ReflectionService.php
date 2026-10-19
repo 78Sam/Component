@@ -29,6 +29,8 @@ class ReflectionService
     ];
 
     /**
+     * Note that if the parameter has `self::NATIVE_TYPE_MIXED` anywhere in it, this will return `[self::NATIVE_TYPE_MIXED]`
+     *
      * @return list<string>
      */
     public static function getTypes(\ReflectionParameter $parameter): array
@@ -52,6 +54,11 @@ class ReflectionService
         }
 
         return [$type->getName()];
+    }
+
+    public static function hasMixed(\ReflectionParameter $parameter): bool
+    {
+        return true; // TODO: Change getTypes to not just return [self::NATIVE_TYPE_MIXED] and use this check instead
     }
 
     public static function isNativeType(\ReflectionParameter $parameter): bool
