@@ -7,6 +7,7 @@ namespace App\Middleware;
 use App\Models\User;
 use App\Services\AuthService;
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
+use Core\Routing\Enums\ResponseCode;
 use Core\Routing\Models\Request;
 use Core\Routing\Models\Responses\Response;
 
@@ -25,7 +26,7 @@ final class Admin implements MiddlewareAttributeInterface
             return null;
         }
 
-        return new Response('', 302, headers: [
+        return new Response('', ResponseCode::Found, headers: [
             'Location' => '/'
         ]);
     }
