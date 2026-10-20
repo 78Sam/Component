@@ -116,7 +116,7 @@ final class SongPartialsController extends AbstractController
         return new HTMXResponse($resp);
     }
 
-    #[Route(['/songs/test2/{id}/view'], 'app_testSongs')]
+    #[Route(['/songs/test2/{id}/view'], 'app_testSongs2')]
     public function testSongs2(Request $request, int $id): Response
     {
         dump($request);

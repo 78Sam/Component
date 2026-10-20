@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Core\Routing;
 
+use Core\DependencyInjection\Container;
 use Core\DependencyInjection\Services\ReflectionService;
+use Core\Logging\Services\LoggingService;
+use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Models\Request;
+use Core\Routing\Models\Responses\Response;
 use Core\Routing\Models\SiteMap;
 use Core\Routing\Models\SiteMapEntry2;
 use Core\Utility\Services\ClassFinderService;
+use Core\Utility\Services\PathService;
 
 abstract class AbstractRouter implements RouterInterface
 {
@@ -21,6 +26,7 @@ abstract class AbstractRouter implements RouterInterface
     }
 
     public function __construct(
+        protected readonly LoggingService $loggingService,
         private readonly ClassFinderService $classFinderService,
     ) {
     }
@@ -42,7 +48,7 @@ abstract class AbstractRouter implements RouterInterface
         $dynamicSiteMapEntries = $this->siteMap->getDynamicSiteMapEntries();
         foreach ($dynamicSiteMapEntries as $dynamicSiteMapEntry) {
             // #'s to avoid the pain of escaping all the /'s
-            if (preg_match("#^{$dynamicSiteMapEntry->route}$#", $request->route) === 1) {
+            if (preg_match($dynamicSiteMapEntry->asPattern(), $request->route) === 1) {
                 return $dynamicSiteMapEntry;
             }
         }
@@ -52,6 +58,8 @@ abstract class AbstractRouter implements RouterInterface
 
     private function getSiteMap(): SiteMap
     {
+        $this->loggingService->log('Building site map');
+
         $siteMap = new SiteMap();
 
         $controllers = [];
@@ -62,17 +70,19 @@ abstract class AbstractRouter implements RouterInterface
         }
 
         foreach ($controllers as $controller) {
-            $attributes = ReflectionService::getAttributesInClass($controller, Route::class);
+            $attributes = ReflectionService::getAttributesOnClassMethods($controller, Route::class);
 
             foreach ($attributes as $attribute) {
-                $routeInstance = $attribute->newInstance();
+                $routeInstance = $attribute['attribute']->newInstance();
 
                 foreach ($routeInstance->routes as $route) {
                     $siteMap->add(
                         new SiteMapEntry2(
                             $routeInstance->name,
                             $route,
-                            $attribute,
+                            $attribute['attribute'],
+                            $controller,
+                            $attribute['method'],
                         ),
                     );
                 }
@@ -80,5 +90,70 @@ abstract class AbstractRouter implements RouterInterface
         }
 
         return $siteMap;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function buildDynamicRequest(SiteMapEntry2 $siteMapEntry, Request $request): array
+    {
+        if (!$siteMapEntry->isDynamic()) {
+            return [];
+        }
+
+        $explodedRoute = PathService::splitRoute($request->route);
+        if (count($explodedRoute) !== count($siteMapEntry->routeSegments)) {
+            throw new \LogicException(
+                "Routes should match after \$this->findRoute(), '{$request->route}' vs '{$siteMapEntry->route}'",
+            );
+        }
+        
+        $dynamicParameters = [];
+        foreach ($siteMapEntry->routeSegments as $index => $segment) {
+            if (!$segment->isDynamic) {
+                continue;
+            }
+
+            $dynamicParameters[$segment->variable] = $explodedRoute[$index];
+        }
+
+        return $dynamicParameters;
+    }
+
+    protected function runMiddleware(SiteMapEntry2 $siteMapEntry, Request $request): ?Response
+    {
+        $applyMiddleware = static function (
+            \ReflectionClass|\ReflectionMethod $middlewareTarget,
+            Request $request,
+        ): ?Response {
+            /** @var list<\ReflectionAttribute<MiddlewareAttributeInterface>> $middlewareAttributes */
+            $middlewareAttributes = $middlewareTarget->getAttributes(
+                MiddlewareAttributeInterface::class,
+                \ReflectionAttribute::IS_INSTANCEOF,
+            );
+
+            foreach ($middlewareAttributes as $methodMiddlewareAttribute) {
+                /** @var MiddlewareAttributeInterface $methodMiddlewareAttributeInstance */
+                $methodMiddlewareAttributeInstance = Container::getInstance()->get($methodMiddlewareAttribute->name);
+                $middlewareResult = $methodMiddlewareAttributeInstance->apply($request);
+                if ($middlewareResult !== null) {
+                    return $middlewareResult;
+                }
+            }
+
+            return null;
+        };
+
+        $classMiddlewareResponse = $applyMiddleware($siteMapEntry->controller, $request);
+        if ($classMiddlewareResponse !== null) {
+            return $classMiddlewareResponse;
+        }
+
+        $methodMiddlewareResponse = $applyMiddleware($siteMapEntry->method, $request);
+        if ($methodMiddlewareResponse !== null) {
+            return $methodMiddlewareResponse;
+        }
+
+        return null;
     }
 }

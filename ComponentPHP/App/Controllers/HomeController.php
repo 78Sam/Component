@@ -24,7 +24,7 @@ final class HomeController extends AbstractController
     ) {
     }
 
-    #[Route(['/'], 'app_home')]
+    #[Route(['/', '/home'], 'app_home')]
     public function index(): Response
     {
         // TODO: All component work should solely live in templates I think

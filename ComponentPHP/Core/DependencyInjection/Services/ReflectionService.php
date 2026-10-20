@@ -144,14 +144,18 @@ class ReflectionService
      * 
      * @param class-string<T> $attribute
      * 
-     * @return list<\ReflectionAttribute<T>>
+     * @return list<array{method: \ReflectionMethod, attribute: \ReflectionAttribute<T>}>
      */
-    public static function getAttributesInClass(\ReflectionClass $class, string $attribute): array
+    public static function getAttributesOnClassMethods(\ReflectionClass $class, string $attribute): array
     {
         $attributes = $class->getAttributes($attribute);
         foreach ($class->getMethods() as $method) {
             foreach ($method->getAttributes($attribute) as $methodAttribute) {
-                $attributes[] = $methodAttribute;
+                // TODO: A model might be nicer
+                $attributes[] = [
+                    'method' => $method,
+                    'attribute' => $methodAttribute,
+                ];
             }
         }
 

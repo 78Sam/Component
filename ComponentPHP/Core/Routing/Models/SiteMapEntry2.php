@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Core\Routing\Models;
 
 use Core\Routing\Attributes\Route;
+use Core\Utility\Services\PathService;
 
-readonly class SiteMapEntry2
+final readonly class SiteMapEntry2
 {
-    public bool $isDynamic;
+    /** @var list<RouteSegment2> */
+    public array $routeSegments;
 
     /**
      * @param \ReflectionAttribute<Route> $routeAttribute
@@ -17,15 +19,29 @@ readonly class SiteMapEntry2
         public string $name,
         public string $route,
         public \ReflectionAttribute $routeAttribute,
+        public \ReflectionClass $controller,
+        public \ReflectionMethod $method,
     ) {
-        $hasDynamicSegment = false;
-        foreach (explode('/', $route) as $routeSegment) {
-            if (preg_match(RouteSegment::PATTERN_PATTERN, $routeSegment) === 1) {
-                $hasDynamicSegment = true;
+        $routeSegments = [];
+        foreach (PathService::splitRoute($route) as $segment) {
+            $routeSegments[] = new RouteSegment2($segment);
+        }
+        $this->routeSegments = $routeSegments;
+    }
 
-                break;
+    public function asPattern(): string
+    {
+        return '#^/' . implode('/', $this->routeSegments) . '$#'; // Using # to avoid having to escape /
+    }
+
+    public function isDynamic(): bool
+    {
+        foreach ($this->routeSegments as $routeSegment) {
+            if ($routeSegment->isDynamic) {
+                return true;
             }
         }
-        $this->isDynamic = $hasDynamicSegment;
+
+        return false;
     }
 }

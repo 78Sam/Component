@@ -7,7 +7,8 @@ namespace Core;
 use Core\Config\AbstractConfig;
 use Core\DependencyInjection\Container;
 use Core\Logging\Services\LoggingService;
-use Core\Routing\Services\RoutingService;
+use Core\Routing\Router;
+use Core\Routing\RouterInterface;
 use Core\Sessions\Services\SessionService;
 use Core\Utility\Services\ClassFinderService;
 use Core\Utility\Services\PathService;
@@ -17,7 +18,7 @@ class Kernel
     public readonly bool $isFranken;
     public readonly Container $container;
 
-    private readonly RoutingService $routingService;
+    private readonly RouterInterface $routingService;
     private readonly ClassFinderService $classFinderService;
     private readonly LoggingService $loggingService;
 
@@ -29,7 +30,7 @@ class Kernel
     ) {
         $this->isFranken = ($_SERVER['SERVER_SOFTWARE'] ?? null) === 'FrankenPHP';
         $this->container = Container::getInstance();
-        $this->routingService = $this->container->get(RoutingService::class);
+        $this->routingService = $this->container->get(Router::class);
         $this->classFinderService = $this->container->get(ClassFinderService::class);
         $this->loggingService = $this->container->get(LoggingService::class);
 

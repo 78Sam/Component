@@ -4,31 +4,39 @@ declare(strict_types=1);
 
 namespace Core\Routing\Models;
 
-class SiteMap
+final class SiteMap
 {
-    /** @var array<string, SiteMapEntry2> */
+    /** @var array<string, list<SiteMapEntry2>> */
     private array $siteMapEntriesByName = [];
 
     /** @var array<string, SiteMapEntry2> */
     private array $siteMapEntriesByRoute = [];
 
-    public function add(SiteMapEntry2 $siteMapEntry2): self
+    public function add(SiteMapEntry2 $siteMapEntry): self
     {
-        if (array_key_exists($siteMapEntry2->name, $this->siteMapEntriesByName)) {
-            throw new \Exception("Site map entry already exists for name: '{$siteMapEntry2->name}'");
+        if (array_key_exists($siteMapEntry->route, $this->siteMapEntriesByRoute)) {
+            throw new \LogicException("Site map entry already exists for route: '{$siteMapEntry->route}'");
+        }
+        $this->siteMapEntriesByRoute[$siteMapEntry->route] = $siteMapEntry;
+
+        if (!array_key_exists($siteMapEntry->name, $this->siteMapEntriesByName)) {
+            $this->siteMapEntriesByName[$siteMapEntry->name] = [];
         }
 
-        if (array_key_exists($siteMapEntry2->route, $this->siteMapEntriesByRoute)) {
-            throw new \Exception("Site map entry already exists for route: '{$siteMapEntry2->route}'");
+        foreach ($this->siteMapEntriesByName[$siteMapEntry->name] as $existingEntry) {
+            if ($siteMapEntry->method !== $existingEntry->method) {
+                throw new \LogicException("Site map entry already with a different method exists for name: '{$siteMapEntry->name}'");
+            }
         }
-
-        $this->siteMapEntriesByName[$siteMapEntry2->name] = $siteMapEntry2; 
-        $this->siteMapEntriesByRoute[$siteMapEntry2->route] = $siteMapEntry2; 
+        $this->siteMapEntriesByName[$siteMapEntry->name][] = $siteMapEntry; 
 
         return $this;
     }
 
-    public function getSiteMapEntryByName(string $name): ?SiteMapEntry2
+    /**
+     * @return null|list<SiteMapEntry2>
+     */
+    public function getSiteMapEntryByName(string $name): ?array
     {
         return $this->siteMapEntriesByName[$name] ?? null;
     }
@@ -43,6 +51,6 @@ class SiteMap
      */
     public function getDynamicSiteMapEntries(): array
     {
-        return array_filter($this->siteMapEntriesByName, fn(SiteMapEntry2 $siteMapEntry): bool => $siteMapEntry->isDynamic);
+        return array_filter($this->siteMapEntriesByRoute, fn(SiteMapEntry2 $siteMapEntry): bool => $siteMapEntry->isDynamic());
     }
 }

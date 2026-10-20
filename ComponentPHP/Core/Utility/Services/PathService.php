@@ -31,4 +31,15 @@ final class PathService
     {
         return static::normalisePath(static::getProjectDirectory() . '/' . implode('/', $segments));
     }
+
+    /**
+     * @return list<string>
+     */
+    public static function splitRoute(string $route): array
+    {
+        return array_values(array_filter(
+            explode('/', $route),
+            fn(string $value): bool => $value !== '',
+        ));
+    }
 }

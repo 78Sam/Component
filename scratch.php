@@ -29,11 +29,28 @@ declare(strict_types=1);
 //     echo 'Yeah';
 // }
 
-$route = '/hello/12/there';
+// $route = '/hello/12/there';
 
-$pattern = '#^/hello/[0-9]+/there$#';
-$pattern = '#^/hello/[^/]+/there$#';
+// $pattern = '#^/hello/[0-9]+/there$#';
+// $pattern = '#^/hello/[^/]+/there$#';
 
-if (preg_match($pattern, $route) === 1) {
-    echo 'Yay';
+// if (preg_match($pattern, $route) === 1) {
+//     echo 'Yay';
+// }
+
+#[\Attribute()]
+class Attr
+{
+
 }
+
+class Sam
+{
+    #[Attr]
+    public function hello()
+    {}
+}
+
+$attrs = (new \ReflectionClass(Sam::class))->getMethod('hello')->getAttributes(Attr::class);
+$attribute = array_first($attrs);
+var_dump($attribute->getP());
