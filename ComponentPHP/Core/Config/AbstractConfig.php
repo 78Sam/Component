@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Config;
 
 use Core\Kernel;
-use Core\Routing\Models\Request;
+use Core\Routing\Models\Requests\Request;
 
 abstract class AbstractConfig implements ConfigInterface
 {

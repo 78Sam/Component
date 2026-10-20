@@ -20,7 +20,7 @@ final class HomeController extends AbstractController
     public function __construct(
         private readonly AuthService $authService,
         private readonly RootTemplate $rootTemplate,
-        private readonly RoutingService $routingService,
+        // private readonly RoutingService $routingService,
     ) {
     }
 
@@ -38,9 +38,9 @@ final class HomeController extends AbstractController
         if ($htmxRedirectData !== null) {
             $component->fill('htmxBodyPreload', $htmxRedirectData, raw: true);
         }
-        else {
-            $component->fill('htmxBodyPreload', $this->routingService->tunnelRequest('app_viewAllSongs')->content, raw: true);
-        }
+        // else {
+        //     $component->fill('htmxBodyPreload', $this->routingService->tunnelRequest('app_viewAllSongs')->content, raw: true);
+        // }
 
         return new Response($component);
     }

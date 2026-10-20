@@ -10,25 +10,22 @@ use Core\Logging\Services\LoggingService;
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
-use Core\Routing\Models\Request;
+use Core\Routing\Models\Metadata\SiteMap;
+use Core\Routing\Models\Metadata\SiteMapEntry;
+use Core\Routing\Models\Requests\Request;
 use Core\Routing\Models\Responses\Response;
-use Core\Routing\Models\SiteMap;
-use Core\Routing\Models\SiteMapEntry2;
 use Core\Utility\Services\ClassFinderService;
 use Core\Utility\Services\PathService;
 
 abstract class AbstractRouter implements RouterInterface
 {
-    private static ?SiteMap $_siteMap = null;
-
-    private SiteMap $siteMap {
-        get => self::$_siteMap ??= $this->getSiteMap();
-    }
+    protected readonly SiteMap $siteMap;
 
     public function __construct(
         protected readonly LoggingService $loggingService,
         private readonly ClassFinderService $classFinderService,
     ) {
+        $this->siteMap = $this->getSiteMap();
     }
 
     /**
@@ -36,7 +33,7 @@ abstract class AbstractRouter implements RouterInterface
      */
     abstract protected function getControllerFolders(): array;
 
-    protected function findRoute(Request $request): ?SiteMapEntry2
+    protected function findRoute(Request $request): ?SiteMapEntry
     {        
         $siteMapEntry = $this->siteMap->getSiteMapEntryByRoute($request->route);
         if ($siteMapEntry !== null) {
@@ -56,46 +53,10 @@ abstract class AbstractRouter implements RouterInterface
         return null;
     }
 
-    private function getSiteMap(): SiteMap
-    {
-        $this->loggingService->log('Building site map');
-
-        $siteMap = new SiteMap();
-
-        $controllers = [];
-        foreach ($this->getControllerFolders() as $controllerFolder) {
-            foreach ($this->classFinderService->byExtension($controllerFolder, AbstractController::class) as $controller) {
-                $controllers[] = $controller;
-            }
-        }
-
-        foreach ($controllers as $controller) {
-            $attributes = ReflectionService::getAttributesOnClassMethods($controller, Route::class);
-
-            foreach ($attributes as $attribute) {
-                $routeInstance = $attribute['attribute']->newInstance();
-
-                foreach ($routeInstance->routes as $route) {
-                    $siteMap->add(
-                        new SiteMapEntry2(
-                            $routeInstance->name,
-                            $route,
-                            $attribute['attribute'],
-                            $controller,
-                            $attribute['method'],
-                        ),
-                    );
-                }
-            }
-        }
-
-        return $siteMap;
-    }
-
     /**
      * @return array<string, mixed>
      */
-    protected function buildDynamicRequest(SiteMapEntry2 $siteMapEntry, Request $request): array
+    protected function buildDynamicRequest(SiteMapEntry $siteMapEntry, Request $request): array
     {
         if (!$siteMapEntry->isDynamic()) {
             return [];
@@ -120,7 +81,7 @@ abstract class AbstractRouter implements RouterInterface
         return $dynamicParameters;
     }
 
-    protected function runMiddleware(SiteMapEntry2 $siteMapEntry, Request $request): ?Response
+    protected function runMiddleware(SiteMapEntry $siteMapEntry, Request $request): ?Response
     {
         $applyMiddleware = static function (
             \ReflectionClass|\ReflectionMethod $middlewareTarget,
@@ -155,5 +116,41 @@ abstract class AbstractRouter implements RouterInterface
         }
 
         return null;
+    }
+
+    private function getSiteMap(): SiteMap
+    {
+        $this->loggingService->log('Building site map');
+
+        $siteMap = new SiteMap();
+
+        $controllers = [];
+        foreach ($this->getControllerFolders() as $controllerFolder) {
+            foreach ($this->classFinderService->byExtension($controllerFolder, AbstractController::class) as $controller) {
+                $controllers[] = $controller;
+            }
+        }
+
+        foreach ($controllers as $controller) {
+            $attributes = ReflectionService::getAttributesOnClassMethods($controller, Route::class);
+
+            foreach ($attributes as $attribute) {
+                $routeInstance = $attribute['attribute']->newInstance();
+
+                foreach ($routeInstance->routes as $route) {
+                    $siteMap->add(
+                        new SiteMapEntry(
+                            $routeInstance->name,
+                            $route,
+                            $attribute['attribute'],
+                            $controller,
+                            $attribute['method'],
+                        ),
+                    );
+                }
+            }
+        }
+
+        return $siteMap;
     }
 }

@@ -8,8 +8,8 @@ use Core\DependencyInjection\Container;
 use Core\DependencyInjection\Services\ReflectionService;
 use Core\Routing\Enums\RequestMethods;
 use Core\Routing\Enums\ResponseCode;
-use Core\Routing\Models\HTMXRequest;
-use Core\Routing\Models\Request;
+use Core\Routing\Models\Requests\HTMXRequest;
+use Core\Routing\Models\Requests\Request;
 use Core\Routing\Models\Responses\Response;
 use Core\Utility\Services\PathService;
 use Core\Utility\Validators\Exceptions\ValidationException;
@@ -95,8 +95,15 @@ class Router extends AbstractRouter
         // Add the request if its needed
 
         foreach ($siteMapEntry->method->getParameters() as $parameter) {
-            if (ReflectionService::getTypes($parameter) === [Request::class]) {
+            $types = ReflectionService::getTypes($parameter);
+            if (count($types) !== 1) {
+                continue;
+            }
+
+            if (array_first($types) instanceof Request) {
                 $dynamicParameters[$parameter->name] = $request;
+
+                break;
             }
         }
 

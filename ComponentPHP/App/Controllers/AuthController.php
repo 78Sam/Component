@@ -11,7 +11,7 @@ use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Enums\RequestMethods;
 use Core\Routing\Models\Responses\RedirectResponse;
-use Core\Routing\Models\Request;
+use Core\Routing\Models\Requests\Request;
 use Core\Routing\Models\Responses\Response;
 use Core\Sessions\Services\SessionService;
 

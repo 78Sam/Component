@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Templates\SQL\UserTemplate;
 use Core\Database\Services\DatabaseService;
-use Core\Routing\Models\Request;
+use Core\Routing\Models\Requests\Request;
 use Core\Utility\Services\DateTimeService;
 use Core\Utility\Validators\Exceptions\ValidationException;
 use Core\Utility\Validators\Services\ValidatorService;

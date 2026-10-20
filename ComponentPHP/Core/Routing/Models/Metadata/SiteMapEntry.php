@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Core\Routing\Models;
+namespace Core\Routing\Models\Metadata;
 
 use Core\Routing\Attributes\Route;
 use Core\Utility\Services\PathService;
 
-final readonly class SiteMapEntry2
+final readonly class SiteMapEntry
 {
-    /** @var list<RouteSegment2> */
+    /** @var list<RouteSegment> */
     public array $routeSegments;
 
     /**
@@ -24,7 +24,7 @@ final readonly class SiteMapEntry2
     ) {
         $routeSegments = [];
         foreach (PathService::splitRoute($route) as $segment) {
-            $routeSegments[] = new RouteSegment2($segment);
+            $routeSegments[] = new RouteSegment($segment);
         }
         $this->routeSegments = $routeSegments;
     }

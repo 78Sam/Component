@@ -7,7 +7,7 @@ namespace App\Middleware;
 use App\Services\AuthService;
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
 use Core\Routing\Enums\ResponseCode;
-use Core\Routing\Models\Request;
+use Core\Routing\Models\Requests\Request;
 use Core\Routing\Models\Responses\Response;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]

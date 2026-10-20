@@ -38,19 +38,4 @@ declare(strict_types=1);
 //     echo 'Yay';
 // }
 
-#[\Attribute()]
-class Attr
-{
-
-}
-
-class Sam
-{
-    #[Attr]
-    public function hello()
-    {}
-}
-
-$attrs = (new \ReflectionClass(Sam::class))->getMethod('hello')->getAttributes(Attr::class);
-$attribute = array_first($attrs);
-var_dump($attribute->getP());
+echo htmlspecialchars("'");

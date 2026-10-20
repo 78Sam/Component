@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Core\Routing\Models;
+namespace Core\Routing\Models\Metadata;
 
 /**
  * I made this class lazy loaded to avoid having to do tonnes of regex pattern matching until its needed
  * Either smart or gonna bite me in the ass somehow
  */
-final readonly class RouteSegment2
+final readonly class RouteSegment
 {
     public const string SEGMENT_PATTERN = '/^(?<segment>[a-zA-Z0-9_-]+)$/';
     public const string VARIABLE_PATTERN = '/^{(?<variable>[a-zA-Z]+[0-9]*)+(:(?<pattern>.*))?}$/';

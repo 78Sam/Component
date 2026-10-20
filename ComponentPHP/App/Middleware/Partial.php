@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use Core\Middleware\Attributes\MiddlewareAttributeInterface;
-use Core\Routing\Models\HTMXRequest;
-use Core\Routing\Models\Request;
+use Core\Routing\Models\Requests\HTMXRequest;
+use Core\Routing\Models\Requests\Request;
 use Core\Routing\Models\Responses\RedirectResponse;
 use Core\Routing\Models\Responses\Response;
 

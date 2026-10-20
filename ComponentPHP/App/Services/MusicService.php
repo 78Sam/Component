@@ -11,7 +11,7 @@ use App\Templates\SQL\MusicTemplate;
 use Core\Database\Services\DatabaseService;
 use Core\Logging\Services\LoggingService;
 use Core\Routing\Enums\ResponseCode;
-use Core\Routing\Models\Request;
+use Core\Routing\Models\Requests\Request;
 use Core\Routing\Models\Responses\Response;
 use Core\Utility\Services\DateTimeService;
 use Core\Utility\Services\PathService;
