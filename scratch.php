@@ -2,40 +2,26 @@
 
 declare(strict_types=1);
 
-// $x = ['a', 'b', 'c', 'e', 'z', 'g'];
-// $y = ['b', 'a', 'z', 'g', 'e', 'c'];
+// class Test
+// {}
 
-// $t1 = microtime(true);
+// class Sam
+// {}
 
-// sort($x);
-// sort($y);
-// if ($x === $y) {
-//     echo "Yeah 1\n";
+// $y = true;
+
+// $x = new Test();
+
+// if (is_a($x, Test::class)) {
+//     echo "YEA";
 // }
 
-// $tres2 = microtime(true) - $t1;
-// echo $tres2 . PHP_EOL;
+// $z = clone null;
 
-// $t1 = microtime(true);
+$p = [];
 
-// if (array_diff($x, $y) === []) {
-//     echo "Yeah 2\n";
-// }
+$x = $p['a']['b'] ?? null;
 
-// $tres3 = microtime(true) - $t1;
-// echo $tres3 . PHP_EOL;
-
-// if ($tres2 < $tres3) {
-//     echo 'Yeah';
-// }
-
-// $route = '/hello/12/there';
-
-// $pattern = '#^/hello/[0-9]+/there$#';
-// $pattern = '#^/hello/[^/]+/there$#';
-
-// if (preg_match($pattern, $route) === 1) {
-//     echo 'Yay';
-// }
-
-echo htmlspecialchars("'");
+if ($x === null) {
+    echo "Yea";
+}
