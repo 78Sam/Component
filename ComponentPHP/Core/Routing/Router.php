@@ -100,7 +100,7 @@ class Router extends AbstractRouter
                 continue;
             }
 
-            if (array_first($types) instanceof Request) {
+            if (array_first($types) === Request::class) {
                 $dynamicParameters[$parameter->name] = $request;
 
                 break;

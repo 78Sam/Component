@@ -8,22 +8,23 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\MusicService;
 use Core\Components\Models\AbstractTemplate;
-use Core\Components\Models\Component;
+use Core\Components\Models\HTMLComponent;
 use Core\Utility\Services\PathService;
 
 final class MusicTemplate extends AbstractTemplate
 {
+    public const string SONGS_FILE = 'App/Components/HTML/songs.html';
+
     #[\Override]
     protected function loadFiles(): void
     {
-        $this->loadFile(PathService::fromProjectDirectory('App', 'Components', 'HTML', 'upload.html'), true);
-        $this->loadFile(PathService::fromProjectDirectory('App', 'Components', 'HTML', 'songs.html'), true);
+        $this->loadFile(self::SONGS_FILE);
     }
 
-    public function getSong(Song $song, User $user): Component
+    public function getSong(Song $song, User $user): HTMLComponent
     {
         $songComponent = $this
-            ->get('song')
+            ->get('song', HTMLComponent::class, self::SONGS_FILE)
             ->fillAll([
                 'id' => $song->id,
                 'title' => $song->title,
@@ -43,8 +44,18 @@ final class MusicTemplate extends AbstractTemplate
     /**
      * @param list<Song> $songs
      */
-    public function getAllSongs(array $songs, User $user): Component
+    public function getAllSongs(array $songs, User $user): HTMLComponent
     {
-        return $this->collect(array_map(fn(Song $song): Component => $this->getSong($song, $user), $songs));
+        return $this->collect(array_map(fn(Song $song): HTMLComponent => $this->getSong($song, $user), $songs), HTMLComponent::class);
+    }
+
+    public function getPlayer(Song $song): HTMLComponent
+    {
+        return $this
+            ->get('player', HTMLComponent::class, self::SONGS_FILE)
+            ->fill('source', PathService::combineSegments('Assets', 'Music', $song->lookupKey))
+            ->fill('title', $song->title)
+            ->fill('artist', $song->artist)
+        ;
     }
 }

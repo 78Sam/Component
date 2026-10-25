@@ -4,73 +4,112 @@ declare(strict_types=1);
 
 namespace Core\Components\Models;
 
+use Core\Components\Exceptions\NonExistentComponentException;
 use Core\Components\Services\ComponentService;
+use Core\Debug\DebugMetrics;
+use Core\Utility\Services\PathService;
 
-abstract class AbstractTemplate
+abstract class AbstractTemplate implements TemplateInterface
 {
-    // TODO: This could also probably use having an interface, that way we could have an AbstractSQLTemplate and a generic template
+    /** @var array<string, array<string, ComponentInterface>> */
+    protected array $componentsByFile = [];
 
-    /** @var array<string, Component> */
-    public array $componentsByName = [];
-
-    /** @var array<string, array<string, Component>> */
-    public array $componentsByFile = [];
+    /** @var array<string, array<string, UnparsedComponent>> */
+    protected array $unparsedComponentsByFile = [];
 
     public function __construct(
-        public readonly ComponentService $componentService,
+        protected readonly ComponentService $componentService,
     ) {
         $this->loadFiles();
     }
 
     public function loadFile(string $path, bool $absolutePath = false): self
     {
-        if (array_key_exists($path, $this->componentsByFile)) {
+        $path = $absolutePath ? PathService::normalisePath($path) : PathService::fromProjectDirectory($path);
+        if (!file_exists($path)) {
+            throw new \Exception("Unable to find file '{$path}'");
+        }
+
+        if (array_key_exists($path, $this->unparsedComponentsByFile)) {
             return $this;
         }
 
-        $components = $this->componentService->loadFile($path, $absolutePath);
-        foreach ($components as $name => $component) {
-            $this->componentsByName[$name] = $component;
-            $this->componentsByFile[$path][$name] = $component;
-        }
+        $this->unparsedComponentsByFile[$path] = $this->componentService->loadFile($path, true);
 
         return $this;
     }
 
-    public function get(string $name, ?string $path = null): ?Component
-    {
-        /** @var ?Component $component */
-        $component = $path !== null
-            ? $this->componentsByFile[$path][$name] ?? null
-            : $this->componentsByName[$name] ?? null;
+    /**
+     * @template T of ComponentInterface
+     *
+     * @param class-string<T> $model
+     *
+     * @return T
+     */
+    public function get(
+        string $componentName,
+        string $model,
+        string $path,
+        bool $absolutePath = false,
+    ): ComponentInterface {
+        $path = $absolutePath ? PathService::normalisePath($path) : PathService::fromProjectDirectory($path);
 
-        return $component === null ? null : clone $component;
+        // Do we just have it
+        $component = $this->componentsByFile[$path][$componentName] ?? null;
+        if ($component !== null) {
+            return clone $component;
+        }
+
+        // Attempt to load it, no-op if we already have
+        $this->loadFile($path, true);
+
+        $unparsedComponent = $this->unparsedComponentsByFile[$path][$componentName] ?? null;
+        if ($unparsedComponent === null) {
+            throw new NonExistentComponentException($componentName, $path);
+        }
+
+        return clone $this->parseNewComponent($unparsedComponent, $model, $path);
     }
 
     /**
-     * @param list<array<string, int|string|Component>> $values
+     * @template T of ComponentInterface
      *
-     * @return list<Component>
+     * @param class-string<T> $model
+     * @param array<string, mixed> $values
+     * @param array<string, mixed> $options
+     *
+     * @return list<T>
      */
-    public function stack(string $component, array $values, bool $raw = false): array
-    {
+    public function stack(
+        string $componentName,
+        string $model,
+        string $path,
+        array $values,
+        bool $absolutePath = false,
+        array $options = [],
+    ): array {
         $components = [];
         foreach ($values as $value) {
-            $components[] = $this->get($component)->fillAll($value, $raw);
+            $components[] = $this->get($componentName, $model, $path, $absolutePath)->fillAll($value, $options);
         }
 
         return $components;
     }
 
     /**
-     * @param list<string|Component> $items
+     * @template T of ComponentInterface
+     *
+     * @param list<string|ComponentInterface> $items
+     * @param class-string<T> $model
+     * 
+     * @return T
      */
-    public function collect(array $items, string $separator = ''): Component
+    public function collect(array $items, string $model, string $separator = ''): ComponentInterface
     {
         $sockets = [];
-        for ($chunk = 0; $chunk < \count($items); $chunk++) {
+        for ($chunk = 0; $chunk < count($items); $chunk++) {
             $item = $items[$chunk];
-            if (!$item instanceof Component && !is_string($item)) {
+            if (!$item instanceof ComponentInterface && !is_string($item)) {
                 $type = gettype($item);
 
                 throw new \Exception("Cannot collect item that is not a string or component: '{$type}'");
@@ -81,16 +120,37 @@ abstract class AbstractTemplate
         }
         array_pop($sockets);
 
-        return new Component('', $sockets, []);
-    }
-
-    /**
-     * @param list<array<string, int|string|Component>> $values
-     */
-    public function quickCollect(string $component, array $values, string $separator = '', bool $raw = false): Component
-    {
-        return $this->collect($this->stack($component, $values, $raw), $separator);
+        return new $model('', $sockets, []);
     }
 
     protected function loadFiles(): void {}
+
+    /**
+     * @template T of ComponentInterface
+     *
+     * @param class-string<T> $model
+     * 
+     * @return T
+     */
+    private function parseNewComponent(
+        UnparsedComponent $unparsedComponent,
+        string $model,
+        string $path,
+    ): ComponentInterface {
+        $component = $this->componentService->parseComponent($unparsedComponent, $model);
+        $componentName = $unparsedComponent->name;
+        if (!array_key_exists($path, $this->componentsByFile)) {
+            $this->componentsByFile[$path] = [];
+        }
+
+        // No need to check for duplicate names as the file must have been loaded and ComponentService::loadFile checks for dupes
+
+        // if (array_key_exists($componentName, $this->componentsByFile[$path])) {
+        //     throw new \Exception('Duplicate path components to be improved');
+        // }
+
+        $this->componentsByFile[$path][$componentName] = $component;
+
+        return $component;
+    }
 }

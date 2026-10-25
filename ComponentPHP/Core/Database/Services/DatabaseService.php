@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Database\Services;
 
-use Core\Components\Models\Component;
+use Core\Components\Models\ComponentInterface;
 use Core\Database\Exceptions\NoConnectionException;
 use Core\Logging\Services\LoggingService;
 
@@ -50,7 +50,7 @@ class DatabaseService
         return $this->runQuery($query, $values);
     }
 
-    public function query(Component $query): ?\PDOStatement
+    public function query(ComponentInterface $query): ?\PDOStatement
     {
         if ($this->connection === null) {
             throw new NoConnectionException();
@@ -190,19 +190,19 @@ class DatabaseService
     /**
      * @return array<string, string>
      */
-    private function prepareComponent(Component $query): array
+    private function prepareComponent(ComponentInterface $query): array
     {
         $values = [];
         foreach ($query->variableMap as $variable => $pseudonyms) {
             $socketValue = $query->sockets[array_first($pseudonyms)] ?? '';
-            if ($socketValue instanceof Component) {
+            if ($socketValue instanceof ComponentInterface) {
                 $values += $this->prepareComponent($socketValue);
 
                 continue;
             }
 
             $values[$variable] = $socketValue;
-            $query->fill($variable, ":{$variable}", raw: true); // TODO: This doesn't stop `'` (single quotes) from being fucked, maybe other stuff too
+            $query->fill($variable, ":{$variable}"); // TODO: ['raw' => true] doesn't stop `'` (single quotes) from being fucked, maybe other stuff too
         }
 
         return $values;

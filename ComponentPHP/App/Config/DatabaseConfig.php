@@ -9,6 +9,7 @@ use Core\Config\AbstractConfig;
 use Core\Database\Services\DatabaseService;
 use Core\Kernel;
 use Core\Logging\Services\LoggingService;
+use Core\Utility\Services\DateTimeService;
 use Core\Utility\Services\PathService;
 
 final class DatabaseConfig extends AbstractConfig
@@ -33,15 +34,13 @@ final class DatabaseConfig extends AbstractConfig
             $schema = file_get_contents(PathService::fromProjectDirectory('App', 'Database', 'schema.sql'));
             $this->databaseService->connection->exec($schema);
 
-            $createUserComponent = $this->userTemplate
-                ->get('create_user')
-                ->fillAll([
-                    'username' => 'sam',
-                    'password' => password_hash('sam', PASSWORD_DEFAULT),
-                    'joined' => (new \DateTimeImmutable('now'))->format('Y-m-d H:i:s'),
-                    'role' => '1',
-                ])
-            ;
+            $createUserComponent = $this->userTemplate->getCreateUserQuery(
+                'sam',
+                password_hash('sam', PASSWORD_DEFAULT),
+                DateTimeService::stringNow(),
+                '1',
+            );
+
             $this->databaseService->query($createUserComponent);
         }
     }

@@ -63,15 +63,12 @@ class AuthService
         $joined = new \DateTimeImmutable('now');
         $role = 0;
 
-        $createUserComponent = $this->userTemplate
-            ->get('create_user')
-            ->fillAll([
-                'username' => $username,
-                'password' => password_hash($password, PASSWORD_DEFAULT),
-                'joined' => DateTimeService::toString($joined),
-                'role' => (string) $role,
-            ])
-        ;
+        $createUserComponent = $this->userTemplate->getCreateUserQuery(
+            $username,
+            password_hash($password, PASSWORD_DEFAULT),
+            DateTimeService::toString($joined),
+            (string) $role,
+        );
 
         $result = $this->databaseService->query($createUserComponent);
         if ($result === null) {
@@ -94,10 +91,7 @@ class AuthService
         $username = $loginDetails['username'];
         $password = $loginDetails['password'];
 
-        $getUserComponent = $this->userTemplate
-            ->get('get_login_user_by_username')
-            ->fill('username', $username)
-        ;
+        $getUserComponent = $this->userTemplate->getLoginUserByUsername($username);
 
         $statement = $this->databaseService->query($getUserComponent);
         if ($statement === null) {

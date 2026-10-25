@@ -12,6 +12,7 @@ use App\Services\AuthService;
 use App\Services\MusicService;
 use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\MusicTemplate;
+use Core\Components\Models\HTMLComponent;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Enums\RequestMethods;
@@ -86,19 +87,11 @@ final class SongPartialsController extends AbstractController
     public function playSong(int $id): HTMXResponse
     {
         $song = $this->musicService->getSongById($id);
-        $source = '';
-        if ($song !== null) {
-            $source = PathService::combineSegments('Assets', 'Music', $song->lookupKey);
+        if ($song === null) {
+            return new HTMXResponse('');
         }
 
-        $player = $this->musicTemplate
-            ->get('player')
-            ->fill('source', $source)
-            ->fill('title', $song->title)
-            ->fill('artist', $song->artist)
-        ;
-
-        return new HTMXResponse($player);
+        return new HTMXResponse($this->musicTemplate->getPlayer($song));
     }
 
     #[Route(['/songs/test'], 'app_testSongs')]

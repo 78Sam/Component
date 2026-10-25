@@ -10,7 +10,7 @@ final class PathService
 
     public static function getProjectDirectory(): string
     {
-        return static::normalisePath(dirname(__DIR__, 3));
+        return self::normalisePath(dirname(__DIR__, 3));
     }
 
     public static function normalisePath(string $path): string
@@ -24,12 +24,12 @@ final class PathService
 
     public static function combineSegments(string ...$segments): string
     {
-        return static::normalisePath(implode('/', $segments));
+        return self::normalisePath(implode('/', $segments));
     }
 
     public static function fromProjectDirectory(string ...$segments): string
     {
-        return static::normalisePath(static::getProjectDirectory() . '/' . implode('/', $segments));
+        return self::normalisePath(self::getProjectDirectory() . '/' . implode('/', $segments));
     }
 
     /**

@@ -105,17 +105,14 @@ final class MusicService
             return null;
         }
 
-        $createSongComponent = $this->musicTemplate
-            ->get('add_song')
-            ->fillAll([
-                'title' => $title,
-                'artist' => $artist,
-                'added_by' => $this->authService->getUser()->id,
-                'added_at' => DateTimeService::stringNow(),
-                'duration' => self::durationToString($minutes, $seconds),
-                'lookup_key' => $lookupKey,
-            ])
-        ;
+        $createSongComponent = $this->musicTemplate->getAddSongQuery(
+            $title,
+            $artist,
+            $this->authService->getRequiredUser()->id,
+            self::durationToString($minutes, $seconds),
+            $lookupKey,
+        );
+
         $this->databaseService->query($createSongComponent);
 
         return $this->getSongByTitleAndArtist($title, $artist);
@@ -123,23 +120,14 @@ final class MusicService
 
     public function getSongByTitleAndArtist(string $title, string $artist): ?Song
     {
-        $findSongComponent = $this->musicTemplate
-            ->get('get_song_by_title_artist')
-            ->fill('title', $title, true)
-            ->fill('artist', $artist, true)
-        ;
-        $statement = $this->databaseService->query($findSongComponent);
+        $statement = $this->databaseService->query($this->musicTemplate->getSongByTitleAndArtistQuery($title, $artist));
 
         return $this->databaseService->getOneOrNullResult($statement, Song::class, $this->formatDatabaseRow(...));
     }
 
     public function getSongById(int $id): ?Song
     {
-        $getAllSongsComponent = $this->musicTemplate
-            ->get('get_song_by_id')
-            ->fill('id', $id)
-        ;
-        $statement = $this->databaseService->query($getAllSongsComponent);
+        $statement = $this->databaseService->query($this->musicTemplate->getSongByIdQuery($id));
 
         return $this->databaseService->getOneOrNullResult($statement, Song::class, $this->formatDatabaseRow(...));
     }
@@ -149,10 +137,7 @@ final class MusicService
      */
     public function getAllSongs(): array
     {
-        $getAllSongsComponent = $this->musicTemplate
-            ->get('get_all_songs')
-        ;
-        $statement = $this->databaseService->query($getAllSongsComponent);
+        $statement = $this->databaseService->query($this->musicTemplate->getAllSongsQuery());
 
         return $this->databaseService->getResult($statement, Song::class, $this->formatDatabaseRow(...));
     }
@@ -169,11 +154,7 @@ final class MusicService
             return new Response('You cannot delete this song', responseCode: ResponseCode::Forbidden);
         }
 
-        $deleteComponent = $this->musicTemplate
-            ->get('delete_song_by_id')
-            ->fill('id', $song->id)
-        ;
-        $this->databaseService->query($deleteComponent);
+        $this->databaseService->query($this->musicTemplate->getDeleteSongByIdQuery($song->id));
 
         unlink(PathService::fromProjectDirectory('Public', 'Assets', 'Music', $song->lookupKey));
 

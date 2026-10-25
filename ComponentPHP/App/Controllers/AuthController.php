@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Services\AuthService;
 use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\RootTemplate;
+use Core\Components\Models\HTMLComponent;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Enums\RequestMethods;
@@ -34,12 +35,12 @@ class AuthController extends AbstractController
             }
         }
 
-        $comp = $this->rootTemplate
-            ->get('app')
+        $component = $this->rootTemplate
+            ->get('app', HTMLComponent::class, RootTemplate::APP_FILE)
             ->fill('body', $this->formTemplate->getLoginForm())
         ;
 
-        return new Response($comp);
+        return new Response($component);
     }
 
     #[Route(['/register'], 'app_register')]
@@ -52,12 +53,12 @@ class AuthController extends AbstractController
             }
         }
 
-        $comp = $this->rootTemplate
-            ->get('app')
+        $component = $this->rootTemplate
+            ->get('app', HTMLComponent::class, RootTemplate::APP_FILE)
             ->fill('body', $this->formTemplate->getRegisterForm())
         ;
 
-        return new Response($comp);
+        return new Response($component);
     }
 
     #[Route(['/logout'], 'app_logout')]

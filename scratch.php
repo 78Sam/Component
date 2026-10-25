@@ -18,10 +18,12 @@ declare(strict_types=1);
 
 // $z = clone null;
 
-$p = [];
+// $p = [];
 
-$x = $p['a']['b'] ?? null;
+// $x = $p['a']['b'] ?? null;
 
-if ($x === null) {
-    echo "Yea";
-}
+// if ($x === null) {
+//     echo "Yea";
+// }
+
+phpinfo();

@@ -5,21 +5,22 @@ declare(strict_types=1);
 namespace App\Templates\HTML;
 
 use Core\Components\Models\AbstractTemplate;
-use Core\Components\Models\Component;
-use Core\Utility\Services\PathService;
+use Core\Components\Models\HTMLComponent;
 
 final class FormTemplate extends AbstractTemplate
 {
+    public const string FORM_FILE = 'App/Components/HTML/form.html';
+
     #[\Override]
     protected function loadFiles(): void
     {
-        $this->loadFile(PathService::fromProjectDirectory('App', 'Components', 'HTML', 'form.html'), true);
+        $this->loadFile(self::FORM_FILE);
     }
 
-    public function getRegisterForm(): Component
+    public function getRegisterForm(): HTMLComponent
     {
         $form = $this
-            ->get('form')
+            ->get('form', HTMLComponent::class, self::FORM_FILE)
             ->fillAll([
                 'route' => '/register',
                 'method' => 'POST',
@@ -29,17 +30,22 @@ final class FormTemplate extends AbstractTemplate
             ])
         ;
 
+        $lowerText = $this
+            ->get('lower_text', HTMLComponent::class, self::FORM_FILE)
+            ->fill('text', 'Or <a href="/login">Login</a>', ['raw' => true])
+        ;
+
         $form
-            ->fill('lower_text', $this->get('lower_text')->fill('text', "Or <a href='/login'>Login</a>", raw: true))
+            ->fill('lower_text', $lowerText)
         ;
 
         return $form;
     }
     
-    public function getLoginForm(): Component
+    public function getLoginForm(): HTMLComponent
     {
         $form = $this
-            ->get('form')
+            ->get('form', HTMLComponent::class, self::FORM_FILE)
             ->fillAll([
                 'route' => '/login',
                 'method' => 'POST',
@@ -49,16 +55,21 @@ final class FormTemplate extends AbstractTemplate
             ])
         ;
 
+        $lowerText = $this
+            ->get('lower_text', HTMLComponent::class, self::FORM_FILE)
+            ->fill('text', 'Or <a href="/register">Register</a>', ['raw' => true])
+        ;
+
         $form
-            ->fill('lower_text', $this->get('lower_text')->fill('text', "Or <a href='/register'>Register</a>", raw: true))
+            ->fill('lower_text', $lowerText)
         ;
 
         return $form;
     }
 
-    public function getUploadForm(?string $error = null): Component
+    public function getUploadForm(?string $error = null): HTMLComponent
     {
-        $rows = $this->stack('form_row', [
+        $rows = $this->stack('form_row', HTMLComponent::class, self::FORM_FILE, [
             [
                 'field' => 'title',
                 'label' => 'Title',
@@ -74,7 +85,7 @@ final class FormTemplate extends AbstractTemplate
         ]);
 
         $rows[] = $this
-            ->get('dual_form_row')
+            ->get('dual_form_row', HTMLComponent::class, self::FORM_FILE)
             ->fillAll([
                 'label' => 'Duration',
                 'field_1' => 'minutes',
@@ -83,11 +94,11 @@ final class FormTemplate extends AbstractTemplate
                 'field_2' => 'seconds',
                 'type_2' => 'number',
                 'properties_2' => 'min="0" step="1" required',
-            ], true)
+            ], ['raw' => true])
         ;
 
         $rows[] = $this
-            ->get('form_row')
+            ->get('form_row', HTMLComponent::class, self::FORM_FILE)
             ->fillAll([
                 'field' => 'file',
                 'label' => 'File',
@@ -97,26 +108,26 @@ final class FormTemplate extends AbstractTemplate
         ;
 
         $form = $this
-            ->get('form')
+            ->get('form', HTMLComponent::class, self::FORM_FILE)
             ->fillAll([
                 'route' => '/songs/upload',
                 'method' => 'POST',
                 'title' => 'Upload',
                 'submit' => 'Upload',
                 'properties' => 'enctype="multipart/form-data"',
-                'rows' => $this->collect($rows),
-            ], true)
+                'rows' => $this->collect($rows, HTMLComponent::class),
+            ], ['raw' => true])
         ;
         if ($error !== null) {
-            $form->fill('error', $this->get('error')->fill('error', $error));
+            $form->fill('error', $this->get('error', HTMLComponent::class, self::FORM_FILE)->fill('error', $error));
         }
 
         return $form;
     }
 
-    private function getAuthFormRows(): Component
+    private function getAuthFormRows(): HTMLComponent
     {
-        return $this->quickCollect('form_row', [
+        $rows = $this->stack('form_row', HTMLComponent::class, self::FORM_FILE, [
             [
                 'field' => 'username',
                 'label' => 'Username',
@@ -130,5 +141,7 @@ final class FormTemplate extends AbstractTemplate
                 'properties' => 'required'
             ],
         ]);
+
+        return $this->collect($rows, HTMLComponent::class);
     }
 }

@@ -46,6 +46,8 @@ final class Container
      */
     public function buildMethodParameters(\ReflectionMethod $method, array $parameters): array
     {
+        // dump($method->name);
+        // dump($parameters);
         $methodParameters = [];
         foreach ($method->getParameters() as $parameter) {
             $parameterName = $parameter->name;
@@ -132,7 +134,7 @@ final class Container
             $type = $parameter->getType()->getName();
             if (ReflectionService::isNativeType($parameter)) {
                 if (!$parameter->isOptional()) {
-                    throw new \Exception("Cannot build DI due to required arguments of type '{$type}'");
+                    throw new \Exception("Cannot build DI due to required arguments of type '{$type}' on '{$classname}'");
                 }
                 continue;
             }

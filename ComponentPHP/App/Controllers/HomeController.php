@@ -11,7 +11,6 @@ use App\Templates\HTML\RootTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Models\Responses\Response;
-use Core\Routing\Services\RoutingService;
 use Core\Sessions\Services\SessionService;
 
 #[Auth]
@@ -29,14 +28,16 @@ final class HomeController extends AbstractController
     {
         // TODO: All component work should solely live in templates I think
 
-        $component = $this->rootTemplate
-            ->get('app')
-            ->fill('navigation', $this->rootTemplate->get('nav_bar'))
-        ;
+        // $component = $this->rootTemplate
+        //     ->get('app')
+        //     ->fill('navigation', $this->rootTemplate->get('nav_bar'))
+        // ;
+
+        $component = $this->rootTemplate->getApp('');
 
         $htmxRedirectData = SessionService::sessionPop('htmx');
         if ($htmxRedirectData !== null) {
-            $component->fill('htmxBodyPreload', $htmxRedirectData, raw: true);
+            $component->fill('htmxBodyPreload', $htmxRedirectData, ['raw' => true]);
         }
         // else {
         //     $component->fill('htmxBodyPreload', $this->routingService->tunnelRequest('app_viewAllSongs')->content, raw: true);

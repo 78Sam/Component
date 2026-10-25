@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Core\Routing\Models\Responses;
 
-use Core\Components\Models\Component;
+use Core\Components\Models\ComponentInterface;
 use Core\Routing\Enums\ResponseCode;
 
 final readonly class HTMXResponse extends Response
 {
     public function __construct(
-        string|Component $content,
+        string|ComponentInterface $content,
         ResponseCode $responseCode = ResponseCode::Ok,
         array $headers = [],
         // ! HTMX headers
