@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Components\Models;
 
+use Core\Components\Exceptions\NonExistentComponentException;
 use Core\Components\Services\ComponentService;
 use Core\Utility\Services\PathService;
 
@@ -60,7 +61,7 @@ abstract class AbstractTemplate2 implements TemplateInterface
 
         $unparsedComponent = $this->unparsedComponentsByFile[$path][$componentName] ?? null;
         if ($unparsedComponent === null) {
-            throw new \Exception("Component doesn't exist"); // TODO: Improve
+            throw new NonExistentComponentException($unparsedComponent->name, $path);
         }
 
         return clone $this->parseNewComponent($unparsedComponent, $model, $path);
@@ -91,8 +92,42 @@ abstract class AbstractTemplate2 implements TemplateInterface
         return $components;
     }
 
+    /**
+     * @template T of ComponentInterface
+     *
+     * @param list<string|ComponentInterface> $items
+     * @param class-string<T> $model
+     * 
+     * @return T
+     */
+    public function collect(array $items, string $model, string $separator = ''): ComponentInterface
+    {
+        $sockets = [];
+        for ($chunk = 0; $chunk < count($items); $chunk++) {
+            $item = $items[$chunk];
+            if (!$item instanceof ComponentInterface && !is_string($item)) {
+                $type = gettype($item);
+
+                throw new \Exception("Cannot collect item that is not a string or component: '{$type}'");
+            }
+
+            $sockets['_chunk_' . ($chunk * 2)] = $item;
+            $sockets['_chunk_' . (($chunk * 2) + 1)] = $separator;
+        }
+        array_pop($sockets);
+
+        return new $model('', $sockets, []);
+    }
+
     protected function loadFiles(): void {}
 
+    /**
+     * @template T of ComponentInterface
+     *
+     * @param class-string<T> $model
+     * 
+     * @return T
+     */
     private function parseNewComponent(
         UnparsedComponent $unparsedComponent,
         string $model,
@@ -104,9 +139,11 @@ abstract class AbstractTemplate2 implements TemplateInterface
             $this->componentsByFile[$path] = [];
         }
 
-        if (array_key_exists($componentName, $this->componentsByFile[$path])) {
-            throw new \Exception('Duplicate path components to be improved'); // TODO: Improve
-        }
+        // No need to check for duplicate names as the file must have been loaded and ComponentService::loadFile checks for dupes
+
+        // if (array_key_exists($componentName, $this->componentsByFile[$path])) {
+        //     throw new \Exception('Duplicate path components to be improved');
+        // }
 
         $this->componentsByFile[$path][$componentName] = $component;
 

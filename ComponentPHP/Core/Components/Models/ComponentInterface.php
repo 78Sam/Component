@@ -6,6 +6,12 @@ namespace Core\Components\Models;
 
 interface ComponentInterface
 {
+    /**
+     * @param array<string, string|ComponentInterface> $sockets
+     * @param array<string, list<string>> $variableMap
+     */
+    public function __construct(string $name, array $sockets, array $variableMap);
+
     public function __toString(): string;
 
     public function render(): string;
