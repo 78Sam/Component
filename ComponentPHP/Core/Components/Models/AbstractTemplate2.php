@@ -41,8 +41,12 @@ abstract class AbstractTemplate2 implements TemplateInterface
      *
      * @return T
      */
-    public function get(string $componentName, string $path, string $model, bool $absolutePath = false): ComponentInterface
-    {
+    public function get(
+        string $componentName,
+        string $path,
+        string $model,
+        bool $absolutePath = false,
+    ): ComponentInterface {
         $path = $absolutePath ? PathService::normalisePath($path) : PathService::fromProjectDirectory($path);
 
         // Do we just have it
@@ -78,8 +82,7 @@ abstract class AbstractTemplate2 implements TemplateInterface
         array $values,
         bool $absolutePath = false,
         array $options = [],
-    ): array
-    {
+    ): array {
         $components = [];
         foreach ($values as $value) {
             $components[] = $this->get($componentName, $path, $model, $absolutePath)->fillAll($value, $options);
@@ -90,8 +93,11 @@ abstract class AbstractTemplate2 implements TemplateInterface
 
     protected function loadFiles(): void {}
 
-    private function parseNewComponent(UnparsedComponent $unparsedComponent, string $model, string $path): ComponentInterface
-    {
+    private function parseNewComponent(
+        UnparsedComponent $unparsedComponent,
+        string $model,
+        string $path,
+    ): ComponentInterface {
         $component = $this->componentService->parseComponent($unparsedComponent, $model);
         $componentName = $unparsedComponent->name;
         if (!array_key_exists($path, $this->componentsByFile)) {
@@ -99,7 +105,7 @@ abstract class AbstractTemplate2 implements TemplateInterface
         }
 
         if (array_key_exists($componentName, $this->componentsByFile[$path])) {
-            throw new \Exception("Duplicate path components to be improved"); // TODO: Improve
+            throw new \Exception('Duplicate path components to be improved'); // TODO: Improve
         }
 
         $this->componentsByFile[$path][$componentName] = $component;

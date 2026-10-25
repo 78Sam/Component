@@ -57,7 +57,10 @@ class ComponentService
             if (array_key_exists($componentName, $components)) {
                 throw new ComponentOverlapException($componentName, $path);
             }
-            $components[$componentName] = new UnparsedComponent($componentMatch['component_name'], $componentMatch['body']);
+            $components[$componentName] = new UnparsedComponent(
+                $componentMatch['component_name'],
+                $componentMatch['body'],
+            );
         }
 
         return $components;
@@ -108,7 +111,7 @@ class ComponentService
 
         $component = new $model($unparsedComponent->name, $sockets, $variableMap);
         if (!$component instanceof ComponentInterface) {
-            throw new \Exception("Component not subclass of ComponentInterface"); // TODO: Improve
+            throw new \Exception('Component not subclass of ComponentInterface'); // TODO: Improve
         }
 
         return $component;

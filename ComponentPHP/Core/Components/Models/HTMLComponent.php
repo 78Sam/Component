@@ -15,14 +15,16 @@ class HTMLComponent extends AbstractComponent
             throw new \Exception("Cannot fill non-existent value '{$name}' options are '{$options}'");
         }
 
-        if (!($value instanceof ComponentInterface) && !is_scalar($value)) {
+        if (!$value instanceof ComponentInterface && !is_scalar($value)) {
             throw new \Exception('You can only fill HTMLComponents with scalar values or other components');
         }
 
         $raw = ($options['raw'] ?? false) === true;
         $pseudonyms = $this->variableMap[$name];
         foreach ($pseudonyms as $pseudonym) {
-            $this->sockets[$pseudonym] = $raw || $value instanceof ComponentInterface ? $value : htmlspecialchars((string) $value);
+            $this->sockets[$pseudonym] = $raw || $value instanceof ComponentInterface
+                ? $value
+                : htmlspecialchars((string) $value);
         }
 
         return $this;

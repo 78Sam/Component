@@ -34,7 +34,7 @@ abstract class AbstractRouter implements RouterInterface
     abstract protected function getControllerFolders(): array;
 
     protected function findRoute(Request $request): ?SiteMapEntry
-    {        
+    {
         $siteMapEntry = $this->siteMap->getSiteMapEntryByRoute($request->route);
         if ($siteMapEntry !== null) {
             return $siteMapEntry;
@@ -68,7 +68,7 @@ abstract class AbstractRouter implements RouterInterface
                 "Routes should match after \$this->findRoute(), '{$request->route}' vs '{$siteMapEntry->route}'",
             );
         }
-        
+
         $dynamicParameters = [];
         foreach ($siteMapEntry->routeSegments as $index => $segment) {
             if (!$segment->isDynamic) {
@@ -126,7 +126,10 @@ abstract class AbstractRouter implements RouterInterface
 
         $controllers = [];
         foreach ($this->getControllerFolders() as $controllerFolder) {
-            foreach ($this->classFinderService->byExtension($controllerFolder, AbstractController::class) as $controller) {
+            foreach ($this->classFinderService->byExtension(
+                $controllerFolder,
+                AbstractController::class,
+            ) as $controller) {
                 $controllers[] = $controller;
             }
         }

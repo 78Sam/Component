@@ -25,10 +25,12 @@ final class SiteMap
 
         foreach ($this->siteMapEntriesByName[$siteMapEntry->name] as $existingEntry) {
             if ($siteMapEntry->method !== $existingEntry->method) {
-                throw new \LogicException("Site map entry already with a different method exists for name: '{$siteMapEntry->name}'");
+                throw new \LogicException(
+                    "Site map entry already with a different method exists for name: '{$siteMapEntry->name}'",
+                );
             }
         }
-        $this->siteMapEntriesByName[$siteMapEntry->name][] = $siteMapEntry; 
+        $this->siteMapEntriesByName[$siteMapEntry->name][] = $siteMapEntry;
 
         return $this;
     }
@@ -51,6 +53,9 @@ final class SiteMap
      */
     public function getDynamicSiteMapEntries(): array
     {
-        return array_filter($this->siteMapEntriesByRoute, fn(SiteMapEntry $siteMapEntry): bool => $siteMapEntry->isDynamic());
+        return array_filter(
+            $this->siteMapEntriesByRoute,
+            fn(SiteMapEntry $siteMapEntry): bool => $siteMapEntry->isDynamic(),
+        );
     }
 }

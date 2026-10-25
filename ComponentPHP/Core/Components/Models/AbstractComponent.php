@@ -14,8 +14,7 @@ abstract class AbstractComponent implements ComponentInterface
         public readonly string $name,
         public array $sockets,
         public readonly array $variableMap,
-    ) {
-    }
+    ) {}
 
     public function __clone(): void
     {

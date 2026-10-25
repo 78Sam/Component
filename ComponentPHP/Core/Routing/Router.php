@@ -111,7 +111,10 @@ class Router extends AbstractRouter
 
         $methodParameters = $container->buildMethodParameters($siteMapEntry->method, $dynamicParameters);
 
-        $response = $siteMapEntry->method->invoke($container->get($siteMapEntry->controller->name), ...$methodParameters);
+        $response = $siteMapEntry->method->invoke(
+            $container->get($siteMapEntry->controller->name),
+            ...$methodParameters,
+        );
         if (!$response instanceof Response) {
             throw new \LogicException("Controller method '{$siteMapEntry->method->name}' must return a Response");
         }

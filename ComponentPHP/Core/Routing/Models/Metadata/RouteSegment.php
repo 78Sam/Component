@@ -18,8 +18,9 @@ final readonly class RouteSegment
     public ?string $variable;
     public bool $isDynamic;
 
-    public function __construct(private string $segment)
-    {
+    public function __construct(
+        private string $segment,
+    ) {
         $this->parseRouteSegment();
     }
 

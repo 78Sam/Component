@@ -141,9 +141,9 @@ class ReflectionService
 
     /**
      * @template T of object
-     * 
+     *
      * @param class-string<T> $attribute
-     * 
+     *
      * @return list<array{method: \ReflectionMethod, attribute: \ReflectionAttribute<T>}>
      */
     public static function getAttributesOnClassMethods(\ReflectionClass $class, string $attribute): array

@@ -9,6 +9,5 @@ readonly class UnparsedComponent
     public function __construct(
         public string $name,
         public string $body,
-    ) {
-    }
+    ) {}
 }

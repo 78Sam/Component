@@ -37,9 +37,6 @@ final class PathService
      */
     public static function splitRoute(string $route): array
     {
-        return array_values(array_filter(
-            explode('/', $route),
-            fn(string $value): bool => $value !== '',
-        ));
+        return array_values(array_filter(explode('/', $route), fn(string $value): bool => $value !== ''));
     }
 }
