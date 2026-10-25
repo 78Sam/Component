@@ -18,6 +18,7 @@ abstract class AbstractTemplate2 implements TemplateInterface
     public function __construct(
         protected readonly ComponentService $componentService,
     ) {
+        $this->loadFiles();
     }
 
     public function loadFile(string $path, bool $absolutePath = false): self
@@ -40,26 +41,54 @@ abstract class AbstractTemplate2 implements TemplateInterface
      *
      * @return T
      */
-    public function get(string $name, string $path, string $model, bool $absolutePath = false): ComponentInterface
+    public function get(string $componentName, string $path, string $model, bool $absolutePath = false): ComponentInterface
     {
         $path = $absolutePath ? PathService::normalisePath($path) : PathService::fromProjectDirectory($path);
 
         // Do we just have it
-        $component = $this->componentsByFile[$path][$name] ?? null;
+        $component = $this->componentsByFile[$path][$componentName] ?? null;
         if ($component !== null) {
             return clone $component;
         }
 
-        // Load it if we have to
+        // Attempt to load it, no-op if we already have
         $this->loadFile($path, true);
 
-        $unparsedComponent = $this->unparsedComponentsByFile[$path][$name] ?? null;
+        $unparsedComponent = $this->unparsedComponentsByFile[$path][$componentName] ?? null;
         if ($unparsedComponent === null) {
             throw new \Exception("Component doesn't exist"); // TODO: Improve
         }
 
         return clone $this->parseNewComponent($unparsedComponent, $model, $path);
     }
+
+    /**
+     * @template T of ComponentInterface
+     *
+     * @param class-string<T> $model
+     * @param array<string, mixed> $values
+     * @param array<string, mixed> $options
+     *
+     * @return list<T>
+     */
+    public function stack(
+        string $componentName,
+        string $path,
+        string $model,
+        array $values,
+        bool $absolutePath = false,
+        array $options = [],
+    ): array
+    {
+        $components = [];
+        foreach ($values as $value) {
+            $components[] = $this->get($componentName, $path, $model, $absolutePath)->fillAll($value, $options);
+        }
+
+        return $components;
+    }
+
+    protected function loadFiles(): void {}
 
     private function parseNewComponent(UnparsedComponent $unparsedComponent, string $model, string $path): ComponentInterface
     {

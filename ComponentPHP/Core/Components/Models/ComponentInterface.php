@@ -14,4 +14,10 @@ interface ComponentInterface
      * @param array<string, mixed> $options
      */
     public function fill(string $name, mixed $value, array $options = []): self;
+
+    /**
+     * @param array<string, mixed> $values
+     * @param array<string, mixed> $options
+     */
+    public function fillAll(array $values, array $options = []): self;
 }

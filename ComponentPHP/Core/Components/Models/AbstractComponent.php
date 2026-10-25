@@ -38,13 +38,11 @@ abstract class AbstractComponent implements ComponentInterface
         return $this->__toString();
     }
 
-    /**
-     * @param array<string, mixed> $values
-     */
-    public function fillAll(array $values): self
+    #[\Override]
+    public function fillAll(array $values, array $options = []): self
     {
         foreach ($values as $name => $value) {
-            $this->fill($name, $value);
+            $this->fill($name, $value, $options);
         }
 
         return $this;
