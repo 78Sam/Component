@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Core\Routing\Models\Requests;
 
+use AbstractRequest;
 use Core\Routing\Enums\RequestMethods;
 
-final readonly class HTMXRequest extends Request
+readonly class HTMXRequest extends AbstractRequest
 {
     public function __construct(
         string $host,

@@ -121,4 +121,9 @@ class Router extends AbstractRouter
 
         return $response;
     }
+
+    // public function tunnelRequest(string $path): Response
+    // {
+
+    // }
 }

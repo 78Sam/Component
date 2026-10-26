@@ -2,28 +2,90 @@
 
 declare(strict_types=1);
 
-// class Test
-// {}
+class ValidationException extends \Exception
+{
+    public function __construct(string $message = "")
+    {
+        return parent::__construct($message);
+    }
+}
 
-// class Sam
-// {}
+abstract class RequestValidatorInterface
+{
+    /**
+     * @param array<string, mixed> $input
+     */
+    public function __construct(
+        public array $input,
+    ) {
+    }
 
-// $y = true;
+    /**
+     * @template T
+     * 
+     * @param callable(mixed $value): (T|ValidationException) $validator
+     *
+     * @throws ValidationException
+     * 
+     * @return T
+     */
+    public function validate(string $key, callable $validator)
+    {
+        if (!array_key_exists($key, $this->input)) {
+            throw new ValidationException('Cannot find key');
+        }
 
-// $x = new Test();
+        $result = $validator($this->input[$key]);
+        if ($result instanceof ValidationException) {
+            throw $result;
+        }
 
-// if (is_a($x, Test::class)) {
-//     echo "YEA";
-// }
+        return $result;
+    }
 
-// $z = clone null;
+    /**
+     * @template T
+     * @template D
+     * 
+     * @param callable(mixed $value): (T|ValidationException) $validator
+     * @param D $default
+     * 
+     * @return T|D
+     */
+    public function validateWithDefault(string $key, callable $validator, mixed $default = null)
+    {
+        if (!array_key_exists($key, $this->input)) {
+            return $default;
+        }
 
-// $p = [];
+        $result = $validator($this->input[$key]);
+        if ($result instanceof ValidationException) {
+            return $default;
+        }
 
-// $x = $p['a']['b'] ?? null;
+        return $result;
+    }
+}
 
-// if ($x === null) {
-//     echo "Yea";
-// }
+class RequestValidator extends RequestValidatorInterface
+{
+    public function validateString(mixed $value): string|ValidationException
+    {
+        if (is_string($value)) {
+            return $value;
+        }
 
-phpinfo();
+        return new ValidationException('Failed to validate string');
+    }
+}
+
+$input = [
+    'required_1' => 'stringValue',
+    'required_2' => 'intstring',
+    'optional_1' => 12,
+];
+
+$validator = new RequestValidator($input);
+
+$x = $validator->validateWithDefault('required_1', $validator->validateString(...), 'sam');
+echo $x;

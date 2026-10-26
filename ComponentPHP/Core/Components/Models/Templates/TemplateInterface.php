@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Components\Models;
+namespace Core\Components\Models\Templates;
 
 use Core\Components\Models\Components\ComponentInterface;
 

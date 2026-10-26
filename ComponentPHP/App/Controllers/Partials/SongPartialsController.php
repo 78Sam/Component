@@ -12,7 +12,6 @@ use App\Services\AuthService;
 use App\Services\MusicService;
 use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\MusicTemplate;
-use Core\Components\Models\Components\HTMLComponent;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Enums\RequestMethods;
@@ -22,7 +21,6 @@ use Core\Routing\Models\Responses\HTMXResponse;
 use Core\Routing\Models\Responses\RedirectResponse;
 use Core\Routing\Models\Responses\Response;
 use Core\Sessions\Services\SessionService;
-use Core\Utility\Services\PathService;
 
 #[Auth]
 final class SongPartialsController extends AbstractController
