@@ -17,4 +17,13 @@ class SimpleParser extends AbstractParser
 
         return new ParseException('Not a string');
     }
+
+    public function validateInt(mixed $value): int|ParseException
+    {
+        if (is_int($value)) {
+            return $value;
+        }
+
+        return new ParseException('Not an int');
+    }
 }
