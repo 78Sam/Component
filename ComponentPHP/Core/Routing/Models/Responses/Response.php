@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Routing\Models\Responses;
 
-use Core\Components\Models\ComponentInterface;
+use Core\Components\Models\Components\ComponentInterface;
 use Core\Routing\Enums\ResponseCode;
 
 readonly class Response

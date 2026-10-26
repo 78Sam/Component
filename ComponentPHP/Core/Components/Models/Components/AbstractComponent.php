@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Components\Models;
+namespace Core\Components\Models\Components;
 
 abstract class AbstractComponent implements ComponentInterface
 {

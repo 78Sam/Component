@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Templates\SQL;
 
-use Core\Components\Models\AbstractTemplate;
-use Core\Components\Models\SQLComponent;
+use Core\Components\Models\Templates\AbstractTemplate;
+use Core\Components\Models\Components\SQLComponent;
 
 class UserTemplate extends AbstractTemplate
 {

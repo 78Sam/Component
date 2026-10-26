@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Core\Components\Models;
 
+use Core\Components\Models\Components\ComponentInterface;
+
 interface TemplateInterface
 {
     public function loadFile(string $path, bool $absolutePath = false): self;

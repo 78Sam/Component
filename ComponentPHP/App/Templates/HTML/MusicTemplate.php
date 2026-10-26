@@ -7,8 +7,8 @@ namespace App\Templates\HTML;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\MusicService;
-use Core\Components\Models\AbstractTemplate;
-use Core\Components\Models\HTMLComponent;
+use Core\Components\Models\Templates\AbstractTemplate;
+use Core\Components\Models\Components\HTMLComponent;
 use Core\Utility\Services\PathService;
 
 final class MusicTemplate extends AbstractTemplate

@@ -12,7 +12,7 @@ use App\Services\AuthService;
 use App\Services\MusicService;
 use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\MusicTemplate;
-use Core\Components\Models\HTMLComponent;
+use Core\Components\Models\Components\HTMLComponent;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Enums\RequestMethods;

@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace Core\Components\Models;
 
 use Core\Components\Exceptions\NonExistentComponentException;
+use Core\Components\Models\Components\ComponentInterface;
+use Core\Components\Models\Components\UnparsedComponent;
 use Core\Components\Services\ComponentService;
-use Core\Debug\DebugMetrics;
 use Core\Utility\Services\PathService;
 
 abstract class AbstractTemplate implements TemplateInterface
 {
     /** @var array<string, array<string, ComponentInterface>> */
     protected array $componentsByFile = [];
+
+    // protected UnparsedComponent
 
     /** @var array<string, array<string, UnparsedComponent>> */
     protected array $unparsedComponentsByFile = [];

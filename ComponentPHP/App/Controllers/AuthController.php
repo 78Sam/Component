@@ -7,7 +7,7 @@ namespace App\Controllers;
 use App\Services\AuthService;
 use App\Templates\HTML\FormTemplate;
 use App\Templates\HTML\RootTemplate;
-use Core\Components\Models\HTMLComponent;
+use Core\Components\Models\Components\HTMLComponent;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Enums\RequestMethods;

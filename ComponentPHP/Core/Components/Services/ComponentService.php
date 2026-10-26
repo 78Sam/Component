@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Core\Components\Services;
 
 use Core\Components\Exceptions\ComponentOverlapException;
-use Core\Components\Models\ComponentInterface;
-use Core\Components\Models\UnparsedComponent;
+use Core\Components\Models\Components\ComponentInterface;
+use Core\Components\Models\Components\UnparsedComponent;
 use Core\Utility\Services\PathService;
 
 class ComponentService

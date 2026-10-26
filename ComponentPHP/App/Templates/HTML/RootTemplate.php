@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Templates\HTML;
 
-use Core\Components\Models\AbstractTemplate;
-use Core\Components\Models\HTMLComponent;
+use Core\Components\Models\Templates\AbstractTemplate;
+use Core\Components\Models\Components\HTMLComponent;
 
 class RootTemplate extends AbstractTemplate
 {

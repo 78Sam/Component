@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Database\Services;
 
-use Core\Components\Models\ComponentInterface;
+use Core\Components\Models\Components\ComponentInterface;
 use Core\Database\Exceptions\NoConnectionException;
 use Core\Logging\Services\LoggingService;
 

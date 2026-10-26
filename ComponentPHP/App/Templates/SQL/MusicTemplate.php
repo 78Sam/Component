@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Templates\SQL;
 
-use Core\Components\Models\AbstractTemplate;
-use Core\Components\Models\SQLComponent;
+use Core\Components\Models\Templates\AbstractTemplate;
+use Core\Components\Models\Components\SQLComponent;
 use Core\Utility\Services\DateTimeService;
 
 final class MusicTemplate extends AbstractTemplate // TODO: SQLAbstractTemplate to add default SQLComponent::class

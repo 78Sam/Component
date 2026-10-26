@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Core\Components\Models;
+namespace Core\Components\Models\Components;
 
-class SQLComponent extends AbstractComponent
+class HTMLComponent extends AbstractComponent
 {
     #[\Override]
     public function fill(string $name, mixed $value, array $options = []): self
@@ -19,9 +19,12 @@ class SQLComponent extends AbstractComponent
             throw new \Exception('You can only fill HTMLComponents with scalar values or other components');
         }
 
+        $raw = ($options['raw'] ?? false) === true;
         $pseudonyms = $this->variableMap[$name];
         foreach ($pseudonyms as $pseudonym) {
-            $this->sockets[$pseudonym] = $value; // TODO: This needs changed to be actually useful for SQL
+            $this->sockets[$pseudonym] = $raw || $value instanceof ComponentInterface
+                ? $value
+                : htmlspecialchars((string) $value);
         }
 
         return $this;
