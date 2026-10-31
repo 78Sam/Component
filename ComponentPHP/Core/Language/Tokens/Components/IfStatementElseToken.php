@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Core\Language\Tokens\Components;
 
-readonly class IfStatementElseToken extends AbstractControlSequenceToken
+use Core\Language\Tokens\ClosableTokenInterface;
+use Core\Language\Tokens\ClosingTokenInterface;
+
+readonly class IfStatementElseToken extends AbstractControlSequenceToken implements ClosableTokenInterface, ClosingTokenInterface
 {
     #[\Override]
     public static function getIdentifier(): string
@@ -13,13 +16,7 @@ readonly class IfStatementElseToken extends AbstractControlSequenceToken
     }
 
     #[\Override]
-    public static function requiresClosing(): bool
-    {
-        return true;
-    }
-
-    #[\Override]
-    public static function closes(): ?array
+    public static function closes(): array
     {
         return [IfStatementStartToken::class];
     }

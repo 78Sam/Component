@@ -4,23 +4,13 @@ declare(strict_types=1);
 
 namespace Core\Language\Tokens\Components;
 
-readonly class IfStatementStartToken extends AbstractControlSequenceToken
+use Core\Language\Tokens\ClosableTokenInterface;
+
+readonly class IfStatementStartToken extends AbstractControlSequenceToken implements ClosableTokenInterface
 {
     #[\Override]
     public static function getIdentifier(): string
     {
         return 'if|';
-    }
-
-    #[\Override]
-    public static function requiresClosing(): bool
-    {
-        return true;
-    }
-
-    #[\Override]
-    public static function closes(): ?array
-    {
-        return null;
     }
 }

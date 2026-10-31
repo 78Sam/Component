@@ -9,6 +9,7 @@ abstract readonly class AbstractToken
     public function __construct(
         public int $start,
         public int $end,
+        public string $body,
     ) {
     }
 }

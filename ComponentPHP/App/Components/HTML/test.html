@@ -1,0 +1,19 @@
+!@(component|user)
+<div>
+    <h1>!@($username)</h1>
+    !@(if|$is_admin)
+    <h2>You are an admin</h2>
+    !@(endif)
+</div>
+!@(end)
+
+!@(component|badge)
+<div>
+    <p>!@($badge_name)</p>
+    !@(if|$dark)
+    <p>Dark theme</p>
+    !@(else)
+    <p>Light theme</p>
+    !@(endif)
+</div>
+!@(end)

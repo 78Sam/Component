@@ -57,7 +57,9 @@ abstract class AbstractTokenizer implements TokenizerInterface
      */
     protected function captureBlock(string $block): self
     {
-        $this->result[] = new $block($this->leftPosition, $this->rightPosition);
+        print_r("Capturing block: {$this->leftPosition} {$this->rightPosition}\n");
+        $body = substr($this->context, $this->leftPosition, $this->rightPosition - $this->leftPosition);
+        $this->result[] = new $block($this->leftPosition, $this->rightPosition, $body);
         $this->leftPosition = $this->rightPosition;
 
         return $this;

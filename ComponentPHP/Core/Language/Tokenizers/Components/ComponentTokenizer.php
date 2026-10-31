@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Core\Language\Tokenizers;
+namespace Core\Language\Tokenizers\Components;
 
+use Core\Language\Tokenizers\AbstractTokenizer;
 use Core\Language\Tokens\Components\AbstractControlSequenceToken;
 use Core\Language\Tokens\Components\BodyToken;
 use Core\Language\Tokens\Components\ComponentEndToken;
@@ -23,6 +24,7 @@ class ComponentTokenizer extends AbstractTokenizer
         }
 
         $currentThree = $char . implode('', $this->peak(2));
+        print_r("Current 3: '{$currentThree}'\n");
         if ($currentThree === AbstractControlSequenceToken::CONTROL_START) {
             $this->captureBlock(BodyToken::class);
             $this->parseControlSequence();

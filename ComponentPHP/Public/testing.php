@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Core\DependencyInjection\Container;
 use Core\Language\Parsers\Components\ComponentParser;
-use Core\Language\Tokenizers\ComponentTokenizer;
+use Core\Language\Tokenizers\Components\ComponentTokenizer;
 use Core\Tests\TestRunner;
 use Core\Utility\Services\PathService;
 use Tests\Core\Reflection\ReflectionTests;
@@ -30,7 +30,7 @@ $container = Container::getInstance();
 // $reflectionService = $container->get(ReflectionService::class);
 
 $tokenizer = $container->get(ComponentTokenizer::class);
-$tokens = $tokenizer->tokenize(file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/app.html')));
+$tokens = $tokenizer->tokenize(file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test2.html')));
 
 var_dump($tokens);
 
