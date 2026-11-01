@@ -11,7 +11,7 @@ readonly class ComponentEndToken extends AbstractControlSequenceToken implements
     #[\Override]
     public static function getIdentifier(): string
     {
-        return 'end';
+        return '/!@\(end\)/';
     }
 
     #[\Override]

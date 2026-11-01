@@ -24,7 +24,6 @@ class ComponentTokenizer extends AbstractTokenizer
         }
 
         $currentThree = $char . implode('', $this->peak(2));
-        print_r("Current 3: '{$currentThree}'\n");
         if ($currentThree === AbstractControlSequenceToken::CONTROL_START) {
             $this->rightPosition--;
             $this->captureBlock(BodyToken::class);
@@ -43,16 +42,16 @@ class ComponentTokenizer extends AbstractTokenizer
             $controlSequenceString .= $char;
         } while ($char !== AbstractControlSequenceToken::CONTROL_END);
 
-        $controlSequenceBody = str_replace(' ', '', substr($controlSequenceString, 3, strlen($controlSequenceString) - 4));
-        $controlSequenceBody = trim($controlSequenceBody, '()');
-        $key = match(true) {
-            str_starts_with($controlSequenceBody, IfStatementStartToken::getIdentifier()) => IfStatementStartToken::class,
-            str_starts_with($controlSequenceBody, IfStatementElseToken::getIdentifier()) => IfStatementElseToken::class,
-            str_starts_with($controlSequenceBody, IfStatementEndToken::getIdentifier()) => IfStatementEndToken::class,
-            str_starts_with($controlSequenceBody, ComponentStartToken::getIdentifier()) => ComponentStartToken::class,
-            str_starts_with($controlSequenceBody, ComponentEndToken::getIdentifier()) => ComponentEndToken::class,
-            str_starts_with($controlSequenceBody, VariableToken::getIdentifier()) => VariableToken::class,
-            default => throw new \Exception("Unable to parse control sequence body '{$controlSequenceBody}'"),
+        $controlSequenceString = str_replace(' ', '', $controlSequenceString);
+
+        $key = match(1) {
+            preg_match(IfStatementStartToken::getIdentifier(), $controlSequenceString) => IfStatementStartToken::class,
+            preg_match(IfStatementElseToken::getIdentifier(), $controlSequenceString) => IfStatementElseToken::class,
+            preg_match(IfStatementEndToken::getIdentifier(), $controlSequenceString) => IfStatementEndToken::class,
+            preg_match(ComponentStartToken::getIdentifier(), $controlSequenceString) => ComponentStartToken::class,
+            preg_match(ComponentEndToken::getIdentifier(), $controlSequenceString) => ComponentEndToken::class,
+            preg_match(VariableToken::getIdentifier(), $controlSequenceString) => VariableToken::class,
+            default => throw new \Exception("Unable to parse control sequence body '{$controlSequenceString}'"),
         };
 
         $this->captureBlock($key);

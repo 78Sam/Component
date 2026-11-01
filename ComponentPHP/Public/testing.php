@@ -30,7 +30,7 @@ $container = Container::getInstance();
 // $reflectionService = $container->get(ReflectionService::class);
 
 $tokenizer = $container->get(ComponentTokenizer::class);
-$tokens = $tokenizer->tokenize(file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test2.html')));
+$tokens = $tokenizer->tokenize(file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test.html')));
 
 var_dump($tokens);
 

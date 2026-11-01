@@ -11,10 +11,5 @@ readonly abstract class AbstractControlSequenceToken extends AbstractToken
     public const string CONTROL_START = '!@(';
     public const string CONTROL_END = ')';
 
-    public function getBody(): ?string
-    {
-        return null;
-    }
-
     abstract static function getIdentifier(): string;
 }
