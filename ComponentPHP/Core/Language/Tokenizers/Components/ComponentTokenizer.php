@@ -26,6 +26,7 @@ class ComponentTokenizer extends AbstractTokenizer
         $currentThree = $char . implode('', $this->peak(2));
         print_r("Current 3: '{$currentThree}'\n");
         if ($currentThree === AbstractControlSequenceToken::CONTROL_START) {
+            $this->rightPosition--;
             $this->captureBlock(BodyToken::class);
             $this->parseControlSequence();
         }
@@ -43,6 +44,7 @@ class ComponentTokenizer extends AbstractTokenizer
         } while ($char !== AbstractControlSequenceToken::CONTROL_END);
 
         $controlSequenceBody = str_replace(' ', '', substr($controlSequenceString, 3, strlen($controlSequenceString) - 4));
+        $controlSequenceBody = trim($controlSequenceBody, '()');
         $key = match(true) {
             str_starts_with($controlSequenceBody, IfStatementStartToken::getIdentifier()) => IfStatementStartToken::class,
             str_starts_with($controlSequenceBody, IfStatementElseToken::getIdentifier()) => IfStatementElseToken::class,

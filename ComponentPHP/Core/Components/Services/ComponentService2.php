@@ -6,7 +6,7 @@ namespace Core\Components\Services;
 
 use Core\Components\Models\Sockets\VariableSocket;
 use Core\Language\Parsers\Components\ComponentParser;
-use Core\Language\Tokenizers\ComponentTokenizer;
+use Core\Language\Tokenizers\Components\ComponentTokenizer;
 use Core\Language\Tokens\Components\ComponentStartToken;
 use Core\Language\Tokens\Components\VariableToken;
 use Core\Utility\Services\PathService;

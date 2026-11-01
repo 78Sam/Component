@@ -8,10 +8,10 @@ use Core\Language\Tokens\AbstractToken;
 
 abstract class AbstractTokenizer implements TokenizerInterface
 {
-    private ?string $context = null;
+    protected ?string $context = null;
 
-    private int $leftPosition = 0;
-    private int $rightPosition = 0;
+    protected int $leftPosition = 0;
+    protected int $rightPosition = 0;
 
     /** @var list<AbstractToken> */
     private array $result = [];
