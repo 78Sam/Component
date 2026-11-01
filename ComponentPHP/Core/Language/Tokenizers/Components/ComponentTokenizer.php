@@ -27,6 +27,7 @@ class ComponentTokenizer extends AbstractTokenizer
         if ($currentThree === AbstractControlSequenceToken::CONTROL_START) {
             $this->rightPosition--;
             $this->captureBlock(BodyToken::class);
+            $this->rightPosition++;
             $this->parseControlSequence();
         }
     }
@@ -43,6 +44,8 @@ class ComponentTokenizer extends AbstractTokenizer
         } while ($char !== AbstractControlSequenceToken::CONTROL_END);
 
         $controlSequenceString = str_replace(' ', '', $controlSequenceString);
+
+        print_r($controlSequenceString . PHP_EOL);
 
         $key = match(1) {
             preg_match(IfStatementStartToken::getIdentifier(), $controlSequenceString) => IfStatementStartToken::class,

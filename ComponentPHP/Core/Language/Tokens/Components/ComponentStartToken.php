@@ -11,6 +11,6 @@ readonly class ComponentStartToken extends AbstractControlSequenceToken implemen
     #[\Override]
     public static function getIdentifier(): string
     {
-        return '/!@\(component|(?<component_name>\w+)\)/';
+        return '/^!@\(component\|(?<component_name>\w+)\)$/';
     }
 }

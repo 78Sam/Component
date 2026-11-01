@@ -11,6 +11,6 @@ readonly class IfStatementStartToken extends AbstractControlSequenceToken implem
     #[\Override]
     public static function getIdentifier(): string
     {
-        return '/!@\(if|(?<condition>[ a-zA-Z0-9_$]+)\)/';
+        return '/^!@\(if\|(?<condition>[ a-zA-Z0-9_$]+)\)$/';
     }
 }

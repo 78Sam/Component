@@ -12,7 +12,7 @@ readonly class IfStatementElseToken extends AbstractControlSequenceToken impleme
     #[\Override]
     public static function getIdentifier(): string
     {
-        return '/!@\(else\)/';
+        return '/^!@\(else\)$/';
     }
 
     #[\Override]

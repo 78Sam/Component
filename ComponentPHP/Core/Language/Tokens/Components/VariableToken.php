@@ -9,6 +9,6 @@ readonly class VariableToken extends AbstractControlSequenceToken
     #[\Override]
     public static function getIdentifier(): string
     {
-        return '/!@\(\$(?<variable_name>\w+)\)/';
+        return '/^!@\(\$(?<variable_name>\w+)\)$/';
     }
 }

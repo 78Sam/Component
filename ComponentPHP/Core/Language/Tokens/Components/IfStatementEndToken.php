@@ -11,7 +11,7 @@ readonly class IfStatementEndToken extends AbstractControlSequenceToken implemen
     #[\Override]
     public static function getIdentifier(): string
     {
-        return '/!@\(endif\)/';
+        return '/^!@\(endif\)$/';
     }
 
     #[\Override]
