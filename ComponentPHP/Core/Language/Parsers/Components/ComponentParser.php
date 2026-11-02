@@ -82,6 +82,9 @@ class ComponentParser extends AbstractParser
         }
     }
 
+    /**
+     * @param list<AbstractToken> $tokens
+     */
     public function parse(array $tokens): AbstractNode
     {
         $generator = $this->tokenGenerator($tokens);
