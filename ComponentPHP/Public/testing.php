@@ -32,7 +32,8 @@ $container = Container::getInstance();
 $tokenizer = $container->get(ComponentTokenizer::class);
 $tokens = $tokenizer->tokenize(file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test.html')));
 
-var_dump($tokens);
+// var_dump($tokens);
 
 $parser = $container->get(ComponentParser::class);
 $parser->validate($tokens);
+var_dump($parser->parse($tokens));
