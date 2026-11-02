@@ -10,6 +10,5 @@ abstract readonly class AbstractToken
         public int $start,
         public int $end,
         public string $body,
-    ) {
-    }
+    ) {}
 }

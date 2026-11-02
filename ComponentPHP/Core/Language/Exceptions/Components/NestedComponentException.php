@@ -8,6 +8,6 @@ class NestedComponentException extends \Exception
 {
     public function __construct()
     {
-        parent::__construct("You cannot open another component before closing the first");
+        parent::__construct('You cannot open another component before closing the first');
     }
 }

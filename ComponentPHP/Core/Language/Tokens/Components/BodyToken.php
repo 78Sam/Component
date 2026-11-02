@@ -6,5 +6,4 @@ namespace Core\Language\Tokens\Components;
 
 use Core\Language\Tokens\AbstractToken;
 
-readonly class BodyToken extends AbstractToken
-{}
+readonly class BodyToken extends AbstractToken {}

@@ -7,7 +7,9 @@ namespace Core\Language\Tokens\Components;
 use Core\Language\Tokens\ClosableTokenInterface;
 use Core\Language\Tokens\ClosingTokenInterface;
 
-readonly class IfStatementElseToken extends AbstractControlSequenceToken implements ClosableTokenInterface, ClosingTokenInterface
+readonly class IfStatementElseToken extends AbstractControlSequenceToken implements
+    ClosableTokenInterface,
+    ClosingTokenInterface
 {
     #[\Override]
     public static function getIdentifier(): string

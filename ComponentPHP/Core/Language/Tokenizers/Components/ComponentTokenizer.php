@@ -47,7 +47,7 @@ class ComponentTokenizer extends AbstractTokenizer
 
         print_r($controlSequenceString . PHP_EOL);
 
-        $key = match(1) {
+        $key = match (1) {
             preg_match(IfStatementStartToken::getIdentifier(), $controlSequenceString) => IfStatementStartToken::class,
             preg_match(IfStatementElseToken::getIdentifier(), $controlSequenceString) => IfStatementElseToken::class,
             preg_match(IfStatementEndToken::getIdentifier(), $controlSequenceString) => IfStatementEndToken::class,

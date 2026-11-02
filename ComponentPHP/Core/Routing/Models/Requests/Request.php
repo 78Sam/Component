@@ -6,5 +6,4 @@ namespace Core\Routing\Models\Requests;
 
 use AbstractRequest;
 
-readonly class Request extends AbstractRequest
-{}
+readonly class Request extends AbstractRequest {}

@@ -9,6 +9,5 @@ abstract class AbstractSocket
     public function __construct(
         public readonly string $name,
         public string $value = '',
-    ) {
-    }
+    ) {}
 }

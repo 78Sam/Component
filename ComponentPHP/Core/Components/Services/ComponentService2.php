@@ -16,8 +16,7 @@ class ComponentService2
     public function __construct(
         private readonly ComponentTokenizer $componentTokenizer,
         private readonly ComponentParser $componentParser,
-    ) {
-    }
+    ) {}
 
     public function loadFile(string $path, bool $absolutePath = false): array
     {

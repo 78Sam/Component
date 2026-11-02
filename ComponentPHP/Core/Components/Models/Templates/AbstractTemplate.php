@@ -104,7 +104,7 @@ abstract class AbstractTemplate implements TemplateInterface
      *
      * @param list<string|ComponentInterface> $items
      * @param class-string<T> $model
-     * 
+     *
      * @return T
      */
     public function collect(array $items, string $model, string $separator = ''): ComponentInterface
@@ -132,7 +132,7 @@ abstract class AbstractTemplate implements TemplateInterface
      * @template T of ComponentInterface
      *
      * @param class-string<T> $model
-     * 
+     *
      * @return T
      */
     private function parseNewComponent(

@@ -6,7 +6,7 @@ namespace Core\Language\Tokens\Components;
 
 use Core\Language\Tokens\AbstractToken;
 
-readonly abstract class AbstractControlSequenceToken extends AbstractToken
+abstract readonly class AbstractControlSequenceToken extends AbstractToken
 {
     public const string CONTROL_START = '!@(';
     public const string CONTROL_END = ')';

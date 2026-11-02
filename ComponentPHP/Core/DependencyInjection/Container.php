@@ -134,7 +134,9 @@ final class Container
             $type = $parameter->getType()->getName();
             if (ReflectionService::isNativeType($parameter)) {
                 if (!$parameter->isOptional()) {
-                    throw new \Exception("Cannot build DI due to required arguments of type '{$type}' on '{$classname}'");
+                    throw new \Exception(
+                        "Cannot build DI due to required arguments of type '{$type}' on '{$classname}'",
+                    );
                 }
                 continue;
             }

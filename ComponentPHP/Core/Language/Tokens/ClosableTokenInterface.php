@@ -4,5 +4,4 @@ declare(strict_types=1);
 
 namespace Core\Language\Tokens;
 
-interface ClosableTokenInterface
-{}
+interface ClosableTokenInterface {}

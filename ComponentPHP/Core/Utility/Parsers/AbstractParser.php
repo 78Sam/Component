@@ -13,16 +13,15 @@ abstract class AbstractParser
      */
     public function __construct(
         public array $input,
-    ) {
-    }
+    ) {}
 
     /**
      * @template T
-     * 
+     *
      * @param callable(mixed $value): (T|ParseException) $validator
      *
      * @throws ParseException
-     * 
+     *
      * @return T
      */
     public function validate(string $key, callable $validator)
@@ -42,10 +41,10 @@ abstract class AbstractParser
     /**
      * @template T
      * @template D
-     * 
+     *
      * @param callable(mixed $value): (T|ParseException) $validator
      * @param D $default
-     * 
+     *
      * @return T|D
      */
     public function validateWithDefault(string $key, callable $validator, mixed $default = null)

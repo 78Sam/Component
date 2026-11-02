@@ -21,7 +21,11 @@ class RequestService
         $httpsScheme = in_array($httpsScheme, ['', 'off'], true) ? 'HTTP' : 'HTTPS';
 
         $host = $serverValidator->validate('SERVER_NAME', $serverValidator->validateString(...));
-        $scheme = $serverValidator->validateWithDefault('REQUEST_SCHEME', $serverValidator->validateString(...), $httpsScheme);
+        $scheme = $serverValidator->validateWithDefault(
+            'REQUEST_SCHEME',
+            $serverValidator->validateString(...),
+            $httpsScheme,
+        );
         $route = $serverValidator->validate('REQUEST_URI', $serverValidator->validateString(...));
         $port = $serverValidator->validate('SERVER_PORT', $serverValidator->validateInt(...));
         $queryString = $serverValidator->validateWithDefault('QUERY_STRING', $serverValidator->validateString(...), '');
@@ -65,7 +69,7 @@ class RequestService
         if (array_key_exists('HTTP_HX_HISTORY_RESTORE_REQUEST', $_SERVER)) {
             return true;
         }
-        
+
         return false;
     }
 }

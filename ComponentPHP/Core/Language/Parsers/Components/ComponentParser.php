@@ -32,7 +32,7 @@ class ComponentParser extends AbstractParser
 {
     /**
      * @param list<AbstractToken> $tokens
-     * 
+     *
      * @throws ClosingUnopenedTokenException If you try and close a sequence but there are none to close
      * @throws UnmatchedClosingTokenException If you try and close a sequence with the wrong token
      * @throws NestedComponentException If you try and open another component without closing the first
@@ -43,7 +43,6 @@ class ComponentParser extends AbstractParser
         $componentOpen = false;
         $sequenceStack = [];
         foreach ($tokens as $token) {
-
             if (!$token instanceof AbstractControlSequenceToken) {
                 continue;
             }
@@ -92,7 +91,7 @@ class ComponentParser extends AbstractParser
             $currentNode->nodes[] = $this->matchToken($generator, $currentNode, $generator->current());
             $generator->next();
         }
-        
+
         return $currentNode;
     }
 
@@ -103,7 +102,7 @@ class ComponentParser extends AbstractParser
     {
         $tokenClass = $token::class;
 
-        return match($tokenClass) {
+        return match ($tokenClass) {
             BodyToken::class => new StringValueNode($parent, $token->body),
             ComponentStartToken::class => $this->parseComponent($generator, $parent),
             IfStatementStartToken::class => $this->parseCondition($generator, $parent),
@@ -137,7 +136,6 @@ class ComponentParser extends AbstractParser
         $hitElse = false;
         $node = new ConditionalNode($parent, 'TODO CONDITION');
         while (!($token = $this->getNext($generator)) instanceof IfStatementEndToken) {
-
             if ($token instanceof IfStatementElseToken) {
                 if ($hitElse) {
                     throw new \Exception('Double else statement');
