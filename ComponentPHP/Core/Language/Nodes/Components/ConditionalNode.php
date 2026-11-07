@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Core\Language\Nodes\Components;
 
-use Core\Language\Nodes\AbstractNode;
+use Core\Language\Nodes\AbstractBranchNode;
+use Core\Language\Nodes\BranchNodeInterface;
 
-class ConditionalNode extends AbstractNode
+class ConditionalNode extends AbstractBranchNode
 {
     public function __construct(
-        ?AbstractNode $parent,
+        BranchNodeInterface $parent,
         public readonly string $condition,
-        public array $trueNodes = [],
-        public array $falseNodes = [],
     ) {
-        return parent::__construct($parent);
+        parent::__construct($parent);
+    }
+
+    #[\Override]
+    public function getParent(): BranchNodeInterface
+    {
+        return $this->parent;
     }
 }

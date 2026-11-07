@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Core\Components\Services;
 
-use Core\Components\Models\Sockets\VariableSocket;
+use Core\Language\Nodes\BranchNodeInterface;
+use Core\Language\Nodes\Components\VariableNode;
+use Core\Language\Nodes\LeafNodeInterface;
 use Core\Language\Parsers\Components\ComponentParser;
 use Core\Language\Tokenizers\Components\ComponentTokenizer;
-use Core\Language\Tokens\Components\ComponentStartToken;
-use Core\Language\Tokens\Components\VariableToken;
 use Core\Utility\Services\PathService;
 
 class ComponentService2
@@ -18,6 +18,7 @@ class ComponentService2
         private readonly ComponentParser $componentParser,
     ) {}
 
+    // TODO: Should we make all paths actually be an instance of PathService so we never have to double check
     public function loadFile(string $path, bool $absolutePath = false): array
     {
         $path = $absolutePath ? PathService::normalisePath($path) : PathService::fromProjectDirectory($path);
@@ -26,21 +27,51 @@ class ComponentService2
         }
 
         $tokens = $this->componentTokenizer->tokenize(file_get_contents($path));
-        $this->componentParser->validate($tokens);
+        $rootNode = $this->componentParser->parse($tokens);
 
-        // Note we have parsed the tokens so we don't have to validate correct syntax, e.g. open -> close
-
-        $component = null;
-        $components = [];
         $sockets = [];
-        foreach ($tokens as $token) {
-            if ($token instanceof ComponentStartToken) {
-                $componentOpen = true;
+        $variableMap = [];
+        $counter = -1;
+        foreach ($this->flatten($rootNode) as $leafNode) {
+            $counter++;
+
+            if (!$leafNode instanceof VariableNode) {
+                $sockets["_block_{$counter}"] = $leafNode->getValue();
+
+                continue;
             }
 
-            if ($token instanceof VariableToken) {
-                $sockets[] = new VariableSocket($token->getBody());
+            $variableName = $leafNode->getValue();
+            if (!array_key_exists($variableName, $variableMap)) {
+                $variableMap[$variableName] = [];
             }
+
+            $key = "_variable_{$variableName}_{$counter}";
+            $variableMap[$variableName][] = $key;
+            $sockets[$key] = '';
         }
+
+        var_dump($sockets);
+        var_dump(implode('', $sockets));
+
+        return $this->flatten($rootNode);
+    }
+
+    /**
+     * @return list<LeafNodeInterface>
+     */
+    private function flatten(BranchNodeInterface $node): array
+    {
+        $nodes = [];
+        foreach ($node->getChildren() as $childNode) {
+            if ($childNode instanceof LeafNodeInterface) {
+                $nodes[] = $childNode;
+
+                continue;
+            }
+            $nodes = array_merge($nodes, $this->flatten($childNode));
+        }
+
+        return $nodes;
     }
 }

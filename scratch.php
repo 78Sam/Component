@@ -1,18 +1,19 @@
 <?php
 
-function genny(array $tokens) {
-    foreach ($tokens as $token) {
-        yield $token;
+class Hello
+{
+    public function __construct(public readonly string $name)
+    {
     }
 }
 
-$gene = genny(['a', 'b', 'c']);
-echo $gene->current() . PHP_EOL;
-$gene->next();
-echo $gene->current() . PHP_EOL;
-$gene->next();
-echo $gene->current() . PHP_EOL;
-$gene->next();
-echo ($gene->current() === null) . PHP_EOL;
-$gene->next();
-$gene->valid()
+$x = new Hello('x');
+$y = new Hello('y');
+$z = new Hello('z');
+
+$a = [$x, $y];
+$b = [$z];
+
+$a = array_merge($a, $b);
+
+var_dump($a);

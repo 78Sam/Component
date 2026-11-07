@@ -11,4 +11,12 @@ readonly class VariableToken extends AbstractControlSequenceToken
     {
         return '/^!@\(\$(?<variable_name>\w+)\)$/';
     }
+
+    public function getName(): string
+    {
+        $matches = [];
+        preg_match(self::getIdentifier(), $this->body, $matches);
+
+        return $matches['variable_name'];
+    }
 }

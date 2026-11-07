@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Language\Nodes\Components;
 
-use Core\Language\Nodes\AbstractNode;
+use Core\Language\Nodes\AbstractLeafNode;
 
-class VariableNode extends AbstractNode
-{
-    public function __construct(
-        ?AbstractNode $parent,
-        public readonly string $variableName,
-    ) {
-        parent::__construct($parent);
-    }
-}
+class VariableNode extends AbstractLeafNode
+{}

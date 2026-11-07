@@ -13,4 +13,12 @@ readonly class ComponentStartToken extends AbstractControlSequenceToken implemen
     {
         return '/^!@\(component\|(?<component_name>\w+)\)$/';
     }
+
+    public function getName(): string
+    {
+        $matches = [];
+        preg_match(self::getIdentifier(), $this->body, $matches);
+
+        return $matches['component_name'];
+    }
 }

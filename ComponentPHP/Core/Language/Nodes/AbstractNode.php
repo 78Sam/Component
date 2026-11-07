@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Core\Language\Nodes;
 
-abstract class AbstractNode
+abstract class AbstractNode implements NodeInterface
 {
     public function __construct(
-        public readonly ?AbstractNode $parent,
+        public readonly ?BranchNodeInterface $parent,
     ) {}
 }

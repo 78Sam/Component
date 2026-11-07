@@ -13,4 +13,12 @@ readonly class IfStatementStartToken extends AbstractControlSequenceToken implem
     {
         return '/^!@\(if\|(?<condition>[ a-zA-Z0-9_$]+)\)$/';
     }
+
+    public function getCondition(): string
+    {
+        $matches = [];
+        preg_match(self::getIdentifier(), $this->body, $matches);
+
+        return $matches['condition'];
+    }
 }

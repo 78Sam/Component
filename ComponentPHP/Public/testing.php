@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Core\Components\Services\ComponentService2;
 use Core\DependencyInjection\Container;
 use Core\Language\Parsers\Components\ComponentParser;
 use Core\Language\Tokenizers\Components\ComponentTokenizer;
@@ -30,10 +31,22 @@ $container = Container::getInstance();
 // $reflectionService = $container->get(ReflectionService::class);
 
 $tokenizer = $container->get(ComponentTokenizer::class);
-$tokens = $tokenizer->tokenize(file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test.html')));
+$tokens = $tokenizer->tokenize(
+    file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test2.html')),
+);
 
 // var_dump($tokens);
 
 $parser = $container->get(ComponentParser::class);
-$parser->validate($tokens);
-var_dump($parser->parse($tokens));
+$nodes = $parser->parse($tokens);
+// var_dump($nodes);
+
+$service = $container->get(ComponentService2::class);
+$flatNodes = $service->loadFile(
+    PathService::fromProjectDirectory('App/Components/HTML/test2.html'),
+    true,
+);
+
+// foreach ($flatNodes as $node) {
+//     var_dump($node::class . "'{$node->getValue()}'\n");
+// }

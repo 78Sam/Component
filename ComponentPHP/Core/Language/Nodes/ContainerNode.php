@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Core\Language\Nodes;
 
-class ContainerNode extends AbstractNode
+class ContainerNode extends AbstractBranchNode
 {
-    /**
-     * @param list<AbstractNode> $nodes
-     */
-    public function __construct(
-        ?AbstractNode $parent,
-        public array $nodes = [],
-    ) {
+    public function __construct(BranchNodeInterface $parent)
+    {
         parent::__construct($parent);
+    }
+
+    #[\Override]
+    public function getParent(): BranchNodeInterface
+    {
+        return $this->parent;
     }
 }

@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace Core\Language\Parsers\Components;
 
-use Core\Language\Exceptions\ClosingUnopenedTokenException;
 use Core\Language\Exceptions\Components\NestedComponentException;
+use Core\Language\Exceptions\ParseException;
 use Core\Language\Exceptions\UnclosedTokenException;
-use Core\Language\Exceptions\UnmatchedClosingTokenException;
 use Core\Language\Nodes\AbstractNode;
+use Core\Language\Nodes\BranchNodeInterface;
 use Core\Language\Nodes\Components\ComponentNode;
 use Core\Language\Nodes\Components\ConditionalNode;
 use Core\Language\Nodes\Components\VariableNode;
 use Core\Language\Nodes\ContainerNode;
+use Core\Language\Nodes\NodeInterface;
 use Core\Language\Nodes\RootNode;
 use Core\Language\Nodes\StringValueNode;
 use Core\Language\Parsers\AbstractParser;
 use Core\Language\Tokens\AbstractToken;
-use Core\Language\Tokens\ClosableTokenInterface;
-use Core\Language\Tokens\ClosingTokenInterface;
-use Core\Language\Tokens\Components\AbstractControlSequenceToken;
 use Core\Language\Tokens\Components\BodyToken;
 use Core\Language\Tokens\Components\ComponentEndToken;
 use Core\Language\Tokens\Components\ComponentStartToken;
@@ -30,134 +28,94 @@ use Core\Language\Tokens\Components\VariableToken;
 
 class ComponentParser extends AbstractParser
 {
-    /**
-     * @param list<AbstractToken> $tokens
-     *
-     * @throws ClosingUnopenedTokenException If you try and close a sequence but there are none to close
-     * @throws UnmatchedClosingTokenException If you try and close a sequence with the wrong token
-     * @throws NestedComponentException If you try and open another component without closing the first
-     * @throws UnclosedTokenException If there was a closable token that wasn't closed
-     */
-    public function validate(array $tokens): void
-    {
-        $componentOpen = false;
-        $sequenceStack = [];
-        foreach ($tokens as $token) {
-            if (!$token instanceof AbstractControlSequenceToken) {
-                continue;
-            }
-
-            // A control token can open and close others
-
-            if ($token instanceof ClosingTokenInterface) {
-                if ($sequenceStack === []) {
-                    throw new ClosingUnopenedTokenException($token);
-                }
-
-                /** @var AbstractToken $tokenToClose */
-                $tokenToClose = array_pop($sequenceStack);
-                if (!in_array($tokenToClose::class, $token->closes(), true)) {
-                    throw new UnmatchedClosingTokenException($token);
-                }
-
-                if ($tokenToClose instanceof ComponentStartToken) {
-                    $componentOpen = false;
-                }
-            }
-
-            if ($token instanceof ClosableTokenInterface) {
-                if ($token instanceof ComponentStartToken) {
-                    if ($componentOpen) {
-                        throw new NestedComponentException();
-                    }
-                    $componentOpen = true;
-                }
-                $sequenceStack[] = $token;
-            }
-        }
-
-        $unclosedToken = array_last($sequenceStack);
-        if ($unclosedToken !== null) {
-            throw new UnclosedTokenException($unclosedToken);
-        }
-    }
-
-    /**
-     * @param list<AbstractToken> $tokens
-     */
-    public function parse(array $tokens): AbstractNode
+    public function parse(array $tokens): RootNode
     {
         $generator = $this->tokenGenerator($tokens);
 
-        $currentNode = new RootNode();
+        $rootNode = new RootNode();
         while ($generator->valid()) {
-            $currentNode->nodes[] = $this->matchToken($generator, $currentNode, $generator->current());
+            $rootNode->addChild($this->matchToken($generator, $rootNode, $generator->current()));
             $generator->next();
         }
 
-        return $currentNode;
+        return $rootNode;
     }
 
     /**
      * @param \Generator<int, AbstractToken, void, void> $generator
      */
-    public function matchToken(\Generator $generator, AbstractNode $parent, AbstractToken $token): AbstractNode
+    public function matchToken(\Generator $generator, BranchNodeInterface $parent, AbstractToken $token): AbstractNode
     {
         $tokenClass = $token::class;
 
         return match ($tokenClass) {
             BodyToken::class => new StringValueNode($parent, $token->body),
-            ComponentStartToken::class => $this->parseComponent($generator, $parent),
-            IfStatementStartToken::class => $this->parseCondition($generator, $parent),
-            VariableToken::class => new VariableNode($parent, 'TODO VAR NAME'),
-            default => throw new \Exception("Cannot do '{$tokenClass}'"),
+            ComponentStartToken::class => $this->parseComponent($generator, $parent, $token),
+            IfStatementStartToken::class => $this->parseCondition($generator, $parent, $token),
+            VariableToken::class => $this->parseVariable($generator, $parent, $token),
+            default => throw new ParseException($tokenClass)
         };
     }
 
     /**
      * @param \Generator<int, AbstractToken, void, void> $generator
      */
-    public function parseComponent(\Generator $generator, ContainerNode $parent): ComponentNode
+    public function parseComponent(\Generator $generator, BranchNodeInterface $parent, ComponentStartToken $token): ComponentNode
     {
         if (!$parent instanceof RootNode) {
-            throw new \Exception('Component parent must be root node');
+            throw new NestedComponentException();
         }
 
-        $node = new ComponentNode($parent, 'TODO NAME');
-        while (!($token = $this->getNext($generator)) instanceof ComponentEndToken) {
-            $node->nodes[] = $this->matchToken($generator, $node, $token);
+        $node = new ComponentNode($parent, $token->getName());
+        while (($token = $this->getNext($generator)) !== null) {
+            if ($token instanceof ComponentEndToken) {
+                return $node;
+            }
+            $node->addChild($this->matchToken($generator, $node, $token));
         }
 
-        return $node;
+        throw new UnclosedTokenException(ComponentStartToken::class);
     }
 
     /**
      * @param \Generator<int, AbstractToken, void, void> $generator
      */
-    public function parseCondition(\Generator $generator, ContainerNode $parent): ConditionalNode
+    public function parseCondition(\Generator $generator, BranchNodeInterface $parent, IfStatementStartToken $token): ContainerNode
     {
         $hitElse = false;
-        $node = new ConditionalNode($parent, 'TODO CONDITION');
-        while (!($token = $this->getNext($generator)) instanceof IfStatementEndToken) {
+        $condition = $token->getCondition();
+
+        $container = new ContainerNode($parent);
+        $ifStatementNode = new ConditionalNode($container, $condition);
+        $container->addChild($ifStatementNode);
+
+        while (($token = $this->getNext($generator)) !== null) {
+            if ($token instanceof IfStatementEndToken) {
+                return $container;
+            }
+
             if ($token instanceof IfStatementElseToken) {
                 if ($hitElse) {
                     throw new \Exception('Double else statement');
                 }
                 $hitElse = true;
+                $ifStatementNode = new ConditionalNode($container, "!({$condition})");
+                $container->addChild($ifStatementNode);
 
                 continue;
             }
 
-            if ($hitElse) {
-                $node->falseNodes[] = $this->matchToken($generator, $node, $token);
-
-                continue;
-            }
-
-            $node->trueNodes[] = $this->matchToken($generator, $node, $token);
+            $ifStatementNode->addChild($this->matchToken($generator, $ifStatementNode, $token));
         }
 
-        return $node;
+        $unclosedToken = $hitElse ? IfStatementElseToken::class : IfStatementStartToken::class;
+
+        throw new UnclosedTokenException($unclosedToken);
+    }
+
+    public function parseVariable(\Generator $_generator, BranchNodeInterface $parent, VariableToken $token): VariableNode
+    {
+        return new VariableNode($parent, $token->getName());
     }
 
     /**
@@ -175,9 +133,12 @@ class ComponentParser extends AbstractParser
     /**
      * @param \Generator<int, AbstractToken, void, void> $generator
      */
-    private function getNext(\Generator $generator): AbstractToken
+    private function getNext(\Generator $generator): ?AbstractToken
     {
         $generator->next();
+        if (!$generator->valid()) {
+            return null;
+        }
 
         return $generator->current();
     }

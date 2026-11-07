@@ -1,1 +1,7 @@
-!@(component|test)<h1>!@($variable)</h1>!@(end)
+!@(component|test)
+!@(if|$dark)
+<h1>Dark !@($variable)</h1>
+!@(else)
+<h1>Light !@($variable)</h1>
+!@(endif)
+!@(end)
