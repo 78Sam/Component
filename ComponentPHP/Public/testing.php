@@ -32,20 +32,20 @@ $container = Container::getInstance();
 
 $tokenizer = $container->get(ComponentTokenizer::class);
 $tokens = $tokenizer->tokenize(
-    file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test2.html')),
+    file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test.html')),
 );
 
 // var_dump($tokens);
 
 $parser = $container->get(ComponentParser::class);
 $nodes = $parser->parse($tokens);
-// var_dump($nodes);
+var_dump($nodes);
 
-$service = $container->get(ComponentService2::class);
-$flatNodes = $service->loadFile(
-    PathService::fromProjectDirectory('App/Components/HTML/test2.html'),
-    true,
-);
+// $service = $container->get(ComponentService2::class);
+// $flatNodes = $service->loadFile(
+//     PathService::fromProjectDirectory('App/Components/HTML/test2.html'),
+//     true,
+// );
 
 // foreach ($flatNodes as $node) {
 //     var_dump($node::class . "'{$node->getValue()}'\n");

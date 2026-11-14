@@ -6,6 +6,8 @@ namespace Core\Language\Tokens\Components;
 
 readonly class VariableToken extends AbstractControlSequenceToken
 {
+    public const string IDENTIFIER = '!@($';
+
     #[\Override]
     public static function getIdentifier(): string
     {

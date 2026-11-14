@@ -8,6 +8,8 @@ use Core\Language\Tokens\ClosingTokenInterface;
 
 readonly class ComponentEndToken extends AbstractControlSequenceToken implements ClosingTokenInterface
 {
+    public const string IDENTIFIER = '!@(end)';
+
     #[\Override]
     public static function getIdentifier(): string
     {

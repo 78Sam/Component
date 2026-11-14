@@ -8,6 +8,8 @@ use Core\Language\Tokens\ClosableTokenInterface;
 
 readonly class ComponentStartToken extends AbstractControlSequenceToken implements ClosableTokenInterface
 {
+    public const string IDENTIFIER = '!@(component|';
+
     #[\Override]
     public static function getIdentifier(): string
     {

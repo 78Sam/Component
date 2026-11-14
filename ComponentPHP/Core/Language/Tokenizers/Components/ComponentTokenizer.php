@@ -6,57 +6,63 @@ namespace Core\Language\Tokenizers\Components;
 
 use Core\Language\Tokenizers\AbstractTokenizer;
 use Core\Language\Tokens\Components\AbstractControlSequenceToken;
-use Core\Language\Tokens\Components\BodyToken;
 use Core\Language\Tokens\Components\ComponentEndToken;
 use Core\Language\Tokens\Components\ComponentStartToken;
-use Core\Language\Tokens\Components\IfStatementElseToken;
-use Core\Language\Tokens\Components\IfStatementEndToken;
-use Core\Language\Tokens\Components\IfStatementStartToken;
 use Core\Language\Tokens\Components\VariableToken;
 
 class ComponentTokenizer extends AbstractTokenizer
 {
-    #[\Override]
-    protected function handle(string $char): void
-    {
-        if ($char !== '!') {
-            return;
-        }
+    /** @var array<string, \Closure> */
+    private array $controlKeys;
+    private int $longestKey;
 
-        $currentThree = $char . implode('', $this->peak(2));
-        if ($currentThree === AbstractControlSequenceToken::CONTROL_START) {
-            $this->rightPosition--;
-            $this->captureBlock(BodyToken::class);
-            $this->rightPosition++;
-            $this->parseControlSequence();
-        }
+    public function __construct()
+    {
+        $this->controlKeys = [
+            ComponentStartToken::IDENTIFIER => fn() => $this->captureControlSequence(ComponentStartToken::class),
+            ComponentEndToken::IDENTIFIER => fn() => $this->captureControlSequence(ComponentEndToken::class),
+            VariableToken::IDENTIFIER => fn() => $this->captureControlSequence(VariableToken::class),
+        ];
+        $this->longestKey = max(array_map(fn(string $key): int => strlen($key), array_keys($this->controlKeys)));
     }
 
-    private function parseControlSequence(): void
+    #[\Override]
+    protected function handle(string $char)
     {
-        $controlSequenceString = '!'; // As we have already consumed the !
-        do {
-            $char = $this->consume();
-            if ($char === null) {
-                throw new \Exception("Couldn't find end for open control sequence");
+        if ($char !== '!') {
+            return null;
+        }
+
+        $buffer = $this->quickPeek(3);
+        if ($buffer !== AbstractControlSequenceToken::CONTROL_START) {
+            return null;
+        }
+
+        for ($i = $this->longestKey; $i > 0; $i--) {
+            $keyCheck = $this->quickPeek($i);
+            if (!array_key_exists($keyCheck, $this->controlKeys)) {
+                continue;
             }
-            $controlSequenceString .= $char;
-        } while ($char !== AbstractControlSequenceToken::CONTROL_END);
 
-        $controlSequenceString = str_replace(' ', '', $controlSequenceString);
+            return $this->controlKeys[$keyCheck];
+        }
 
-        // print_r($controlSequenceString . PHP_EOL);
+        return null;
+    }
 
-        $key = match (1) {
-            preg_match(IfStatementStartToken::getIdentifier(), $controlSequenceString) => IfStatementStartToken::class,
-            preg_match(IfStatementElseToken::getIdentifier(), $controlSequenceString) => IfStatementElseToken::class,
-            preg_match(IfStatementEndToken::getIdentifier(), $controlSequenceString) => IfStatementEndToken::class,
-            preg_match(ComponentStartToken::getIdentifier(), $controlSequenceString) => ComponentStartToken::class,
-            preg_match(ComponentEndToken::getIdentifier(), $controlSequenceString) => ComponentEndToken::class,
-            preg_match(VariableToken::getIdentifier(), $controlSequenceString) => VariableToken::class,
-            default => throw new \Exception("Unable to parse control sequence body '{$controlSequenceString}'"),
-        };
+    private function captureControlSequence(string $sequence): void
+    {
+        while ($this->consume() !== AbstractControlSequenceToken::CONTROL_END) {
+            if ($this->isEof()) {
+                throw new \Exception("Reached end of file while parsing {$sequence}");
+            }
+        }
 
-        $this->captureBlock($key);
+        $this->captureBlock($sequence);
+    }
+
+    private function quickPeek(int $steps): string
+    {
+        return implode('', $this->peek($steps));
     }
 }
