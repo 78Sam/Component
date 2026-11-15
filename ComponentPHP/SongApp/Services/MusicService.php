@@ -14,7 +14,7 @@ use Core\Routing\Enums\ResponseCode;
 use Core\Routing\Models\Requests\Request;
 use Core\Routing\Models\Responses\Response;
 use Core\Utility\Services\DateTimeService;
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 use Core\Utility\Validators\Exceptions\ValidationException;
 use Core\Utility\Validators\Services\ValidatorService;
 use Core\Utility\Validators\Types\IntOrStringIntValidator;

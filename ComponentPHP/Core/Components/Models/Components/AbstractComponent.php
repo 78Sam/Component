@@ -4,44 +4,46 @@ declare(strict_types=1);
 
 namespace Core\Components\Models\Components;
 
-abstract class AbstractComponent implements ComponentInterface
+use Core\Components\Models\Sockets\SocketMap;
+
+abstract readonly class AbstractComponent implements ComponentInterface
 {
-    /**
-     * @param array<string, string|ComponentInterface> $sockets
-     * @param array<string, list<string>> $variableMap
-     */
     public function __construct(
-        public readonly string $name,
-        public array $sockets,
-        public readonly array $variableMap,
-    ) {}
+        public string $name,
+        public SocketMap $socketMap,
+    ) {
+    }
 
     public function __clone(): void
     {
-        foreach ($this->sockets as $key => $socket) {
-            if ($socket instanceof ComponentInterface) {
-                $this->sockets[$key] = clone $socket;
-            }
-        }
+        $this->socketMap = clone $this->socketMap;
     }
 
     #[\Override]
     public function __toString(): string
     {
-        return implode('', $this->sockets);
+        return $this->render();
     }
 
     #[\Override]
     public function render(): string
     {
-        return $this->__toString();
+        return $this->socketMap->render();
     }
 
     #[\Override]
-    public function fillAll(array $values, array $options = []): self
+    public function fill(string $name, string $value): self
+    {
+        $this->socketMap->fill($name, $value);
+
+        return $this;
+    }
+
+    #[\Override]
+    public function fillAll(array $values): self
     {
         foreach ($values as $name => $value) {
-            $this->fill($name, $value, $options);
+            $this->fill($name, $value);
         }
 
         return $this;

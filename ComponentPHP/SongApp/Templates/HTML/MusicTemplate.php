@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Services\MusicService;
 use Core\Components\Models\Templates\AbstractTemplate;
 use Core\Components\Models\Components\HTMLComponent;
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 final class MusicTemplate extends AbstractTemplate
 {

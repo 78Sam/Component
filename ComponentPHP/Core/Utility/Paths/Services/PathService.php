@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Utility\Services;
+namespace Core\Utility\Paths\Services;
 
 final class PathService
 {
@@ -10,7 +10,7 @@ final class PathService
 
     public static function getProjectDirectory(): string
     {
-        return self::normalisePath(dirname(__DIR__, 3));
+        return self::normalisePath(dirname(__DIR__, 4));
     }
 
     public static function normalisePath(string $path): string

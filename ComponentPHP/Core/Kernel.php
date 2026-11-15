@@ -11,7 +11,7 @@ use Core\Routing\Router;
 use Core\Routing\RouterInterface;
 use Core\Sessions\Services\SessionService;
 use Core\Utility\Services\ClassFinderService;
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 class Kernel
 {

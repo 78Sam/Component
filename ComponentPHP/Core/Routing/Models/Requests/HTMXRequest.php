@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Core\Routing\Models\Requests;
 
-use AbstractRequest;
 use Core\Routing\Enums\RequestMethods;
 
 readonly class HTMXRequest extends AbstractRequest

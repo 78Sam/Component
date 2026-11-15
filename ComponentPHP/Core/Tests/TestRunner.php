@@ -7,7 +7,7 @@ namespace Core\Tests;
 use Core\Tests\Attributes\Test;
 use Core\Utility\Console;
 use Core\Utility\Services\ClassFinderService;
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 final class TestRunner
 {

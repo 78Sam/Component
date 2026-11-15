@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Core\Debug\Models;
 
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 readonly class Backtrace implements \Stringable
 {

@@ -10,7 +10,7 @@ use Core\Database\Services\DatabaseService;
 use Core\Kernel;
 use Core\Logging\Services\LoggingService;
 use Core\Utility\Services\DateTimeService;
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 final class DatabaseConfig extends AbstractConfig
 {

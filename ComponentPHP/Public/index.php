@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Core\Kernel;
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 /** @var \Composer\Autoload\ClassLoader $classLoader */
 $classLoader = require_once dirname(__DIR__) . '/vendor/autoload.php';

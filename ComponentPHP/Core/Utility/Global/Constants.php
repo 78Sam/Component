@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 if (!defined('CPHP_ROOT_DIR')) {
     /** @var string */

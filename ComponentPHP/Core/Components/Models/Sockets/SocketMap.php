@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Core\Components\Models\Sockets;
 
+use Core\Components\Models\Components\ComponentInterface;
+
 class SocketMap
 {
-    /** @var array<string, string> */
+    public const string PLACEHOLDER_KEY = '_block';
+
+    /** @var array<string, string|ComponentInterface> */
     private array $sockets = [];
 
     /** @var array<string, list<string>> */
@@ -14,7 +18,7 @@ class SocketMap
 
     private int $uid = 0;
 
-    public function add(string $variableName, string $value): self
+    public function add(string $variableName, string|ComponentInterface $value): self
     {
         if (!array_key_exists($variableName, $this->variableMap)) {
             $this->variableMap[$variableName] = [];

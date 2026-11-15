@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Core\Routing\Models\Requests;
+
 use Core\Routing\Enums\RequestMethods;
 
 abstract readonly class AbstractRequest

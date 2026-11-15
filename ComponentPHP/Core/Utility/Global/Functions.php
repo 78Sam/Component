@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Core\Debug\DebugMetrics;
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 if (!function_exists('dump')) {
     function dump(mixed ...$values): void

@@ -4,116 +4,71 @@ declare(strict_types=1);
 
 namespace Core\Components\Services;
 
-use Core\Components\Exceptions\ComponentOverlapException;
-use Core\Components\Models\Components\ComponentInterface;
-use Core\Components\Models\Components\UnparsedComponent;
-use Core\Utility\Services\PathService;
+use Core\Components\Models\Components\Component;
+use Core\Components\Models\Sockets\SocketMap;
+use Core\Language\Nodes\BranchNodeInterface;
+use Core\Language\Nodes\Components\ComponentNode;
+use Core\Language\Nodes\Components\VariableNode;
+use Core\Language\Nodes\LeafNodeInterface;
+use Core\Language\Parsers\Components\ComponentParser;
+use Core\Language\Tokenizers\Components\ComponentTokenizer;
+use Core\Utility\Paths\Models\Path;
 
 class ComponentService
 {
-    public const string VARIABLE_PATTERN = '/!@\(\s*\$(?<variable_name>[a-zA-Z_]{1}\w*)\s*\)/';
-    public const string COMPONENT_PATTERN = '/!@\(\s*component\|(?<component_name>\w+)\s*\)(?<body>.*?)!@\(\s*end\s*\)/s';
+    public function __construct(
+        private readonly ComponentTokenizer $componentTokenizer,
+        private readonly ComponentParser $componentParser,
+    ) {}
 
-    /**
-     * @template T of ComponentInterface
-     *
-     * @param class-string<T> $model
-     *
-     * @return T
-     */
-    public function get(string $componentName, string $model, string $path, bool $absolutePath = false)
+    // TODO: Should we make all paths actually be an instance of PathService so we never have to double check
+    public function loadFile(Path $path)
     {
-        $components = $this->loadFile($path, $absolutePath);
-        if (!array_key_exists($componentName, $components)) {
-            return null;
+        if (!file_exists($path->getPath())) {
+            throw new \Exception("Cannot find file at: '{$path}'");
         }
 
-        return $this->parseComponent($components[$componentName], $model);
-    }
+        $tokens = $this->componentTokenizer->tokenize(file_get_contents($path->getPath()));
+        $rootNode = $this->componentParser->parse($tokens);
 
-    /**
-     * @return array<string, UnparsedComponent>
-     */
-    public function loadFile(string $path, bool $absolutePath = false): array
-    {
-        $path = $absolutePath ? PathService::normalisePath($path) : PathService::fromProjectDirectory($path);
-
-        $content = file_get_contents($path);
-        if ($content === false) {
-            throw new \Exception("Unable to read file '{$path}'");
-        }
-
-        $componentMatches = [];
-        $matchResult = preg_match_all(self::COMPONENT_PATTERN, $content, $componentMatches, flags: PREG_SET_ORDER);
-        if ($matchResult === 0 || $matchResult === false) {
-            return [];
-        }
-        /** @var list<array{component_name: string, body: string}> $componentMatches */ // Intentionally below
-
-        /** @var array<string, UnparsedComponent> $components */
+        /** @var array<string, Component> $components */
         $components = [];
-        foreach ($componentMatches as $componentMatch) {
-            $componentName = $componentMatch['component_name'];
-            if (array_key_exists($componentName, $components)) {
-                throw new ComponentOverlapException($componentName, $path);
+        $componentNodes = $rootNode->getChildren();
+        foreach ($componentNodes as $componentNode) {
+            if (!$componentNode instanceof ComponentNode) {
+                continue;
             }
-            $components[$componentName] = new UnparsedComponent(
-                $componentMatch['component_name'],
-                $componentMatch['body'],
-            );
+
+            $socketMap = new SocketMap();
+            foreach ($this->flatten($componentNode) as $leafNode) {
+                if ($leafNode instanceof VariableNode) {
+                    $socketMap->add($leafNode->getValue(), '');
+
+                    continue;
+                }
+                $socketMap->add(SocketMap::PLACEHOLDER_KEY, $leafNode->getValue());
+            }
+            $components[$componentNode->name] = new Component($componentNode->name, $socketMap);
         }
 
         return $components;
     }
 
     /**
-     * @template T of ComponentInterface
-     *
-     * @param class-string<T> $model
-     *
-     * @return T
+     * @return list<LeafNodeInterface>
      */
-    public function parseComponent(UnparsedComponent $unparsedComponent, string $model): ComponentInterface
+    private function flatten(BranchNodeInterface $node): array
     {
-        /** @var array<string, string> $sockets */
-        $sockets = [];
+        $nodes = [];
+        foreach ($node->getChildren() as $childNode) {
+            if ($childNode instanceof LeafNodeInterface) {
+                $nodes[] = $childNode;
 
-        /** @var array<string, list<string>> $variableMap */
-        $variableMap = [];
-
-        $componentBody = $unparsedComponent->body;
-        if ($componentBody[0] === "\n") {
-            $componentBody = substr($componentBody, 1);
-        }
-
-        if ($componentBody[-1] === "\n") {
-            $componentBody = substr($componentBody, 0, -1);
-        }
-
-        $variableMatches = [];
-        preg_match_all(self::VARIABLE_PATTERN, $componentBody, $variableMatches, flags: PREG_SET_ORDER);
-        foreach ($variableMatches as $index => $variable) {
-            $split = explode($variable[0], $componentBody, limit: 2);
-
-            $sockets["_socket_block_{$index}"] = $split[0];
-            $variableName = $variable['variable_name'];
-            $variablePseudonym = "_socket_variable_{$variableName}_{$index}";
-            $sockets[$variablePseudonym] = '';
-
-            if (!array_key_exists($variableName, $variableMap)) {
-                $variableMap[$variableName] = [];
+                continue;
             }
-            $variableMap[$variableName][] = $variablePseudonym;
-
-            $componentBody = $split[1];
-        }
-        $sockets['_socket_block_-1'] = $componentBody;
-
-        $component = new $model($unparsedComponent->name, $sockets, $variableMap);
-        if (!$component instanceof ComponentInterface) {
-            throw new \Exception('Component not subclass of ComponentInterface'); // TODO: Improve
+            $nodes = array_merge($nodes, $this->flatten($childNode));
         }
 
-        return $component;
+        return $nodes;
     }
 }

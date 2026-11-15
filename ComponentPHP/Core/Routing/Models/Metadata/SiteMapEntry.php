@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Core\Routing\Models\Metadata;
 
 use Core\Routing\Attributes\Route;
-use Core\Utility\Services\PathService;
+use Core\Utility\Paths\Services\PathService;
 
 final readonly class SiteMapEntry
 {
