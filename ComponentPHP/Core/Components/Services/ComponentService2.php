@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Core\Components\Services;
 
+use Core\Components\Models\Components\Component;
+use Core\Components\Models\Sockets\SocketMap;
 use Core\Language\Nodes\BranchNodeInterface;
+use Core\Language\Nodes\Components\ComponentNode;
 use Core\Language\Nodes\Components\VariableNode;
 use Core\Language\Nodes\LeafNodeInterface;
 use Core\Language\Parsers\Components\ComponentParser;
@@ -19,7 +22,7 @@ class ComponentService2
     ) {}
 
     // TODO: Should we make all paths actually be an instance of PathService so we never have to double check
-    public function loadFile(string $path, bool $absolutePath = false): array
+    public function loadFile(string $path, bool $absolutePath = false)
     {
         $path = $absolutePath ? PathService::normalisePath($path) : PathService::fromProjectDirectory($path);
         if (!file_exists($path)) {
@@ -29,32 +32,27 @@ class ComponentService2
         $tokens = $this->componentTokenizer->tokenize(file_get_contents($path));
         $rootNode = $this->componentParser->parse($tokens);
 
-        $sockets = [];
-        $variableMap = [];
-        $counter = -1;
-        foreach ($this->flatten($rootNode) as $leafNode) {
-            $counter++;
-
-            if (!$leafNode instanceof VariableNode) {
-                $sockets["_block_{$counter}"] = $leafNode->getValue();
-
+        /** @var array<string, Component> $components */
+        $components = [];
+        $componentNodes = $rootNode->getChildren();
+        foreach ($componentNodes as $componentNode) {
+            if (!$componentNode instanceof ComponentNode) {
                 continue;
             }
 
-            $variableName = $leafNode->getValue();
-            if (!array_key_exists($variableName, $variableMap)) {
-                $variableMap[$variableName] = [];
-            }
+            $socketMap = new SocketMap();
+            foreach ($this->flatten($componentNode) as $leafNode) {
+                if ($leafNode instanceof VariableNode) {
+                    $socketMap->add($leafNode->getValue(), '');
 
-            $key = "_variable_{$variableName}_{$counter}";
-            $variableMap[$variableName][] = $key;
-            $sockets[$key] = '';
+                    continue;
+                }
+                $socketMap->add('_block', $leafNode->getValue());
+            }
+            $components[$componentNode->name] = new Component($componentNode->name, $socketMap);
         }
 
-        var_dump($sockets);
-        var_dump(implode('', $sockets));
-
-        return $this->flatten($rootNode);
+        return $components;
     }
 
     /**

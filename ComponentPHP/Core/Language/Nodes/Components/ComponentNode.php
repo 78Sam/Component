@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Core\Language\Nodes\Components;
 
 use Core\Language\Nodes\AbstractBranchNode;
-use Core\Language\Nodes\RootNode;
 
 class ComponentNode extends AbstractBranchNode
 {

@@ -10,8 +10,8 @@ use Core\Language\Exceptions\UnclosedTokenException;
 use Core\Language\Nodes\AbstractNode;
 use Core\Language\Nodes\BranchNodeInterface;
 use Core\Language\Nodes\Components\ComponentNode;
+use Core\Language\Nodes\Components\RootNode;
 use Core\Language\Nodes\Components\VariableNode;
-use Core\Language\Nodes\RootNode;
 use Core\Language\Nodes\StringValueNode;
 use Core\Language\Parsers\AbstractParser;
 use Core\Language\Tokens\AbstractToken;
@@ -22,13 +22,17 @@ use Core\Language\Tokens\Components\VariableToken;
 
 class ComponentParser extends AbstractParser
 {
+    // TODO: The generator is cool but a simple integer might be better
+
     public function parse(array $tokens): RootNode
     {
         $generator = $this->tokenGenerator($tokens);
 
         $rootNode = new RootNode();
         while ($generator->valid()) {
-            $rootNode->addChild($this->matchToken($generator, $rootNode, $generator->current()));
+
+            $nextNode = $this->matchToken($generator, $rootNode, $generator->current());
+            $rootNode->addChild($nextNode);
             $generator->next();
         }
 

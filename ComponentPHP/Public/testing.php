@@ -23,30 +23,13 @@ define('PSR4_NAMESPACES', $psr4Namespaces);
 
 $container = Container::getInstance();
 
-// $tester = $container->get(TestRunner::class);
-// $tester->runTestClass(ReflectionTests::class);
-
-// $tester->runAllTests();
-
-// $reflectionService = $container->get(ReflectionService::class);
-
-$tokenizer = $container->get(ComponentTokenizer::class);
-$tokens = $tokenizer->tokenize(
-    file_get_contents(PathService::fromProjectDirectory('App/Components/HTML/test.html')),
+$service = $container->get(ComponentService2::class);
+$comps = $service->loadFile(
+    PathService::fromProjectDirectory('App/Components/HTML/test.html'),
+    true,
 );
 
-// var_dump($tokens);
-
-$parser = $container->get(ComponentParser::class);
-$nodes = $parser->parse($tokens);
-var_dump($nodes);
-
-// $service = $container->get(ComponentService2::class);
-// $flatNodes = $service->loadFile(
-//     PathService::fromProjectDirectory('App/Components/HTML/test2.html'),
-//     true,
-// );
-
-// foreach ($flatNodes as $node) {
-//     var_dump($node::class . "'{$node->getValue()}'\n");
-// }
+// var_dump($comps);
+$component = $comps['user'];
+$component->fill('username', 'sam');
+echo "'" . $component->render() . "'\n";
