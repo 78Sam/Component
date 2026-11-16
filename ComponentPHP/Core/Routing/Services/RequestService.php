@@ -8,8 +8,8 @@ use Core\Routing\Enums\RequestMethods;
 use Core\Routing\Models\Requests\AbstractRequest;
 use Core\Routing\Models\Requests\HTMXRequest;
 use Core\Routing\Models\Requests\Request;
-use Core\Utility\Parsers\Implementations\SimpleParser;
 use Core\Utility\Paths\Services\PathService;
+use Core\Utility\Validators\Implementations\SimpleParser;
 
 class RequestService
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Utility\Parsers\Exceptions;
+namespace Core\Utility\Validators\Exceptions;
 
 class ParseException extends \Exception
 {

@@ -9,6 +9,7 @@ use Core\DependencyInjection\Container;
 use Core\Logging\Services\LoggingService;
 use Core\Routing\Router;
 use Core\Routing\RouterInterface;
+use Core\Routing\Services\RequestService;
 use Core\Sessions\Services\SessionService;
 use Core\Utility\Services\ClassFinderService;
 use Core\Utility\Paths\Services\PathService;
@@ -59,7 +60,7 @@ class Kernel
         try {
             SessionService::startSession();
 
-            $request = $this->routingService->buildRequest($server, $get, $post, $files, $cookies);
+            $request = RequestService::buildRequestFromGlobals();
             foreach ($this->configFiles as $configFile) {
                 $configFile->preRequest($this, $request);
             }

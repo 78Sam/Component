@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Core\Utility\Parsers\Implementations;
+namespace Core\Utility\Validators\Implementations;
 
-use Core\Utility\Parsers\AbstractParser;
-use Core\Utility\Parsers\Exceptions\ParseException;
+use Core\Utility\Validators\AbstractParser;
+use Core\Utility\Validators\Exceptions\ParseException;
 
 class SimpleParser extends AbstractParser
 {
@@ -24,6 +24,12 @@ class SimpleParser extends AbstractParser
             return $value;
         }
 
-        return new ParseException('Not an int');
+        if (ctype_digit($value)) {
+            return (int) $value;
+        }
+
+        $type = gettype($value);
+
+        return new ParseException("Not an int, got '{$value}' of type '{$type}'");
     }
 }

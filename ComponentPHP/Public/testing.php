@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Core\Components\Services\ComponentService2;
+use Core\Components\Services\ComponentService;
 use Core\DependencyInjection\Container;
 use Core\Utility\Paths\Models\Path;
 use Core\Utility\Paths\Services\PathService;
@@ -20,7 +20,7 @@ define('PSR4_NAMESPACES', $psr4Namespaces);
 
 $container = Container::getInstance();
 
-$service = $container->get(ComponentService2::class);
+$service = $container->get(ComponentService::class);
 $comps = $service->loadFile(new Path('App/Components/HTML/test.html'));
 
 // var_dump($comps);

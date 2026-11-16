@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Core\Utility\Parsers;
+namespace Core\Utility\Validators;
 
-use Core\Utility\Parsers\Exceptions\ParseException;
+use Core\Utility\Validators\Exceptions\ParseException;
 
 abstract class AbstractParser
 {

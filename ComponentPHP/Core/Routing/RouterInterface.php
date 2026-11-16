@@ -9,7 +9,5 @@ use Core\Routing\Models\Responses\Response;
 
 interface RouterInterface
 {
-    public function buildRequest(array $server, array $get, array $post, array $files, array $cookies): Request;
-
     public function handleRequest(Request $request): Response;
 }
