@@ -6,6 +6,7 @@ namespace App\Templates\HTML;
 
 use Core\Components\Services\ComponentService;
 use Core\Components\Templates\AbstractTemplate;
+use Core\Utility\Paths\Models\Path;
 use Core\Utility\Paths\Models\PathRegistry;
 
 abstract class AbstractBaseTemplate extends AbstractTemplate
@@ -22,6 +23,8 @@ abstract class AbstractBaseTemplate extends AbstractTemplate
     #[\Override]
     protected function loadFiles(): void
     {
-        parent::loadFiles();
+        $this->pathRegistry->set(self::COMPONENT_KEY_CONTAINERS, new Path('App/Components/HTML/containers.html'));
+
+        $this->loadFile($this->pathRegistry->get(self::COMPONENT_KEY_CONTAINERS));
     }
 }
