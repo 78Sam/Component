@@ -10,14 +10,15 @@ use Core\Utility\Paths\Models\Path;
 
 class HomeTemplate extends AbstractBaseTemplate
 {
-    public const array COMPONENT_KEY_PATH_MAPPINGS = [
-        'app_template' => 'App/Components/app.html',
-    ];
+    private const string COMPONENT_KEY_APP = 'app_template';
 
-    public function getFiles()
+    /**
+     * @return array<string, string>
+     */
+    public function getFiles(): array
     {
         return [
-            'app_template' => 'App/Components/HTML/app.html',
+            self::COMPONENT_KEY_APP => 'App/Components/HTML/app.html',
         ];
     }
 
@@ -26,13 +27,11 @@ class HomeTemplate extends AbstractBaseTemplate
     {
         parent::loadFiles();
 
-        foreach ($this->getFiles() as $file) {
-            
+        foreach ($this->getFiles() as $key => $file) {
+            $path = new Path($file);
+            $this->pathRegistry->set($key, $path);
+            $this->loadFile($path);
         }
-
-        $this->pathRegistry->set(self::COMPONENT_KEY_APP, new Path(self::COMPONENT_KEY_PATH_MAPPINGS[self::COMPONENT_KEY_APP]));
-
-        $this->loadFile($this->pathRegistry->get(self::COMPONENT_KEY_APP));
     }
 
     public function loadApp(string $title, string|ComponentInterface $body): ComponentInterface

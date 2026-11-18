@@ -10,6 +10,9 @@ class Path
 {
     private ?string $path = null;
 
+    /**
+     * @param bool $absolutePath For use with paths that point outside the project directory
+     */
     public function __construct(
         private readonly string $rawPath,
         private readonly bool $absolutePath = false,
