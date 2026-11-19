@@ -59,7 +59,7 @@ abstract class AbstractTemplate implements TemplateInterface
 
     /**
      * @param list<array<string, string>> $values
-     * 
+     *
      * @return list<ComponentInterface>
      */
     protected function stack(string $name, string $key, array $values): array
@@ -79,7 +79,7 @@ abstract class AbstractTemplate implements TemplateInterface
     {
         $socketMap = new SocketMap();
         $totalItems = count($items);
-        for ($i = 0; $i < $totalItems - 1; $i++) {
+        for ($i = 0; $i < ($totalItems - 1); $i++) {
             $item = $items[$i];
             if (!$item instanceof ComponentInterface && !is_string($item)) {
                 $type = gettype($item);

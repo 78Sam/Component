@@ -9,7 +9,8 @@ abstract class AbstractBranchNode extends AbstractNode implements BranchNodeInte
     /** @var list<NodeInterface> */
     protected array $children = [];
 
-    public function __construct(?BranchNodeInterface $parent) {
+    public function __construct(?BranchNodeInterface $parent)
+    {
         parent::__construct($parent);
     }
 

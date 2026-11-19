@@ -6,7 +6,10 @@ namespace Core\Language\Nodes;
 
 abstract class AbstractLeafNode extends AbstractNode implements LeafNodeInterface
 {
-    public function __construct(BranchNodeInterface $parent, public readonly string $value) {
+    public function __construct(
+        BranchNodeInterface $parent,
+        public readonly string $value,
+    ) {
         parent::__construct($parent);
     }
 

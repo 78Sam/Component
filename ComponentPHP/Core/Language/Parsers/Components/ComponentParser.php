@@ -30,7 +30,6 @@ class ComponentParser extends AbstractParser
 
         $rootNode = new RootNode();
         while ($generator->valid()) {
-
             $nextNode = $this->matchToken($generator, $rootNode, $generator->current());
             $rootNode->addChild($nextNode);
             $generator->next();
@@ -50,15 +49,18 @@ class ComponentParser extends AbstractParser
             BodyToken::class => new StringValueNode($parent, $token->body),
             ComponentStartToken::class => $this->parseComponent($generator, $parent, $token),
             VariableToken::class => $this->parseVariable($generator, $parent, $token),
-            default => throw new ParseException($tokenClass)
+            default => throw new ParseException($tokenClass),
         };
     }
 
     /**
      * @param \Generator<int, AbstractToken, void, void> $generator
      */
-    public function parseComponent(\Generator $generator, BranchNodeInterface $parent, ComponentStartToken $token): ComponentNode
-    {
+    public function parseComponent(
+        \Generator $generator,
+        BranchNodeInterface $parent,
+        ComponentStartToken $token,
+    ): ComponentNode {
         if (!$parent instanceof RootNode) {
             throw new NestedComponentException();
         }
@@ -74,8 +76,11 @@ class ComponentParser extends AbstractParser
         throw new UnclosedTokenException(ComponentStartToken::class);
     }
 
-    public function parseVariable(\Generator $_generator, BranchNodeInterface $parent, VariableToken $token): VariableNode
-    {
+    public function parseVariable(
+        \Generator $_generator,
+        BranchNodeInterface $parent,
+        VariableToken $token,
+    ): VariableNode {
         return new VariableNode($parent, $token->getName());
     }
 

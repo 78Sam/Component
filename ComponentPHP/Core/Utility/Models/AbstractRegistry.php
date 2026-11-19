@@ -14,9 +14,9 @@ abstract class AbstractRegistry
 
     /**
      * @template D
-     * 
+     *
      * @param D $default
-     * 
+     *
      * @return T|D
      */
     public function getWithDefault(string $key, mixed $default): mixed

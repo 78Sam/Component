@@ -6,5 +6,4 @@ namespace Core\Language\Nodes\Components;
 
 use Core\Language\Nodes\AbstractLeafNode;
 
-class VariableNode extends AbstractLeafNode
-{}
+class VariableNode extends AbstractLeafNode {}

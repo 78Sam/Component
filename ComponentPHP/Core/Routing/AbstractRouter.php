@@ -14,8 +14,8 @@ use Core\Routing\Models\Metadata\SiteMap;
 use Core\Routing\Models\Metadata\SiteMapEntry;
 use Core\Routing\Models\Requests\Request;
 use Core\Routing\Models\Responses\Response;
-use Core\Utility\Services\ClassFinderService;
 use Core\Utility\Paths\Services\PathService;
+use Core\Utility\Services\ClassFinderService;
 
 abstract class AbstractRouter implements RouterInterface
 {

@@ -11,8 +11,7 @@ abstract readonly class AbstractComponent implements ComponentInterface
     public function __construct(
         public string $name,
         public SocketMap $socketMap,
-    ) {
-    }
+    ) {}
 
     public function __clone(): void
     {

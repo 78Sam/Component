@@ -16,8 +16,7 @@ class Path
     public function __construct(
         private readonly string $rawPath,
         private readonly bool $absolutePath = false,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {
@@ -27,7 +26,9 @@ class Path
     public function getPath(): string
     {
         if ($this->path === null) {
-            $this->path = $this->absolutePath ? PathService::normalisePath($this->rawPath) : PathService::fromProjectDirectory($this->rawPath);
+            $this->path = $this->absolutePath
+                ? PathService::normalisePath($this->rawPath)
+                : PathService::fromProjectDirectory($this->rawPath);
         }
 
         return $this->path;

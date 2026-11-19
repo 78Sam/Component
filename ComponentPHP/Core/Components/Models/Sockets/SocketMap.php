@@ -30,7 +30,7 @@ class SocketMap
 
         return $this;
     }
-    
+
     public function fill(string $variableName, string $value): self
     {
         if (!array_key_exists($variableName, $this->variableMap)) {
@@ -51,6 +51,6 @@ class SocketMap
 
     private function makeUnique(string $value): string
     {
-        return "{$value}_" . ($this->uid++);
+        return "{$value}_" . $this->uid++;
     }
 }

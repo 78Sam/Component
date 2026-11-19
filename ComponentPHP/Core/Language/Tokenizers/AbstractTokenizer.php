@@ -8,7 +8,7 @@ use Core\Language\Tokens\AbstractToken;
 use Core\Language\Tokens\Components\BodyToken;
 
 abstract class AbstractTokenizer
-{   
+{
     private string $context = '';
     private int $leftPosition = 0;
     private int $rightPosition = 0;
@@ -27,7 +27,6 @@ abstract class AbstractTokenizer
         $this->contextLength = strlen($this->context);
 
         while (!$this->isEof()) {
-
             $handler = $this->handle($this->peek(1)[0]);
             if ($handler) {
                 $this->captureBlock(BodyToken::class);
