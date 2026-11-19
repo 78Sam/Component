@@ -12,7 +12,6 @@ use Core\Components\Services\ComponentService;
 use Core\Components\Templates\TemplateInterface;
 use Core\Logging\Services\LoggingService;
 use Core\Utility\Paths\Models\Path;
-use Core\Utility\Paths\Models\PathRegistry;
 
 abstract class AbstractTemplate implements TemplateInterface
 {
@@ -21,7 +20,6 @@ abstract class AbstractTemplate implements TemplateInterface
 
     public function __construct(
         protected readonly ComponentService $componentService,
-        protected readonly PathRegistry $pathRegistry,
         protected readonly LoggingService $loggingService,
     ) {
         foreach ($this->getFiles() as $key => $path) {
@@ -41,7 +39,6 @@ abstract class AbstractTemplate implements TemplateInterface
             return $this;
         }
 
-        $this->pathRegistry->set($key, $path);
         $this->components[$key] = $this->componentService->loadFile($path);
 
         return $this;
