@@ -9,7 +9,7 @@ use Core\Utility\Paths\Models\Path;
 
 interface TemplateInterface
 {
-    public function loadFile(Path $path): self;
-
-    public function get(string $name, Path $path): ComponentInterface;
+//     protected function loadFile(string $key, Path $path): self;
+// 
+//     protected function get(string $name, string $key): ComponentInterface;
 }

@@ -10,37 +10,48 @@ use Core\Components\Models\Components\ComponentInterface;
 use Core\Components\Models\Sockets\SocketMap;
 use Core\Components\Services\ComponentService;
 use Core\Components\Templates\TemplateInterface;
+use Core\Logging\Services\LoggingService;
 use Core\Utility\Paths\Models\Path;
+use Core\Utility\Paths\Models\PathRegistry;
 
 abstract class AbstractTemplate implements TemplateInterface
 {
     /** @var array<string, array<string, ComponentInterface>> */
     protected array $components = [];
 
-    public function __construct(protected readonly ComponentService $componentService) {
-        $this->loadFiles();
+    public function __construct(
+        protected readonly ComponentService $componentService,
+        protected readonly PathRegistry $pathRegistry,
+        protected readonly LoggingService $loggingService,
+    ) {
+        foreach ($this->getFiles() as $key => $path) {
+            $this->loggingService->log("Loading template file with key: '{$key}'", LoggingService::LEVEL_DEBUG);
+            $this->loadFile($key, new Path($path));
+        }
     }
 
-    protected function loadFiles(): void {}
+    /**
+     * @return array<string, string>
+     */
+    abstract protected function getFiles(): array;
 
-    #[\Override]
-    public function loadFile(Path $path): self
+    protected function loadFile(string $key, Path $path): self
     {
-        if (array_key_exists($path->getPath(), $this->components)) {
+        if (array_key_exists($key, $this->components)) {
             return $this;
         }
 
-        $this->components[$path->getPath()] = $this->componentService->loadFile($path);
+        $this->pathRegistry->set($key, $path);
+        $this->components[$key] = $this->componentService->loadFile($path);
 
         return $this;
     }
 
-    #[\Override]
-    public function get(string $name, Path $path): ComponentInterface
+    protected function get(string $name, string $key): ComponentInterface
     {
-        $component = $this->components[$path->getPath()][$name] ?? null;
+        $component = $this->components[$key][$name] ?? null;
         if ($component === null) {
-            throw new NonExistentComponentException($name, $path->getPath());
+            throw new NonExistentComponentException($name, $key);
         }
 
         return clone $component;
@@ -51,11 +62,11 @@ abstract class AbstractTemplate implements TemplateInterface
      * 
      * @return list<ComponentInterface>
      */
-    public function stack(string $name, Path $path, array $values): array
+    protected function stack(string $name, string $key, array $values): array
     {
         $components = [];
         foreach ($values as $value) {
-            $components[] = $this->get($name, $path)->fillAll($value);
+            $components[] = $this->get($name, $key)->fillAll($value);
         }
 
         return $components;
@@ -64,7 +75,7 @@ abstract class AbstractTemplate implements TemplateInterface
     /**
      * @param list<string|ComponentInterface> $items
      */
-    public function collect(array $items, string $separator = ''): ComponentInterface
+    protected function collect(array $items, string $separator = ''): ComponentInterface
     {
         $socketMap = new SocketMap();
         $totalItems = count($items);

@@ -10,11 +10,13 @@ use Core\Utility\Services\DateTimeService;
 
 class LoggingService
 {
+    public const string LEVEL_DEBUG = 'debug';
     public const string LEVEL_INFO = 'info';
     public const string LEVEL_WARNING = 'warning';
     public const string LEVEL_ERROR = 'error';
 
     private const array LEVEL_MAP = [
+        self::LEVEL_DEBUG => Console::BG_COLOUR_GREEN,
         self::LEVEL_INFO => Console::BG_COLOUR_BLUE,
         self::LEVEL_WARNING => Console::BG_COLOUR_YELLOW,
         self::LEVEL_ERROR => Console::BG_COLOUR_RED,
