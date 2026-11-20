@@ -22,33 +22,27 @@ abstract class AbstractTemplate implements TemplateInterface
         protected readonly ComponentService $componentService,
         protected readonly LoggingService $loggingService,
     ) {
-        foreach ($this->getFiles() as $key => $path) {
-            $this->loggingService->log("Loading template file with key: '{$key}'", LoggingService::LEVEL_DEBUG);
-            $this->loadFile($key, new Path($path));
-        }
+        $this->setup();
     }
 
-    /**
-     * @return array<string, string>
-     */
-    abstract protected function getFiles(): array;
+    abstract protected function setup(): void;
 
-    protected function loadFile(string $key, Path $path): self
+    protected function loadFile(Path $path): self
     {
-        if (array_key_exists($key, $this->components)) {
+        if (array_key_exists($path->getPath(), $this->components)) {
             return $this;
         }
 
-        $this->components[$key] = $this->componentService->loadFile($path);
+        $this->components[$path->getPath()] = $this->componentService->loadFile($path);
 
         return $this;
     }
 
-    protected function get(string $name, string $key): ComponentInterface
+    protected function get(string $name, Path $path): ComponentInterface
     {
-        $component = $this->components[$key][$name] ?? null;
+        $component = $this->components[$path->getPath()][$name] ?? null;
         if ($component === null) {
-            throw new NonExistentComponentException($name, $key);
+            throw new NonExistentComponentException($name, $path->getPath());
         }
 
         return clone $component;
@@ -74,19 +68,26 @@ abstract class AbstractTemplate implements TemplateInterface
      */
     protected function collect(array $items, string $separator = ''): ComponentInterface
     {
+        $validateType = static function(mixed $value): void {
+            if (!$value instanceof ComponentInterface && !is_string($value)) {
+                $type = gettype($value);
+
+                throw new \Exception("Cannot collect item that is not a string or component: '{$type}'");
+            }
+        };
+
         $socketMap = new SocketMap();
         $totalItems = count($items);
         for ($i = 0; $i < ($totalItems - 1); $i++) {
             $item = $items[$i];
-            if (!$item instanceof ComponentInterface && !is_string($item)) {
-                $type = gettype($item);
-
-                throw new \Exception("Cannot collect item that is not a string or component: '{$type}'");
-            }
+            $validateType($item);
             $socketMap->add(SocketMap::PLACEHOLDER_KEY, $item);
             $socketMap->add(SocketMap::PLACEHOLDER_KEY, $separator);
         }
-        $socketMap->add(SocketMap::PLACEHOLDER_KEY, $items[$totalItems]);
+
+        $lastItem = $items[$totalItems - 1];
+        $validateType($lastItem);
+        $socketMap->add(SocketMap::PLACEHOLDER_KEY, $lastItem);
 
         return new Component('', $socketMap);
     }
