@@ -4,26 +4,25 @@ declare(strict_types=1);
 
 namespace App\Templates\HTML;
 
-use App\Components\HTML\Test;
+use App\Components\HTML\AppSchematic;
+use App\Components\HTML\TestSchematic;
 use Core\Components\Models\Components\ComponentInterface;
-use Core\Utility\Paths\Models\Path;
 
 class HomeTemplate extends AbstractBaseTemplate
 {
-    private const string COMPONENT_HTML_APP = 'html.app';
-
     #[\Override]
     protected function setup(): void
     {
         parent::setup();
 
-        $this->loadFile(new Path('App/Components/HTML/app.html'));
+        $this->loadFile(AppSchematic::getPath());
+        $this->loadFile(TestSchematic::getPath());
     }
 
     public function loadApp(string $title, string|ComponentInterface $body): ComponentInterface
     {
         return $this
-            ->get('app', new Path('App/Components/HTML/app.html'))
+            ->get(AppSchematic::COMPONENT_APP, AppSchematic::getPath())
             ->fill('title', $title)
             ->fill('body', $body)
         ;
@@ -31,8 +30,6 @@ class HomeTemplate extends AbstractBaseTemplate
 
     public function loadTest(): ComponentInterface
     {
-        $this->loadFile(Test::getPath());
-
-        return $this->get('test', 'test');
+        return $this->get(TestSchematic::COMPONENT_TEST, TestSchematic::getPath());
     }
 }

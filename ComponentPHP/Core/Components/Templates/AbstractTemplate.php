@@ -7,6 +7,7 @@ namespace Core\Components\Templates;
 use Core\Components\Exceptions\NonExistentComponentException;
 use Core\Components\Models\Components\Component;
 use Core\Components\Models\Components\ComponentInterface;
+use Core\Components\Models\Components\ComponentRegistry;
 use Core\Components\Models\Sockets\SocketMap;
 use Core\Components\Services\ComponentService;
 use Core\Components\Templates\TemplateInterface;
@@ -15,13 +16,13 @@ use Core\Utility\Paths\Models\Path;
 
 abstract class AbstractTemplate implements TemplateInterface
 {
-    /** @var array<string, array<string, ComponentInterface>> */
-    protected array $components = [];
+    protected ComponentRegistry $componentRegistry;
 
     public function __construct(
         protected readonly ComponentService $componentService,
         protected readonly LoggingService $loggingService,
     ) {
+        $this->componentRegistry = new ComponentRegistry();
         $this->setup();
     }
 
@@ -29,18 +30,20 @@ abstract class AbstractTemplate implements TemplateInterface
 
     protected function loadFile(Path $path): self
     {
-        if (array_key_exists($path->getPath(), $this->components)) {
+        if ($this->componentRegistry->getWithDefault($path->getPath(), null) !== null) {
             return $this;
         }
 
-        $this->components[$path->getPath()] = $this->componentService->loadFile($path);
+        foreach ($this->componentService->loadFile($path) as $componentName => $component) {
+            $this->componentRegistry->set("{$path->getPath()}.{$componentName}", $component);
+        }
 
         return $this;
     }
 
     protected function get(string $name, Path $path): ComponentInterface
     {
-        $component = $this->components[$path->getPath()][$name] ?? null;
+        $component = $this->componentRegistry->getWithDefault("{$path->getPath()}.{$name}", null);
         if ($component === null) {
             throw new NonExistentComponentException($name, $path->getPath());
         }
@@ -53,11 +56,11 @@ abstract class AbstractTemplate implements TemplateInterface
      *
      * @return list<ComponentInterface>
      */
-    protected function stack(string $name, string $key, array $values): array
+    protected function stack(string $name, Path $path, array $values): array
     {
         $components = [];
         foreach ($values as $value) {
-            $components[] = $this->get($name, $key)->fillAll($value);
+            $components[] = $this->get($name, $path)->fillAll($value);
         }
 
         return $components;

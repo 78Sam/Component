@@ -1,31 +1,18 @@
 <?php
 
-class SocketMap
+abstract class X
 {
-    private array $sockets = [];
-
-    private array $variableMap = [];
-
-    private int $uid = 0;
-
-    public function addVariable(string $variableName, string $value)
-    {
-        if (!array_key_exists($variableName, $this->variableMap)) {
-            $this->variableMap[$variableName] = [];
-        }
-
-    }
-
-    public function makeUnique(string $value): string
-    {
-        $x = $value . ($this->uid++);
-        print_r($x . PHP_EOL);
-
-        return $x;
-    }
+    public string $hello;
 }
 
-$y = new SocketMap();
-$y->makeUnique('hi');
-$y->makeUnique('hi');
-$y->makeUnique('hi');
+class Y extends X {};
+
+class Z extends X {};
+
+$p = new Y();
+$q = new Z();
+
+$p::$hello = 'yo';
+$q::$hello = 'yo2';
+
+echo $p::$hello;
