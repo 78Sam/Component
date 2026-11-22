@@ -18,6 +18,11 @@ class SocketMap
 
     private int $uid = 0;
 
+    public function getVariables(): array
+    {
+        return array_keys($this->variableMap);
+    }
+
     public function add(string $variableName, string|ComponentInterface $value): self
     {
         if (!array_key_exists($variableName, $this->variableMap)) {
@@ -31,7 +36,7 @@ class SocketMap
         return $this;
     }
 
-    public function fill(string $variableName, string $value): self
+    public function fill(string $variableName, string|ComponentInterface $value): self
     {
         if (!array_key_exists($variableName, $this->variableMap)) {
             throw new \Exception("Socket '{$variableName}' does not exist");

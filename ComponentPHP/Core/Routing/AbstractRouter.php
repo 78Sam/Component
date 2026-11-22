@@ -126,28 +126,26 @@ abstract class AbstractRouter implements RouterInterface
 
         $controllers = [];
         foreach ($this->getControllerFolders() as $controllerFolder) {
-            foreach ($this->classFinderService->byExtension(
-                $controllerFolder,
-                AbstractController::class,
-            ) as $controller) {
-                $controllers[] = $controller;
+            $foundControllers = $this->classFinderService->byExtension($controllerFolder, AbstractController::class);
+            foreach ($foundControllers as $foundController) {
+                $controllers[] = $foundController;
             }
         }
 
         foreach ($controllers as $controller) {
-            $attributes = ReflectionService::getAttributesOnClassMethods($controller, Route::class);
+            $methodAttributes = ReflectionService::getAttributesOnClassMethods(Route::class, $controller);
 
-            foreach ($attributes as $attribute) {
-                $routeInstance = $attribute['attribute']->newInstance();
+            foreach ($methodAttributes as $methodAttribute) {
+                $routeInstance = $methodAttribute->attribute->newInstance();
 
                 foreach ($routeInstance->routes as $route) {
                     $siteMap->add(
                         new SiteMapEntry(
                             $routeInstance->name,
                             $route,
-                            $attribute['attribute'],
+                            $methodAttribute->attribute,
                             $controller,
-                            $attribute['method'],
+                            $methodAttribute->method,
                         ),
                     );
                 }

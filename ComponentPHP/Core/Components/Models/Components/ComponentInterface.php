@@ -19,5 +19,5 @@ interface ComponentInterface
     /**
      * @param array<string, string> $values
      */
-    public function fillAll(array $values): self;
+    public function fillArray(array $values): self;
 }

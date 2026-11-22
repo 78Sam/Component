@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Core\DependencyInjection\Services;
 
+use Core\DependencyInjection\Models\MethodAttribute;
+
 class ReflectionService
 {
     public const string NATIVE_TYPE_ARRAY = 'array';
@@ -54,11 +56,6 @@ class ReflectionService
         }
 
         return [$type->getName()];
-    }
-
-    public static function hasMixed(\ReflectionParameter $parameter): bool
-    {
-        return true; // TODO: Change getTypes to not just return [self::NATIVE_TYPE_MIXED] and use this check instead
     }
 
     public static function isNativeType(\ReflectionParameter $parameter): bool
@@ -144,21 +141,37 @@ class ReflectionService
      *
      * @param class-string<T> $attribute
      *
-     * @return list<array{method: \ReflectionMethod, attribute: \ReflectionAttribute<T>}>
+     * @return list<MethodAttribute<T>>
      */
-    public static function getAttributesOnClassMethods(\ReflectionClass $class, string $attribute): array
-    {
-        $attributes = $class->getAttributes($attribute);
+    public static function getAttributesOnClassMethods(string $attribute, \ReflectionClass $class): array
+    {   
+        $methodAttributes = [];
         foreach ($class->getMethods() as $method) {
             foreach ($method->getAttributes($attribute) as $methodAttribute) {
-                // TODO: A model might be nicer
-                $attributes[] = [
-                    'method' => $method,
-                    'attribute' => $methodAttribute,
-                ];
+                $methodAttributes[] = new MethodAttribute($method, $methodAttribute);
             }
         }
 
-        return $attributes;
+        return $methodAttributes;
+    }
+
+    public static function getPropertyAccess(string $propertyName, \ReflectionClass $class): null|\ReflectionProperty|\ReflectionMethod
+    {
+        $properties = $class->getProperties(\ReflectionProperty::IS_PUBLIC);
+        foreach ($properties as $property) {
+            if ($property->getName() === $propertyName) {
+                return $property;
+            }
+        }
+
+        $methodName = 'get' . ucfirst($propertyName);
+        $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
+        foreach ($methods as $method) {
+            if ($method->getName() === $methodName) {
+                return $method;
+            }
+        }
+
+        return null;
     }
 }

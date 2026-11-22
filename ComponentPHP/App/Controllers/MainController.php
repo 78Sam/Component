@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use App\Templates\HTML\HomeTemplate;
+use App\Templates\HTML\UserTemplate;
 use Core\Routing\Attributes\Route;
 use Core\Routing\Controllers\AbstractController;
 use Core\Routing\Models\Responses\Response;
@@ -14,6 +15,7 @@ final class MainController extends AbstractController
 {
     public function __construct(
         private readonly HomeTemplate $homeTemplate,
+        private readonly UserTemplate $userTemplate,
     ) {
     }
 
@@ -29,13 +31,16 @@ final class MainController extends AbstractController
         return new Response($this->homeTemplate->loadTest());
     }
 
-//     public function viewUsers(): Response
-//     {
-//         $users = [
-//             new User('user1', new \DateTimeImmutable('now')),
-//             new User('user2', new \DateTimeImmutable('now - 5 seconds')),
-//         ];
-// 
-//         return new Response($this->homeTemplate)
-//     }
+    #[Route(['/users'], 'app_users')]
+    public function viewUsers(): Response
+    {
+        $users = [
+            new User('user1', new \DateTimeImmutable('now')),
+            new User('user2', new \DateTimeImmutable('now - 5 seconds')),
+        ];
+
+        $userComponent = $this->userTemplate->loadUserCards($users);
+
+        return new Response($this->homeTemplate->loadApp('Users', $userComponent));
+    }
 }

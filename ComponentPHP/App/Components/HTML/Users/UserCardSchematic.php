@@ -13,6 +13,6 @@ final class UserCardSchematic extends AbstractSchematic
     #[\Override]
     protected static function getRawPath(): string
     {
-        return 'App/Components/HTML/users/user_card.html';
+        return 'App/Components/HTML/users/user_card_component.html';
     }
 }

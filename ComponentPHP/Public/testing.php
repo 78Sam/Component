@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use Core\Components\Services\ComponentService;
 use Core\DependencyInjection\Container;
+use Core\DependencyInjection\Services\ReflectionService;
+use Core\Temp\MyAttribute;
+use Core\Temp\TempClass;
 use Core\Utility\Paths\Models\Path;
 use Core\Utility\Paths\Services\PathService;
 
@@ -20,10 +23,11 @@ define('PSR4_NAMESPACES', $psr4Namespaces);
 
 $container = Container::getInstance();
 
-$service = $container->get(ComponentService::class);
-$comps = $service->loadFile(new Path('App/Components/HTML/test.html'));
-
-// var_dump($comps);
-$component = $comps['user'];
-$component->fill('username', 'sam');
-echo "'" . $component->render() . "'\n";
+$reflectionService = $container->get(ReflectionService::class);
+/** @var \ReflectionClass<TempClass> $p */
+$p = new \ReflectionClass(TempClass::class);
+$x = $p->getMethods();
+var_dump($reflectionService::getAttributesOnClassMethods(
+    MyAttribute::class,
+    new \ReflectionClass(TempClass::class),
+));

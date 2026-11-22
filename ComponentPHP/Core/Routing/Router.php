@@ -44,12 +44,7 @@ class Router extends AbstractRouter
         // Add the request if its needed
 
         foreach ($siteMapEntry->method->getParameters() as $parameter) {
-            $types = ReflectionService::getTypes($parameter);
-            if (count($types) !== 1) {
-                continue;
-            }
-
-            if (array_first($types) === Request::class) {
+            if (array_first(ReflectionService::getTypes($parameter)) === Request::class) {
                 $dynamicParameters[$parameter->name] = $request;
 
                 break;

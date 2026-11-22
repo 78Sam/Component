@@ -31,7 +31,7 @@ abstract readonly class AbstractComponent implements ComponentInterface
     }
 
     #[\Override]
-    public function fill(string $name, string $value): self
+    public function fill(string $name, string|ComponentInterface $value): self
     {
         $this->socketMap->fill($name, $value);
 
@@ -39,12 +39,17 @@ abstract readonly class AbstractComponent implements ComponentInterface
     }
 
     #[\Override]
-    public function fillAll(array $values): self
+    public function fillArray(array $values): self
     {
         foreach ($values as $name => $value) {
             $this->fill($name, $value);
         }
 
         return $this;
+    }
+
+    public function fillModel(object $model)
+    {
+        // TODO: Use ReflectionService::getPropertyAccess() and SocketMap::getVariables()
     }
 }
