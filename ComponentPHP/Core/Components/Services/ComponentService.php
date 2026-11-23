@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\Components\Services;
 
 use Core\Components\Models\Components\Component;
+use Core\Components\Models\Components\ComponentInterface;
 use Core\Components\Models\Sockets\SocketMap;
 use Core\Language\Nodes\BranchNodeInterface;
 use Core\Language\Nodes\Components\ComponentNode;
@@ -22,7 +23,10 @@ class ComponentService
     ) {}
 
     // TODO: Should we make all paths actually be an instance of PathService so we never have to double check
-    public function loadFile(Path $path)
+    /**
+     * @return array<string, ComponentInterface>
+     */
+    public function loadFile(Path $path): array
     {
         if (!file_exists($path->getPath())) {
             throw new \Exception("Cannot find file at: '{$path}'");

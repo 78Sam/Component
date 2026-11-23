@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Core\Components\Models\Components;
 
 use Core\Components\Models\Sockets\SocketMap;
+use Core\DependencyInjection\Services\ReflectionService;
 
 abstract readonly class AbstractComponent implements ComponentInterface
 {
@@ -48,8 +49,26 @@ abstract readonly class AbstractComponent implements ComponentInterface
         return $this;
     }
 
-    public function fillModel(object $model)
+    public function fillModel(object $model): self
     {
-        // TODO: Use ReflectionService::getPropertyAccess() and SocketMap::getVariables()
+        foreach ($this->socketMap->getVariables() as $variable) {
+            $accessMethod = ReflectionService::getPropertyAccess($variable, $model::class);
+            if ($accessMethod === null) {
+                // TODO: This should at least log a warning
+                continue;
+            }
+
+            $value = $accessMethod instanceof \ReflectionMethod ? $accessMethod->invoke($model) : $accessMethod->getValue($model);
+            if (!$value instanceof ComponentInterface) {
+                $value = ReflectionService::castString($value);
+                if ($value === null) {
+                    throw new \Exception("Cannot fill variable {$variable} from model as it cannot be converted to a string. Implement a getter instead");
+                }
+            }
+
+            $this->fill($variable, $value);
+        }
+
+        return $this;
     }
 }

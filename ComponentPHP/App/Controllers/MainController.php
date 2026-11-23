@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Models\StringableModel;
 use App\Models\User;
 use App\Templates\HTML\HomeTemplate;
 use App\Templates\HTML\UserTemplate;

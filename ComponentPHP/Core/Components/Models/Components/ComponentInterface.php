@@ -14,10 +14,12 @@ interface ComponentInterface
 
     public function render(): string;
 
-    public function fill(string $name, string $value): self;
+    public function fill(string $name, string|ComponentInterface $value): self;
 
     /**
-     * @param array<string, string> $values
+     * @param array<string, string|ComponentInterface> $values
      */
     public function fillArray(array $values): self;
+
+    public function fillModel(object $model): self;
 }

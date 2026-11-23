@@ -18,6 +18,9 @@ class SocketMap
 
     private int $uid = 0;
 
+    /**
+     * @return list<string>
+     */
     public function getVariables(): array
     {
         return array_keys($this->variableMap);

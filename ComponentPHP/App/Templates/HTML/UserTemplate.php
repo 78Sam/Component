@@ -29,10 +29,7 @@ class UserTemplate extends AbstractBaseTemplate
         foreach ($users as $user) {
             $userComponents[] = $this
                 ->get(UserCardSchematic::COMPONENT_USER_CARD, UserCardSchematic::getPath())
-                ->fillArray([
-                    'username' => $user->username,
-                    'accountCreatedAt' => $user->created->format('Y-m-d H:i:s'),
-                ])
+                ->fillModel($user)
             ;
         }
 

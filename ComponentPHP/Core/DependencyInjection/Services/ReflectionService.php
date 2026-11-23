@@ -6,6 +6,7 @@ namespace Core\DependencyInjection\Services;
 
 use Core\DependencyInjection\Models\MethodAttribute;
 
+// TODO: We have no closure support
 class ReflectionService
 {
     public const string NATIVE_TYPE_ARRAY = 'array';
@@ -29,6 +30,24 @@ class ReflectionService
         self::NATIVE_TYPE_OBJECT,
         self::NATIVE_TYPE_STRING,
     ];
+
+    public const array GET_TYPE_TO_NATIVE_TYPE = [
+        'array' => self::NATIVE_TYPE_ARRAY,
+        'boolean' => self::NATIVE_TYPE_BOOL,
+        'double' => self::NATIVE_TYPE_FLOAT,
+        'integer' => self::NATIVE_TYPE_INT,
+        'NULL' => self::NATIVE_TYPE_NULL,
+        'object' => self::NATIVE_TYPE_OBJECT,
+        'string' => self::NATIVE_TYPE_STRING,
+    ];
+
+    /**
+     * @return self::NATIVE_TYPE_ARRAY|self::NATIVE_TYPE_BOOL|self::NATIVE_TYPE_FLOAT|self::NATIVE_TYPE_INT|self::NATIVE_TYPE_NULL|self::NATIVE_TYPE_OBJECT|self::NATIVE_TYPE_STRING
+     */
+    public static function getType(mixed $value): string
+    {
+        return self::GET_TYPE_TO_NATIVE_TYPE[gettype($value)];
+    }
 
     /**
      * Note that if the parameter has `self::NATIVE_TYPE_MIXED` anywhere in it, this will return `[self::NATIVE_TYPE_MIXED]`
@@ -155,21 +174,54 @@ class ReflectionService
         return $methodAttributes;
     }
 
-    public static function getPropertyAccess(string $propertyName, \ReflectionClass $class): null|\ReflectionProperty|\ReflectionMethod
+    /**
+     * @param class-string $class
+     */
+    public static function getPropertyAccess(string $propertyName, string $class): null|\ReflectionProperty|\ReflectionMethod
     {
-        $properties = $class->getProperties(\ReflectionProperty::IS_PUBLIC);
-        foreach ($properties as $property) {
-            if ($property->getName() === $propertyName) {
+        $reflectionClass = new \ReflectionClass($class);
+
+        $methodName = 'get' . ucfirst($propertyName);
+        if ($reflectionClass->hasMethod($methodName)) {
+            $method = $reflectionClass->getMethod($methodName);
+            if ($method->isPublic()) {
+                return $method;
+            }
+        }
+
+        if ($reflectionClass->hasProperty($propertyName)) {
+            $property = $reflectionClass->getProperty($propertyName);
+            if ($property->isPublic()) {
                 return $property;
             }
         }
 
-        $methodName = 'get' . ucfirst($propertyName);
-        $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
-        foreach ($methods as $method) {
-            if ($method->getName() === $methodName) {
-                return $method;
-            }
+        return null;
+    }
+
+    public static function castString(mixed $value): ?string
+    {
+        $type = self::getType($value);
+
+        if ($type === self::NATIVE_TYPE_STRING) {
+            return $value;
+        }
+
+        if ($type === self::NATIVE_TYPE_ARRAY) {
+            return null;
+        }
+
+        if ($type === self::NATIVE_TYPE_BOOL) {
+            return $value ? 'true' : 'false';
+        }
+
+        if (in_array($type, [self::NATIVE_TYPE_FLOAT, self::NATIVE_TYPE_INT, self::NATIVE_TYPE_NULL])) {
+            return (string) $value;
+        }
+
+        $reflectionClass = new \ReflectionClass($value::class);
+        if ($reflectionClass->hasMethod('__toString')) {
+            return $value->__toString();
         }
 
         return null;

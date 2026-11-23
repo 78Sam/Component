@@ -60,7 +60,7 @@ abstract class AbstractTemplate implements TemplateInterface
     {
         $components = [];
         foreach ($values as $value) {
-            $components[] = $this->get($name, $path)->fillAll($value);
+            $components[] = $this->get($name, $path)->fillArray($value);
         }
 
         return $components;

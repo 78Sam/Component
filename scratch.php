@@ -1,7 +1,15 @@
 <?php
 
-$x = [];
-$x += ['ab', 'cd'];
-$x += ['ef'];
+$x = [
+    1,
+    'hi',
+    1.2,
+    true,
+    new \DateTime(),
+    ['a'],
+    null,
+];
 
-var_dump($x);
+foreach ($x as $p) {
+    echo gettype($p) . PHP_EOL;
+}

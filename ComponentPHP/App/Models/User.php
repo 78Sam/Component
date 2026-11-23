@@ -8,7 +8,12 @@ readonly class User
 {
     public function __construct(
         public string $username,
-        public \DateTimeImmutable $created,
+        public \DateTimeImmutable $accountCreatedAt,
     ) {
+    }
+
+    public function getAccountCreatedAt(): string
+    {
+        return $this->accountCreatedAt->format('Y-m-d H:i:s');
     }
 }

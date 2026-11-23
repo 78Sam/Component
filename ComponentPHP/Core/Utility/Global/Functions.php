@@ -3,21 +3,17 @@
 declare(strict_types=1);
 
 use Core\Debug\DebugMetrics;
+use Core\DependencyInjection\Container;
+use Core\Site\Templates\DebugTemplate;
 use Core\Utility\Paths\Services\PathService;
 
 if (!function_exists('dump')) {
     function dump(mixed ...$values): void
     {
-        $debugFrame = DebugMetrics::getBacktrace();
+        $container = Container::getInstance();
+        $debugTemplate = $container->get(DebugTemplate::class);
 
-        echo "<pre>{$debugFrame}\n\n";
-        /** @mago-expect analysis:mixed-assignment */
-        foreach ($values as $value) {
-            $data = var_export($value, return: true);
-            echo htmlspecialchars($data);
-            echo '<br>';
-        }
-        echo "\n\n</pre>";
+        echo $debugTemplate->getDump(DebugMetrics::getBacktrace(), ...$values)->render();
     }
 }
 

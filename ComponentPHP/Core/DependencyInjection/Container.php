@@ -18,6 +18,8 @@ final class Container
     /** @var array<class-string, array{object: object, requires: list<class-string>}> */
     private array $classMap = [];
 
+    private function __construct() {}
+
     public static function getInstance(): self
     {
         if (self::$instance === null) {
@@ -46,8 +48,6 @@ final class Container
      */
     public function buildMethodParameters(\ReflectionMethod $method, array $parameters): array
     {
-        // dump($method->name);
-        // dump($parameters);
         $methodParameters = [];
         foreach ($method->getParameters() as $parameter) {
             $parameterName = $parameter->name;
