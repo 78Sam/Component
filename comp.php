@@ -16,7 +16,7 @@ if ($argc !== 2) {
 }
 
 $input = strtolower($argv[1]);
-if (!in_array($input, $options)) {
+if (!in_array($input, $options, true)) {
     $help();
 }
 

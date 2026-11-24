@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+
+use Core\CLI\CLI;
+
+require_once __DIR__ . '/ComponentPHP/vendor/autoload.php';
+
+$cli = new CLI($argc, $argv);
+$cli->main();

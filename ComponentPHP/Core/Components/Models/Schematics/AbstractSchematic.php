@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Core\Components\Models\Components;
+namespace Core\Components\Models\Schematics;
 
 use Core\Utility\Paths\Models\Path;
 use Core\Utility\Paths\Models\PathRegistry;

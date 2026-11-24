@@ -39,4 +39,11 @@ final class PathService
     {
         return array_values(array_filter(explode('/', $route), fn(string $value): bool => $value !== ''));
     }
+
+    public static function removeExtension(\SplFileInfo $file): string
+    {
+        $filename = $file->getFilename();
+
+        return substr($filename, 0, strlen($filename) - strlen(".{$file->getExtension()}"));
+    }
 }

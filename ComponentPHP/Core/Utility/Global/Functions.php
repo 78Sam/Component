@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Core\Debug\DebugMetrics;
 use Core\DependencyInjection\Container;
-use Core\Site\Templates\DebugTemplate;
+use Core\Internals\Templates\DebugTemplate;
 use Core\Utility\Paths\Services\PathService;
 
 if (!function_exists('dump')) {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\HTML\Users;
 
-use Core\Components\Models\Components\AbstractSchematic;
+use Core\Components\Models\Schematics\AbstractSchematic;
 
 final class UserCardSchematic extends AbstractSchematic
 {
