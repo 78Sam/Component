@@ -12,7 +12,7 @@ use Core\Components\Models\Schematics\AbstractSchematic;
  */
 final class !@($name)Schematic extends AbstractSchematic
 {
-    !@($getFunctions)
+    !@($componentConstants)
 
     protected static function getRawPath(): string
     {
@@ -21,14 +21,6 @@ final class !@($name)Schematic extends AbstractSchematic
 }
 !@(end)
 
-!@(component|get_component_function)
-private static ?!@($key) $c!@($name) = null;
-public static function c!@($name): !@($key)
-{
-    if (self::$c!@($name) === null) {
-        self::$c!@($name) = new !@($key)();
-    }
-    
-    return self::$c!@($name);
-}
+!@(component|component_constant)
+public const string COMPONENT_!@($constantName) = '!@($name)';
 !@(end)

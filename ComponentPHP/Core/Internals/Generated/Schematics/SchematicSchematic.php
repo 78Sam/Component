@@ -11,15 +11,8 @@ use Core\Components\Models\Schematics\AbstractSchematic;
  */
 final class SchematicSchematic extends AbstractSchematic
 {
-    public static function cClass(): ClassComponentSchematic00000003
-    {
-        return new ClassComponentSchematic00000003();
-    }
-
-    public static function cGetComponentFunction(): GetComponentFunctionComponentSchematic00000004
-    {
-        return new GetComponentFunctionComponentSchematic00000004();
-    }
+    public const string COMPONENT_CLASS = 'class';
+    public const string COMPONENT_COMPONENT_CONSTANT = 'component_constant';
 
     #[\Override]
     protected static function getRawPath(): string

@@ -11,25 +11,8 @@ use Core\Components\Models\Schematics\AbstractSchematic;
  */
 final class DumpSchematic extends AbstractSchematic
 {
-    private static ?DumpComponentSchematic00000001 $cDump = null;
-    public static function cDump(): DumpComponentSchematic00000001
-    {
-        if (self::$cDump === null) {
-            self::$cDump = new DumpComponentSchematic00000001();
-        }
-        
-        return self::$cDump;
-    }
-
-    private static ?DataItemComponentSchematic00000002 $cDataItem = null;
-    public static function cDataItem(): DataItemComponentSchematic00000002
-    {
-        if (self::$cDataItem === null) {
-            self::$cDataItem = new DataItemComponentSchematic00000002();
-        }
-        
-        return self::$cDataItem;
-    }
+    public const string COMPONENT_DUMP = 'dump';
+    public const string COMPONENT_DATA_ITEM = 'data_item';
 
     #[\Override]
     protected static function getRawPath(): string
