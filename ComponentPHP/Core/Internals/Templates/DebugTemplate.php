@@ -19,19 +19,16 @@ class DebugTemplate extends AbstractTemplate
 
     public function getDump(Backtrace $backtrace, mixed ...$values): ComponentInterface
     {
-        $dataItemComponent = DumpSchematic::cDataItem();
         $dataComponents = [];
         foreach ($values as $value) {
             $dataComponents[] = $this
-                ->get($dataItemComponent::getName(), DumpSchematic::getPath())
-                ->fill($dataItemComponent::SOCKET_DATA, var_export($value, true))
+                ->get(DumpSchematic::C_DATA_ITEM, DumpSchematic::getPath())
+                ->fill(DumpSchematic::SOCKETS[DumpSchematic::C_DUMP][''], var_export($value, true))
             ;
         }
 
-        $dumpComponent = DumpSchematic::cDump();
-
         return $this
-            ->get($dumpComponent::getName(), DumpSchematic::getPath())
+            ->get(DumpSchematic::C_DUMP, DumpSchematic::getPath())
             ->fill($dumpComponent::SOCKET_DEBUG_FRAME, "{$backtrace}")
             ->fill($dumpComponent::SOCKET_DATA, $this->collect($dataComponents, '<br>'))
         ;

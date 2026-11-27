@@ -11,8 +11,23 @@ use Core\Components\Models\Schematics\AbstractSchematic;
  */
 final class DumpSchematic extends AbstractSchematic
 {
-    public const string COMPONENT_DUMP = 'dump';
-    public const string COMPONENT_DATA_ITEM = 'data_item';
+    public const string C_DUMP = 'dump';
+    public const string C_DATA_ITEM = 'data_item';
+
+    /**
+     * @var array{
+     *  '
+     * }
+     */
+    public const array SOCKETS = [
+        self::C_DUMP => [
+            'debug_frame' => 'debug_frame',
+            'data' => 'data',
+        ],
+        self::C_DATA_ITEM => [
+            'data' => 'data',
+        ],
+    ];
 
     #[\Override]
     protected static function getRawPath(): string
