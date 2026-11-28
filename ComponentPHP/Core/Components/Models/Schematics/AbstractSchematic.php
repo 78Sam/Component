@@ -18,11 +18,13 @@ abstract class AbstractSchematic
         }
 
         $rawPath = static::getRawPath();
-        if (static::$pathRegistry->getWithDefault($rawPath, null) === null) {
-            static::$pathRegistry->set($rawPath, new Path($rawPath));
+        $existingPath = static::$pathRegistry->getWithDefault($rawPath, null);
+        if ($existingPath === null) {
+            $existingPath = new Path($rawPath);
+            static::$pathRegistry->set($rawPath, $existingPath);
         }
 
-        return static::$pathRegistry->get($rawPath);
+        return $existingPath;
     }
 
     abstract protected static function getRawPath(): string;

@@ -8,6 +8,7 @@ use Core\Components\Models\Components\ComponentInterface;
 use Core\Components\Templates\AbstractTemplate;
 use Core\Internals\Generated\Schematics\SchematicSchematic;
 use Core\Utility\Paths\Models\Path;
+use Core\Utility\Paths\Services\PathService;
 use Core\Utility\Services\FormattingService;
 
 class SchematicTemplate extends AbstractTemplate
@@ -25,9 +26,19 @@ class SchematicTemplate extends AbstractTemplate
         $constants = [];
         foreach ($components as $componentName => $component) {
             $constants[] = $this
-                ->get(SchematicSchematic::COMPONENT_CONSTANT, SchematicSchematic::getPath())
+                ->get(SchematicSchematic::_COMPONENT_CONSTANT, SchematicSchematic::getPath())
                 ->fill('constantName', FormattingService::underscoreToScreamingSnakeCase($componentName))
-                ->fill('')
+                ->fill('name', FormattingService::underscoreToCamelCase($componentName))
+            ;
         }
+
+        $filename = $path->getFilename();
+
+        return $this
+            ->get(SchematicSchematic::_CLASS, SchematicSchematic::getPath())
+            ->fill('componentConstants', $this->collect($constants))
+            ->fill('className', FormattingService::underscoreToPascalCase($filename))
+            ->fill('path', PathService::makeRelative($path->getPath()))
+        ;
     }
 }

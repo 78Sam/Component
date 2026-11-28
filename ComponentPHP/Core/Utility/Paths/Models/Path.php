@@ -33,4 +33,13 @@ class Path
 
         return $this->path;
     }
+
+    public function getFilename(bool $withExtension = false): string
+    {
+        if (!$withExtension) {
+            return PathService::removeExtension(new \SplFileInfo($this->getPath()));
+        }
+
+        return basename($this->getPath());
+    }
 }

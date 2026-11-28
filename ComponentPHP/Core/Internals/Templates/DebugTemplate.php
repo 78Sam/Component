@@ -22,13 +22,13 @@ class DebugTemplate extends AbstractTemplate
         $dataComponents = [];
         foreach ($values as $value) {
             $dataComponents[] = $this
-                ->get(DumpSchematic::DATA_ITEM, DumpSchematic::getPath())
+                ->get(DumpSchematic::_DATA_ITEM, DumpSchematic::getPath())
                 ->fill('data', var_export($value, true))
             ;
         }
 
         return $this
-            ->get(DumpSchematic::DUMP, DumpSchematic::getPath())
+            ->get(DumpSchematic::_DUMP, DumpSchematic::getPath())
             ->fill('debugFrame', "{$backtrace}")
             ->fill('data', $this->collect($dataComponents, '<br>'))
         ;

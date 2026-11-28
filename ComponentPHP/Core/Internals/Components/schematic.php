@@ -10,7 +10,7 @@ use Core\Components\Models\Schematics\AbstractSchematic;
 /**
  * @see ComponentPHP/!@($path)
  */
-final class !@($name)Schematic extends AbstractSchematic
+final class !@($className)Schematic extends AbstractSchematic
 {
     !@($componentConstants)
 
@@ -22,5 +22,5 @@ final class !@($name)Schematic extends AbstractSchematic
 !@(end)
 
 !@(component|component_constant)
-public const string !@($constantName) = '!@($name)';
+public const string _!@($constantName) = '!@($name)';
 !@(end)

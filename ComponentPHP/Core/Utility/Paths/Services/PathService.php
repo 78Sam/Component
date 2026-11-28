@@ -13,6 +13,14 @@ final class PathService
         return self::normalisePath(dirname(__DIR__, 4));
     }
 
+    /**
+     * Turn an absolute path into one relative to the project directory
+     */
+    public static function makeRelative(string $path): string
+    {
+        return substr(self::normalisePath($path), strlen(self::getProjectDirectory()) + 1);
+    }
+
     public static function normalisePath(string $path): string
     {
         $path = preg_replace('/\/+/', '/', str_replace('\\', '/', $path));
