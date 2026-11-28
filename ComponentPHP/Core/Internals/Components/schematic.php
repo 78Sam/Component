@@ -22,5 +22,5 @@ final class !@($name)Schematic extends AbstractSchematic
 !@(end)
 
 !@(component|component_constant)
-public const string COMPONENT_!@($constantName) = '!@($name)';
+public const string !@($constantName) = '!@($name)';
 !@(end)

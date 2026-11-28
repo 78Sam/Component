@@ -7,31 +7,16 @@ namespace Core\Internals\Generated\Schematics;
 use Core\Components\Models\Schematics\AbstractSchematic;
 
 /**
- * @see ComponentPHP/Core/Internals/Components/dump_component.html
+ * @see ComponentPHP/Core/Internals/Components/dump.html
  */
 final class DumpSchematic extends AbstractSchematic
 {
-    public const string C_DUMP = 'dump';
-    public const string C_DATA_ITEM = 'data_item';
-
-    /**
-     * @var array{
-     *  '
-     * }
-     */
-    public const array SOCKETS = [
-        self::C_DUMP => [
-            'debug_frame' => 'debug_frame',
-            'data' => 'data',
-        ],
-        self::C_DATA_ITEM => [
-            'data' => 'data',
-        ],
-    ];
+    public const string DUMP = 'dump';
+    public const string DATA_ITEM = 'data_item';
 
     #[\Override]
     protected static function getRawPath(): string
     {
-        return 'Core/Internals/Components/dump_component.html';
+        return 'Core/Internals/Components/dump.html';
     }
 }

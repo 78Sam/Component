@@ -36,7 +36,7 @@ class CLI
 
     private function server(): void
     {
-        exec('cd ComponentPHP/Public && php -S localhost:8080');
+        exec('cd ComponentPHP/Public && php -S 0.0.0.0:8080');
     }
 
     private function generate(): void
@@ -56,9 +56,9 @@ class CLI
         /** @var \SplFileInfo $file */
         foreach ($directoryIterator as $file) {
             $filename = PathService::removeExtension($file);
-            if (!str_ends_with($filename, '_component')) {
-                continue;
-            }
+            // if (!str_ends_with($filename, '_component')) {
+            //     continue;
+            // }
 
             $loadedComponents = $componentService->loadFile(new Path($file->getPathname(), true));
             var_dump($loadedComponents);
